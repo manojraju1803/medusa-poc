@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:9000/hello-world)",
+      "Bash(curl -s -w \"\\\\n%{http_code}\\\\n\" http://localhost:9000/hello-world/123)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend ls -R /server/apps/backend/src/api)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend sh -c 'ls -d /server/node_modules/chokidar /server/apps/backend/node_modules/chokidar 2>/dev/null; grep -rl \"chokidar\" /server/node_modules/@medusajs/cli/dist /server/node_modules/@medusajs/medusa/dist 2>/dev/null | head -10')",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend sh -c 'ls /server/node_modules/.pnpm 2>/dev/null | grep -i chokidar | head; echo \"--- medusa pkgs ---\"; ls /server/node_modules/@medusajs 2>/dev/null | head -30')",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend sh -c 'ls /server/apps/backend/node_modules/@medusajs 2>/dev/null; echo \"--- who depends on chokidar ---\"; ls -d /server/node_modules/.pnpm/@medusajs* 2>/dev/null | head -20')",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend sh -c 'D=/server/node_modules/.pnpm/@medusajs+cli@2.20.1_@types+node@20.19.43/node_modules/@medusajs/cli; grep -rlE \"chokidar|watch\" $D/dist 2>/dev/null | head -20; echo \"=== deps ===\"; grep -E \"chokidar|nodemon|watch\" $D/package.json')",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend sh -c 'D=$\\(ls -d /server/node_modules/.pnpm/@medusajs+medusa@2.20.1*/node_modules/@medusajs/medusa 2>/dev/null | head -1\\); echo \"DIR=$D\"; grep -E \"chokidar\" $D/package.json; echo \"=== files mentioning chokidar ===\"; grep -rl \"chokidar\" $D/dist 2>/dev/null | head -10')",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec medusa_backend sh -c 'grep -n -A12 \"chokidar\" /server/node_modules/.pnpm/@medusajs+medusa@2.20.1_38ce98640fd5aab33aca73212e49cf43/node_modules/@medusajs/medusa/dist/commands/develop.js | head -60')"
+    ]
+  }
+}
