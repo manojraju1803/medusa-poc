@@ -18,7 +18,7 @@ export default function ProductPrice({
   const selectedPrice = variant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
-    return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />
+    return <span className="text-ui-fg-subtle">Sign in to see pricing</span>
   }
 
   return (
