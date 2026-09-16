@@ -6,9 +6,11 @@ import { HttpTypes } from "@medusajs/types"
 export default function ProductPrice({
   product,
   variant,
+  isLoggedIn,
 }: {
   product: HttpTypes.StoreProduct
   variant?: HttpTypes.StoreProductVariant
+  isLoggedIn?: boolean
 }) {
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,
@@ -18,7 +20,13 @@ export default function ProductPrice({
   const selectedPrice = variant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
-    return <span className="text-ui-fg-subtle">Sign in to see pricing</span>
+    return (
+      <span className="text-ui-fg-subtle">
+        {isLoggedIn
+          ? "Your account is awaiting approval"
+          : "Sign in to see pricing"}
+      </span>
+    )
   }
 
   return (

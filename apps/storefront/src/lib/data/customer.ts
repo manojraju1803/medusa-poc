@@ -222,6 +222,8 @@ async function completeLogin(
 
   const customerCacheTag = await getCacheTag("customers")
   revalidateTag(customerCacheTag)
+  const productsCacheTag = await getCacheTag("products")
+  revalidateTag(productsCacheTag)
 
   try {
     await transferCart()
