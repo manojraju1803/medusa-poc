@@ -1,14 +1,15 @@
 import {
   defineMiddlewares,
   AuthenticatedMedusaRequest,
-  MedusaResponse,
   MedusaNextFunction,
+  MedusaRequest,
+  MedusaResponse,
 } from '@medusajs/framework/http';
 import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 import { MedusaError } from '@medusajs/framework/utils';
 
 async function requireApproved(
-  req: AuthenticatedMedusaRequest,
+  req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction,
 ) {
@@ -25,8 +26,11 @@ async function requireApproved(
 
 const APPROVED_GROUP = 'Approved';
 
-async function isApproved(req: AuthenticatedMedusaRequest): Promise<boolean> {
-  const actorId = req.auth_context?.actor_id;
+async function isApproved(req: MedusaRequest): Promise<boolean> {
+  // Store routes authenticate with `allowUnauthenticated`, so `auth_context` is
+  // absent for logged-out callers. The middleware array is typed against the base
+  // `MedusaRequest`, which does not declare it.
+  const actorId = (req as AuthenticatedMedusaRequest).auth_context?.actor_id;
   if (!actorId) {
     return false;
   }
@@ -38,11 +42,11 @@ async function isApproved(req: AuthenticatedMedusaRequest): Promise<boolean> {
     filters: { id: actorId },
   });
 
-  return !!data[0]?.groups?.some((g) => g.name === APPROVED_GROUP);
+  return !!data[0]?.groups?.some((group) => group?.name === APPROVED_GROUP);
 }
 
 async function hidePrices(
-  req: AuthenticatedMedusaRequest,
+  req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction,
 ) {
