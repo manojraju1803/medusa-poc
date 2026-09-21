@@ -140,6 +140,22 @@ You can slo run the following command from the root to start both backend and st
 pnpm dev
 ```
 
+### Logs during development
+
+Run Postgres and Redis in Docker and the apps on the host, so backend and
+storefront logs print straight in your terminal:
+
+```bash
+docker compose up postgres redis -d
+pnpm dev
+```
+
+If you run the full stack with `pnpm docker:up`, use `pnpm docker:logs` to
+follow the `medusa` and `storefront` output.
+
+Server-side fetches in the storefront log to that terminal (or container),
+not the browser console or Network tab.
+
 ## Configuration
 
 The storefront is configured via environment variables in `apps/storefront/.env.local`:
