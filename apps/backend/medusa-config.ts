@@ -33,4 +33,21 @@ module.exports = defineConfig({
     },
     databaseDriverOptions: { ssl: false, sslmode: 'disable' },
   },
+  modules: [
+    {
+      resolve: '@medusajs/medusa/tax',
+      options: {
+        providers: [
+          {
+            resolve: './src/modules/india-gst-tax',
+            id: 'india-gst',
+            options: {
+              sellerProvinceCode: 'in-ka',
+              shippingGstPercent: 18,
+            },
+          },
+        ],
+      },
+    },
+  ],
 });
