@@ -10,6 +10,7 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
+import ErrorMessage from "@modules/checkout/components/error-message"
 
 type MobileActionsProps = {
   product: HttpTypes.StoreProduct
@@ -21,6 +22,7 @@ type MobileActionsProps = {
   isAdding?: boolean
   show: boolean
   optionsDisabled: boolean
+  error?: string | null
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -33,6 +35,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   isAdding,
   show,
   optionsDisabled,
+  error,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -130,6 +133,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   : "Add to cart"}
               </Button>
             </div>
+            <ErrorMessage error={error} data-testid="mobile-add-to-cart-error-message" />
           </div>
         </Transition>
       </div>

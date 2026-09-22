@@ -5,6 +5,7 @@ import { useIntersection } from "@lib/hooks/use-in-view"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
 import Divider from "@modules/common/components/divider"
+import ErrorMessage from "@modules/checkout/components/error-message"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
@@ -40,6 +41,7 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -126,6 +128,7 @@ export default function ProductActions({
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
 
+    setError(null)
     setIsAdding(true)
 
     await addToCart({
@@ -133,8 +136,8 @@ export default function ProductActions({
       quantity: 1,
       countryCode,
     })
-
-    setIsAdding(false)
+      .catch((err) => setError(err.message))
+      .finally(() => setIsAdding(false))
   }
 
   return (
@@ -188,6 +191,7 @@ export default function ProductActions({
               ? "Out of stock"
               : "Add to cart"}
         </Button>
+        <ErrorMessage error={error} data-testid="add-to-cart-error-message" />
         <MobileActions
           product={product}
           variant={selectedVariant}
@@ -196,6 +200,7 @@ export default function ProductActions({
           inStock={inStock}
           handleAddToCart={handleAddToCart}
           isAdding={isAdding}
+          error={error}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
         />
