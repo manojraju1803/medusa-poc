@@ -19,7 +19,7 @@ async function requireApproved(
   next(
     new MedusaError(
       MedusaError.Types.NOT_ALLOWED,
-      'Your account must be approved before adding items to a cart.',
+      'Your account must be approved before you can use a cart.',
     ),
   );
 }
@@ -86,6 +86,26 @@ export default defineMiddlewares({
       middlewares: [hidePrices],
     },
     {
+      method: ['GET'],
+      matcher: '/store/product-categories',
+      middlewares: [hidePrices],
+    },
+    {
+      method: ['GET'],
+      matcher: '/store/product-categories/:id',
+      middlewares: [hidePrices],
+    },
+    {
+      method: ['GET'],
+      matcher: '/store/collections',
+      middlewares: [hidePrices],
+    },
+    {
+      method: ['GET'],
+      matcher: '/store/collections/:id',
+      middlewares: [hidePrices],
+    },
+    {
       method: ['POST'],
       matcher: '/store/carts',
       middlewares: [requireApproved],
@@ -93,6 +113,21 @@ export default defineMiddlewares({
     {
       method: ['POST'],
       matcher: '/store/carts/:id/line-items',
+      middlewares: [requireApproved],
+    },
+    {
+      method: ['GET', 'POST'],
+      matcher: '/store/carts/:id',
+      middlewares: [requireApproved],
+    },
+    {
+      method: ['POST', 'DELETE'],
+      matcher: '/store/carts/:id/line-items/:line_id',
+      middlewares: [requireApproved],
+    },
+    {
+      method: ['POST'],
+      matcher: '/store/carts/:id/complete',
       middlewares: [requireApproved],
     },
   ],
