@@ -2,7 +2,8 @@ import { Container, clx } from "@modules/common/components/ui"
 import Image from "next/image"
 import React from "react"
 
-import PlaceholderImage from "@modules/common/icons/placeholder-image"
+import ProductPlaceholder from "@modules/common/icons/product-placeholder"
+import { isRealProductImageUrl } from "@lib/util/product-image"
 
 type ThumbnailProps = {
   thumbnail?: string | null
@@ -21,7 +22,9 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   className,
   "data-testid": dataTestid,
 }) => {
-  const initialImage = thumbnail || images?.[0]?.url
+  const initialImage = [thumbnail, ...(images?.map((i) => i.url) ?? [])].find(
+    isRealProductImageUrl
+  )
 
   return (
     <Container
@@ -60,8 +63,9 @@ const ImageOrPlaceholder = ({
       fill
     />
   ) : (
-    <div className="w-full h-full absolute inset-0 flex items-center justify-center">
-      <PlaceholderImage size={size === "small" ? 16 : 24} />
+    <div className="w-full h-full absolute inset-0 flex flex-col items-center justify-center gap-y-2 text-ui-fg-muted">
+      <ProductPlaceholder size={size === "small" ? 32 : 56} />
+      <span className="txt-compact-small">No image available</span>
     </div>
   )
 }

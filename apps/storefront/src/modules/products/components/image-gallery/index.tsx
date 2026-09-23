@@ -1,16 +1,33 @@
 import { HttpTypes } from "@medusajs/types"
 import { Container } from "@modules/common/components/ui"
 import Image from "next/image"
+import ProductPlaceholder from "@modules/common/icons/product-placeholder"
+import { isRealProductImageUrl } from "@lib/util/product-image"
 
 type ImageGalleryProps = {
   images: HttpTypes.StoreProductImage[]
 }
 
 const ImageGallery = ({ images }: ImageGalleryProps) => {
+  const realImages = images.filter((image) => isRealProductImageUrl(image.url))
+
+  if (!realImages.length) {
+    return (
+      <div className="flex items-start relative">
+        <div className="flex flex-col flex-1 small:mx-16">
+          <Container className="relative aspect-square w-full overflow-hidden bg-ui-bg-subtle flex flex-col items-center justify-center gap-y-2 text-ui-fg-muted">
+            <ProductPlaceholder size={56} />
+            <span className="txt-compact-small">No image available</span>
+          </Container>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-start relative">
       <div className="flex flex-col flex-1 small:mx-16 gap-y-4">
-        {images.map((image, index) => {
+        {realImages.map((image, index) => {
           return (
             <Container
               key={image.id}
