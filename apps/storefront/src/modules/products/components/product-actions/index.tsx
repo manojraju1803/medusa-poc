@@ -42,6 +42,7 @@ export default function ProductActions({
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [quantity, setQuantity] = useState(1)
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -96,6 +97,11 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
+  useEffect(() => {
+    const minQuantity = Number(selectedVariant?.metadata?.min_quantity)
+    setQuantity(Number.isFinite(minQuantity) && minQuantity > 0 ? minQuantity : 1)
+  }, [selectedVariant])
+
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
     // If we don't manage inventory, we can always add to cart
@@ -133,7 +139,7 @@ export default function ProductActions({
 
     await addToCart({
       variantId: selectedVariant.id,
-      quantity: 1,
+      quantity,
       countryCode,
     })
       .catch((err) => setError(err.message))
@@ -171,26 +177,37 @@ export default function ProductActions({
           isLoggedIn={isLoggedIn}
         />
 
-        <Button
-          onClick={handleAddToCart}
-          disabled={
-            !inStock ||
-            !selectedVariant ||
-            !!disabled ||
-            isAdding ||
-            !isValidVariant
-          }
-          variant="primary"
-          className="w-full h-10"
-          isLoading={isAdding}
-          data-testid="add-product-button"
-        >
-          {!selectedVariant
-            ? "Select variant"
-            : !inStock || !isValidVariant
-              ? "Out of stock"
-              : "Add to cart"}
-        </Button>
+        <div className="flex gap-x-2">
+          <input
+            type="number"
+            min={1}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
+            disabled={!!disabled || isAdding}
+            className="border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 w-20 text-center"
+            data-testid="product-quantity-input"
+          />
+          <Button
+            onClick={handleAddToCart}
+            disabled={
+              !inStock ||
+              !selectedVariant ||
+              !!disabled ||
+              isAdding ||
+              !isValidVariant
+            }
+            variant="primary"
+            className="w-full h-10"
+            isLoading={isAdding}
+            data-testid="add-product-button"
+          >
+            {!selectedVariant
+              ? "Select variant"
+              : !inStock || !isValidVariant
+                ? "Out of stock"
+                : "Add to cart"}
+          </Button>
+        </div>
         <ErrorMessage error={error} data-testid="add-to-cart-error-message" />
         <MobileActions
           product={product}
