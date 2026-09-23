@@ -109,4 +109,27 @@
   .text-3xl-semi {
     @apply text-[32px] leading-[44px] font-semibold;
   }
+
+  /* imported product descriptions are raw html */
+  .product-description p {
+    @apply mb-2;
+  }
+
+  .product-description table {
+    @apply w-full border-collapse my-4 text-small-regular;
+  }
+
+  .product-description table td,
+  .product-description table th {
+    @apply border border-ui-border-base px-3 py-2 text-left align-top;
+  }
+
+  .product-description table tr:nth-child(even) {
+    @apply bg-ui-bg-subtle;
+  }
+
+  .product-description ul,
+  .product-description ol {
+    @apply pl-5 mb-2 list-disc;
+  }
 }

@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import { Heading, Text } from "@modules/common/components/ui"
+import { Heading } from "@modules/common/components/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 type ProductInfoProps = {
@@ -26,12 +26,13 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           {product.title}
         </Heading>
 
-        <Text
-          className="text-medium text-ui-fg-subtle whitespace-pre-line"
-          data-testid="product-description"
-        >
-          {product.description}
-        </Text>
+        {product.description && (
+          <div
+            className="product-description text-medium text-ui-fg-subtle"
+            data-testid="product-description"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
+        )}
       </div>
     </div>
   )
