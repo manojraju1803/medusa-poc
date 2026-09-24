@@ -27,6 +27,7 @@ coverage
 # Misc
 *.pem
 self.local
+*.tsbuildinfo
 
 # Debug
 npm-debug.log*
