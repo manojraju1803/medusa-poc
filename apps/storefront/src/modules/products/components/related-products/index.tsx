@@ -1,5 +1,6 @@
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import { PRODUCT_CARD_FIELDS } from "@lib/util/product"
 import { HttpTypes } from "@medusajs/types"
 import Product from "../product-preview"
 
@@ -32,6 +33,7 @@ export default async function RelatedProducts({
       .filter(Boolean) as string[]
   }
   queryParams.is_giftcard = false
+  queryParams.fields = PRODUCT_CARD_FIELDS
 
   const products = await listProducts({
     queryParams,
