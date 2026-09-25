@@ -57,9 +57,6 @@ export const retrieveCustomer =
     return await sdk.client
       .fetch<{ customer: HttpTypes.StoreCustomer }>(`/store/customers/me`, {
         method: "GET",
-        query: {
-          fields: "*orders",
-        },
         headers,
         next,
         cache: "force-cache",
