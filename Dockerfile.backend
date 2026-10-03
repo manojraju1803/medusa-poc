@@ -27,8 +27,12 @@ RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --no-lint
 # Build Medusa Admin dashboard bundle second (.medusa/admin/index.html)
 RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --admin-only --no-lint
 
-# Verify both server and admin builds exist in image
-RUN ls -la .medusa && ls -la .medusa/admin && test -f .medusa/admin/index.html
+# Verify both server and admin builds exist in image and mirror to root directory
+RUN ls -la .medusa && ls -la .medusa/admin && test -f .medusa/admin/index.html && \
+    mkdir -p /app/.medusa /app/apps/backend/dist /app/dist && \
+    cp -r /app/apps/backend/.medusa/* /app/.medusa/ && \
+    cp -r /app/apps/backend/.medusa/admin /app/apps/backend/dist/admin && \
+    cp -r /app/apps/backend/.medusa/admin /app/dist/admin
 
 # Set runtime memory limit for 512MB container
 ENV NODE_OPTIONS="--max-old-space-size=450"
