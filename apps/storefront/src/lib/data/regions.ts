@@ -71,9 +71,9 @@ export const getRegion = async (countryCode: string) => {
     return null
   }
 
-  regions.forEach((region) => {
-    region.countries?.forEach((c) => {
-      regionMap.set(c?.iso_2 ?? "", region)
+  regions.forEach((region: HttpTypes.StoreRegion) => {
+    region.countries?.forEach((c: HttpTypes.StoreRegionCountry | any) => {
+      regionMap.set(c?.iso_2?.toLowerCase() ?? "", region)
     })
   })
 

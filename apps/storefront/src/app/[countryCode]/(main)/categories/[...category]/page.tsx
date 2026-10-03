@@ -56,6 +56,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
     const productCategory = await getCategoryByHandle(params.category)
 
+    if (!productCategory) {
+      notFound()
+    }
+
     const title = productCategory.name + " | IngredientsBazar"
 
     const description = productCategory.description ?? `${title} category.`

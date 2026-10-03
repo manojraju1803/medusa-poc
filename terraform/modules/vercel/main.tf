@@ -13,13 +13,10 @@ resource "vercel_project" "storefront" {
   framework      = "nextjs"
   root_directory = var.storefront_root_dir
 
-  dynamic "git_repository" {
-    for_each = var.git_repository != null ? [var.git_repository] : []
-    content {
-      type = git_repository.value.type
-      repo = git_repository.value.repo
-    }
-  }
+  git_repository = var.git_repository != null ? {
+    type = var.git_repository.type
+    repo = var.git_repository.repo
+  } : null
 }
 
 # Environment Variable: Medusa Backend URL (Pointing to AWS ALB or Domain)
@@ -28,6 +25,7 @@ resource "vercel_project_environment_variable" "backend_url" {
   key        = "MEDUSA_BACKEND_URL"
   value      = var.medusa_backend_url
   target     = ["production", "preview", "development"]
+  sensitive  = false
 }
 
 # Environment Variable: Publishable Key
@@ -37,4 +35,6 @@ resource "vercel_project_environment_variable" "publishable_key" {
   key        = "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY"
   value      = var.medusa_publishable_key
   target     = ["production", "preview", "development"]
+  sensitive  = false
 }
+

@@ -23,6 +23,7 @@ export const listCategories = async (query?: Record<string, unknown>) => {
       }
     )
     .then(({ product_categories }) => product_categories)
+    .catch(() => [])
 }
 
 export const getCategoryByHandle = async (categoryHandle: string[]) => {
@@ -45,4 +46,5 @@ export const getCategoryByHandle = async (categoryHandle: string[]) => {
       }
     )
     .then(({ product_categories }) => product_categories[0])
+    .catch(() => undefined)
 }

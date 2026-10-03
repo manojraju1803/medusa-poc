@@ -31,9 +31,25 @@ sdk.client.fetch = async <T>(
     ...localeHeader,
     ...headers,
   }
-  init = {
+
+  // 8s timeout safeguard to prevent Vercel 504 Gateway Timeout on cold starts
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 8000)
+  const signal = init?.signal || controller.signal
+
+  const updatedInit: FetchArgs = {
     ...init,
     headers: newHeaders,
+    signal,
   }
-  return originalFetch(input, init)
+
+  try {
+    const res = await originalFetch(input, updatedInit)
+    clearTimeout(timeoutId)
+    return res as T
+  } catch (err) {
+    clearTimeout(timeoutId)
+    throw err
+  }
 }
+

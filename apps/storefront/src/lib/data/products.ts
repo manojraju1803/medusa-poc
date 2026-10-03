@@ -91,6 +91,17 @@ export const listProducts = async ({
         queryParams,
       }
     })
+    .catch((err) => {
+      console.warn("listProducts: backend request failed, returning empty list:", err?.message || err)
+      return {
+        response: {
+          products: [],
+          count: 0,
+        },
+        nextPage: null,
+        queryParams,
+      }
+    })
 }
 
 export const listProductsWithSort = async ({
