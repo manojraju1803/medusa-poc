@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ingredients-bazar-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile.backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 9000
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: COOKIE_SECRET
+        sync: false
+      - key: STORE_CORS
+        value: https://*.vercel.app,http://localhost:8000
+      - key: ADMIN_CORS
+        value: https://*.onrender.com,http://localhost:9000
+      - key: AUTH_CORS
+        value: https://*.vercel.app,https://*.onrender.com,http://localhost:8000,http://localhost:9000

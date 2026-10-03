@@ -1,0 +1,10 @@
+# Uncomment and configure this file to persist Terraform state remotely in S3
+# terraform {
+#   backend "s3" {
+#     bucket         = "ingredients-bazar-terraform-state"
+#     key            = "dev/terraform.tfstate"
+#     region         = "ap-south-1"
+#     dynamodb_table = "ingredients-bazar-terraform-locks"
+#     encrypt        = true
+#   }
+# }

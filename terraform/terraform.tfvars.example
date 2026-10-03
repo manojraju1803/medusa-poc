@@ -1,0 +1,43 @@
+# AWS Deployment Settings
+aws_region   = "ap-south-1"
+project_name = "ingredients-bazar"
+environment  = "dev"
+
+# Database Configuration
+db_name              = "medusa"
+db_username          = "medusa_admin"
+db_password          = "ChangeMeStrongPassword123!" # Change to a secure password
+db_instance_class    = "db.t4g.micro"
+db_allocated_storage = 20
+db_multi_az          = false
+
+# Redis Configuration
+redis_node_type = "cache.t4g.micro"
+
+# Security & Secrets
+jwt_secret    = "supersecretjwtkey_change_me_in_production"
+cookie_secret = "supersecretcookiekey_change_me_in_production"
+
+# CORS Configuration (Set to your domain in production)
+store_cors = "*"
+admin_cors = "*"
+auth_cors  = "*"
+
+# ECS Resource Allocation
+backend_cpu              = 512
+backend_memory           = 1024
+backend_desired_count    = 1
+storefront_cpu           = 256
+storefront_memory        = 512
+storefront_desired_count = 1
+enable_storefront        = false # Set to false if hosting storefront on Vercel
+
+# Optional: Deploy Storefront to Vercel via Terraform
+deploy_storefront_to_vercel = true
+vercel_api_token            = "YOUR_VERCEL_API_TOKEN"
+medusa_publishable_key      = "pk_01..."
+git_repository = {
+  type = "github"
+  repo = "your-org/ingredients-bazar-medusa"
+}
+

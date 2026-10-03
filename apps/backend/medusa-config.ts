@@ -3,24 +3,8 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils';
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
 module.exports = defineConfig({
-  admin: {
-    vite: (config) => {
-      return {
-        server: {
-          host: '0.0.0.0',
-          // Allow all hosts when running in Docker (development mode)
-          // In production, this should be more restrictive
-          allowedHosts: ['localhost', '.localhost', '127.0.0.1'],
-          hmr: {
-            // HMR websocket port inside container
-            port: 5173,
-            // Port browser connects to (exposed in docker-compose.yml)
-            clientPort: 5173,
-          },
-        },
-      };
-    },
-  },
+
+
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
@@ -31,18 +15,23 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
     },
-    databaseDriverOptions: { ssl: false, sslmode: 'disable' },
+    databaseDriverOptions: process.env.DATABASE_URL?.includes("sslmode=require") || process.env.NODE_ENV === "production"
+      ? { connection: { ssl: { rejectUnauthorized: false } } }
+      : { ssl: false, sslmode: "disable" },
   },
   modules: [
     {
-      resolve: '@medusajs/medusa/tax',
+      resolve: "./src/modules/brand",
+    },
+    {
+      resolve: "@medusajs/medusa/tax",
       options: {
         providers: [
           {
-            resolve: './src/modules/india-gst-tax',
-            id: 'india-gst',
+            resolve: "./src/modules/india-gst-tax",
+            id: "india-gst",
             options: {
-              sellerProvinceCode: 'in-ka',
+              sellerProvinceCode: "in-ka",
               shippingGstPercent: 18,
             },
           },
@@ -50,4 +39,5 @@ module.exports = defineConfig({
       },
     },
   ],
-});
+})
+
