@@ -27,12 +27,18 @@ RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --no-lint
 # Build Medusa Admin dashboard bundle second (.medusa/admin/index.html)
 RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --admin-only --no-lint
 
-# Verify both server and admin builds exist in image and mirror to root directory
+# Verify both server and admin builds exist in image and mirror to all possible admin paths
 RUN ls -la .medusa && ls -la .medusa/admin && test -f .medusa/admin/index.html && \
-    mkdir -p /app/.medusa /app/apps/backend/dist /app/dist && \
+    mkdir -p /app/.medusa /app/apps/backend/dist /app/dist /app/apps/backend/.medusa/server/public /app/.medusa/server/public /app/apps/backend/.medusa/server/admin /app/.medusa/server/admin /app/apps/backend/public /app/public && \
     cp -r /app/apps/backend/.medusa/* /app/.medusa/ && \
+    cp -r /app/apps/backend/.medusa/admin /app/apps/backend/.medusa/server/public/admin && \
+    cp -r /app/apps/backend/.medusa/admin /app/apps/backend/.medusa/server/admin && \
+    cp -r /app/apps/backend/.medusa/admin /app/.medusa/server/public/admin && \
+    cp -r /app/apps/backend/.medusa/admin /app/.medusa/server/admin && \
     cp -r /app/apps/backend/.medusa/admin /app/apps/backend/dist/admin && \
-    cp -r /app/apps/backend/.medusa/admin /app/dist/admin
+    cp -r /app/apps/backend/.medusa/admin /app/dist/admin && \
+    cp -r /app/apps/backend/.medusa/admin /app/apps/backend/public/admin && \
+    cp -r /app/apps/backend/.medusa/admin /app/public/admin
 
 # Set runtime memory limit for 512MB container
 ENV NODE_OPTIONS="--max-old-space-size=450"
