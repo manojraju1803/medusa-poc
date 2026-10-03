@@ -9,11 +9,11 @@ module.exports = defineConfig({
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
     http: {
-      storeCors: process.env.STORE_CORS!,
-      adminCors: process.env.ADMIN_CORS!,
-      authCors: process.env.AUTH_CORS!,
-      jwtSecret: process.env.JWT_SECRET,
-      cookieSecret: process.env.COOKIE_SECRET,
+      storeCors: process.env.STORE_CORS || "http://localhost:8000,https://*.vercel.app",
+      adminCors: process.env.ADMIN_CORS || "http://localhost:9000,https://*.onrender.com",
+      authCors: process.env.AUTH_CORS || "http://localhost:8000,http://localhost:9000,https://*.vercel.app,https://*.onrender.com",
+      jwtSecret: process.env.JWT_SECRET || "super_secret_jwt_random_key_1234567890",
+      cookieSecret: process.env.COOKIE_SECRET || "super_secret_cookie_random_key_1234567890",
     },
     databaseDriverOptions: process.env.DATABASE_URL?.includes("sslmode=require") || process.env.NODE_ENV === "production"
       ? { connection: { ssl: { rejectUnauthorized: false } } }
