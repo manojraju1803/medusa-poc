@@ -71,48 +71,60 @@ function getImagesForVariant(
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
-  const { handle } = params
-  const region = await getRegion(params.countryCode)
+  const { handle, countryCode } = params
+  try {
+    const region = await getRegion(countryCode)
 
-  if (!region) {
-    notFound()
-  }
+    if (!region) {
+      return { title: "Product Not Found | IngredientsBazar" }
+    }
 
-  const product = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle },
-  }).then(({ response }) => response.products[0])
+    const { response } = await listProducts({
+      countryCode,
+      queryParams: { handle },
+    })
 
-  if (!product) {
-    notFound()
-  }
+    const product = response?.products?.[0]
 
-  return {
-    title: `${product.title} | IngredientsBazar`,
-    description: `${product.title}`,
-    openGraph: {
+    if (!product) {
+      return { title: "Product Not Found | IngredientsBazar" }
+    }
+
+    return {
       title: `${product.title} | IngredientsBazar`,
-      description: `${product.title}`,
-      images: product.thumbnail ? [product.thumbnail] : [],
-    },
+      description: `${product.description ?? product.title}`,
+      openGraph: {
+        title: `${product.title} | IngredientsBazar`,
+        description: `${product.description ?? product.title}`,
+        images: product.thumbnail ? [product.thumbnail] : [],
+      },
+    }
+  } catch {
+    return { title: "Product | IngredientsBazar" }
   }
 }
 
 export default async function ProductPage(props: Props) {
   const params = await props.params
-  const region = await getRegion(params.countryCode)
   const searchParams = await props.searchParams
 
-  const selectedVariantId = searchParams.v_id
+  const region = await getRegion(params.countryCode)
+  const selectedVariantId = searchParams?.v_id
 
   if (!region) {
     notFound()
   }
 
-  const pricedProduct = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle: params.handle },
-  }).then(({ response }) => response.products[0])
+  let pricedProduct: HttpTypes.StoreProduct | undefined
+  try {
+    const { response } = await listProducts({
+      countryCode: params.countryCode,
+      queryParams: { handle: params.handle },
+    })
+    pricedProduct = response?.products?.[0]
+  } catch (err) {
+    console.error("ProductPage fetch error:", err)
+  }
 
   if (!pricedProduct) {
     notFound()
@@ -129,3 +141,4 @@ export default async function ProductPage(props: Props) {
     />
   )
 }
+

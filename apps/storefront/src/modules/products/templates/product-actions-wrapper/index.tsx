@@ -13,17 +13,22 @@ export default async function ProductActionsWrapper({
   id: string
   region: HttpTypes.StoreRegion
 }) {
-  const [product, customer] = await Promise.all([
-    listProducts({ queryParams: { id: [id] }, regionId: region.id }).then(
-      ({ response }) => response.products[0],
-    ),
-    retrieveCustomer(),
-  ])
-  if (!product) {
+  try {
+    const [product, customer] = await Promise.all([
+      listProducts({ queryParams: { id: [id] }, regionId: region?.id })
+        .then(({ response }) => response?.products?.[0])
+        .catch(() => null),
+      retrieveCustomer().catch(() => null),
+    ])
+    if (!product) {
+      return null
+    }
+
+    return (
+      <ProductActions product={product} region={region} isLoggedIn={!!customer} />
+    )
+  } catch {
     return null
   }
-
-  return (
-    <ProductActions product={product} region={region} isLoggedIn={!!customer} />
-  )
 }
+
