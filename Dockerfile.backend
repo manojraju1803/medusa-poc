@@ -21,9 +21,14 @@ WORKDIR /app/apps/backend
 
 ENV NODE_ENV=production
 
-# Build Medusa Admin dashboard bundle (.medusa/admin/index.html) and Server bundle (.medusa/server)
-RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --admin-only --no-lint
+# Build Medusa Server bundle first (.medusa/server)
 RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --no-lint
+
+# Build Medusa Admin dashboard bundle second (.medusa/admin/index.html)
+RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build --admin-only --no-lint
+
+# Verify both server and admin builds exist in image
+RUN ls -la .medusa && ls -la .medusa/admin && test -f .medusa/admin/index.html
 
 # Set runtime memory limit for 512MB container
 ENV NODE_OPTIONS="--max-old-space-size=450"
