@@ -20,13 +20,13 @@ COPY apps/backend ./apps/backend
 WORKDIR /app/apps/backend
 
 ENV NODE_ENV=production
+
+# Build Medusa Admin & Server bundle with sufficient heap for the bundler
+RUN NODE_OPTIONS="--max-old-space-size=2048" npx medusa build
+
+# Set runtime memory limit for 512MB container
 ENV NODE_OPTIONS="--max-old-space-size=450"
-
-# Build Medusa Admin & Server bundle at Docker build time
-RUN npx medusa build
-
 EXPOSE 9000
-
 ENV PORT=9000
 
 # Start server (migration + start)
