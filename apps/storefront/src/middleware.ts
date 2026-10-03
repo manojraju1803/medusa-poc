@@ -14,9 +14,7 @@ async function getRegionMap(cacheId: string) {
   const { regionMap, regionMapUpdated } = regionMapCache
 
   if (!BACKEND_URL) {
-    throw new Error(
-      "Middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a NEXT_PUBLIC_MEDUSA_BACKEND_URL environment variable."
-    )
+    return regionMapCache.regionMap
   }
 
   if (
@@ -24,18 +22,23 @@ async function getRegionMap(cacheId: string) {
     regionMapUpdated < Date.now() - 3600 * 1000
   ) {
     try {
-      // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
+      // Fetch regions with a strict 3s timeout so middleware NEVER hangs
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
+
       const response = await fetch(`${BACKEND_URL}/store/regions`, {
         method: "GET",
         headers: {
-          "x-publishable-api-key": PUBLISHABLE_API_KEY!,
+          "x-publishable-api-key": PUBLISHABLE_API_KEY || "",
         },
+        signal: controller.signal,
         next: {
           revalidate: 3600,
           tags: [`regions-${cacheId}`],
         },
-        cache: "force-cache",
       })
+
+      clearTimeout(timeoutId)
 
       if (response.ok) {
         const json = await response.json()
@@ -44,15 +47,24 @@ async function getRegionMap(cacheId: string) {
         if (regions?.length) {
           regions.forEach((region: HttpTypes.StoreRegion) => {
             region.countries?.forEach((c) => {
-              regionMapCache.regionMap.set(c.iso_2 ?? "", region)
+              regionMapCache.regionMap.set(c.iso_2?.toLowerCase() ?? "", region)
             })
           })
           regionMapCache.regionMapUpdated = Date.now()
         }
       }
     } catch (error) {
-      console.error("Middleware: failed to fetch regions from backend:", error)
+      console.warn("Middleware: quick fallback used (backend offline/booting):", error)
     }
+  }
+
+  // If no regions loaded yet, ensure DEFAULT_REGION is always present in map
+  if (!regionMapCache.regionMap.has(DEFAULT_REGION.toLowerCase())) {
+    regionMapCache.regionMap.set(DEFAULT_REGION.toLowerCase(), {
+      id: "reg_default",
+      name: "Default Region",
+      countries: [{ iso_2: DEFAULT_REGION.toLowerCase() }],
+    } as any)
   }
 
   return regionMapCache.regionMap

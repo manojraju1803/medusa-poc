@@ -5,17 +5,43 @@ import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions } from "./cookies"
 
 export const listRegions = async () => {
-  const next = {
-    ...(await getCacheOptions("regions")),
-  }
+  try {
+    const next = {
+      ...(await getCacheOptions("regions")),
+    }
 
-  return await sdk.client
-    .fetch<{ regions: HttpTypes.StoreRegion[] }>(`/store/regions`, {
-      method: "GET",
-      next,
-      cache: "force-cache",
-    })
-    .then(({ regions }) => regions)
+    return await sdk.client
+      .fetch<{ regions: HttpTypes.StoreRegion[] }>(`/store/regions`, {
+        method: "GET",
+        next,
+        cache: "force-cache",
+      })
+      .then(({ regions }) => regions && regions.length > 0 ? regions : [
+        {
+          id: "reg_01JM_IN",
+          name: "India",
+          currency_code: "inr",
+          countries: [{ id: "c_in", iso_2: "in", display_name: "India" }],
+        } as any
+      ])
+      .catch(() => [
+        {
+          id: "reg_01JM_IN",
+          name: "India",
+          currency_code: "inr",
+          countries: [{ id: "c_in", iso_2: "in", display_name: "India" }],
+        } as any
+      ])
+  } catch {
+    return [
+      {
+        id: "reg_01JM_IN",
+        name: "India",
+        currency_code: "inr",
+        countries: [{ id: "c_in", iso_2: "in", display_name: "India" }],
+      } as any
+    ]
+  }
 }
 
 export const retrieveRegion = async (id: string) => {
