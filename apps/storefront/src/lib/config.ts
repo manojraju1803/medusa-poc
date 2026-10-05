@@ -32,9 +32,10 @@ sdk.client.fetch = async <T>(
     ...headers,
   }
 
-  // 8s timeout safeguard to prevent Vercel 504 Gateway Timeout on cold starts
+  // Generous timeout to avoid aborting valid Medusa workflows on local dev
+  const timeoutMs = process.env.NODE_ENV === "development" ? 60000 : 30000
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 8000)
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
   const signal = init?.signal || controller.signal
 
   const updatedInit: FetchArgs = {

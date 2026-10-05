@@ -1,7 +1,6 @@
 "use client"
 
-import { Button, Heading } from "@modules/common/components/ui"
-
+import { Button } from "@modules/common/components/ui"
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
 import DiscountCode from "@modules/checkout/components/discount-code"
@@ -27,17 +26,20 @@ const Summary = ({ cart }: SummaryProps) => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <Heading level="h2" className="text-[2rem] leading-[2.75rem]">
-        Summary
-      </Heading>
+      <h2 className="text-xl font-extrabold text-[#0f172a]">
+        Order Summary
+      </h2>
       <DiscountCode cart={cart} />
       <Divider />
       <CartTotals totals={cart} />
       <LocalizedClientLink
         href={"/checkout?step=" + step}
         data-testid="checkout-button"
+        className="w-full mt-2 block"
       >
-        <Button className="w-full h-10">Go to checkout</Button>
+        <Button className="w-full h-11 bg-[#1C94D2] hover:bg-[#0284c7] text-white font-bold rounded-xl shadow-sm transition-all text-xs uppercase tracking-wider">
+          Proceed to B2B Checkout →
+        </Button>
       </LocalizedClientLink>
     </div>
   )

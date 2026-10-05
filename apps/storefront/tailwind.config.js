@@ -20,6 +20,39 @@ module.exports = {
         padding: "padding-top padding-right padding-bottom padding-left",
       },
       colors: {
+        brand: {
+          green: "#97C93E",
+          greenHover: "#84B82A",
+          greenDark: "#15803D",
+          greenDeep: "#0D3320",
+          greenLight: "#F4FBEA",
+          greenBorder: "#D4EDAB",
+          blue: "#1C94D2",
+          blueHover: "#0284C7",
+          blueDark: "#0369A1",
+          blueDeep: "#0A2540",
+          blueLight: "#F0F9FF",
+          blueBorder: "#BAE6FD",
+        },
+        b2b: {
+          primary: "#1C94D2",
+          primaryHover: "#0284C7",
+          primaryGreen: "#97C93E",
+          primaryGreenHover: "#84B82A",
+          dark: "#0A2540",
+          forest: "#083320",
+          emerald: "#166534",
+          mint: "#f0fdf4",
+          light: "#f8fffe",
+          accent: "#97C93E",
+          accentBlue: "#1C94D2",
+          accentLight: "#BAE6FD",
+          border: "#bbf7d0",
+          badge: "#dcfce7",
+          charcoal: "#0f172a",
+          slate: "#374151",
+          muted: "#6b7280",
+        },
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -59,6 +92,7 @@ module.exports = {
       },
       fontFamily: {
         sans: [
+          "Plus Jakarta Sans",
           "Inter",
           "-apple-system",
           "BlinkMacSystemFont",
@@ -135,9 +169,21 @@ module.exports = {
           "0%": { transform: "scale(1)", opacity: 1 },
           "100%": { transform: "scale(0.9)", opacity: 0 },
         },
-        "slide-in": {
-          "0%": { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(0)" },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        "float-reverse": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(8px)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.08)" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(200%)" },
         },
       },
       animation: {
@@ -154,6 +200,10 @@ module.exports = {
         enter: "enter 200ms ease-out",
         "slide-in": "slide-in 1.2s cubic-bezier(.41,.73,.51,1.02)",
         leave: "leave 150ms ease-in forwards",
+        float: "float 6s ease-in-out infinite",
+        "float-reverse": "float-reverse 7s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 4s ease-in-out infinite",
+        shimmer: "shimmer 2.5s infinite",
       },
     },
   },

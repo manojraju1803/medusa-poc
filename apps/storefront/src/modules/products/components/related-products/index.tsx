@@ -19,53 +19,58 @@ export default async function RelatedProducts({
     return null
   }
 
-  // edit this function to define your related products logic
-  const queryParams: HttpTypes.StoreProductListParams = {}
-  if (region?.id) {
-    queryParams.region_id = region.id
-  }
-  if (product.collection_id) {
-    queryParams.collection_id = [product.collection_id]
-  }
-  if (product.tags) {
-    queryParams.tag_id = product.tags
+  try {
+    const queryParams: HttpTypes.StoreProductListParams = {}
+    if (region?.id) {
+      queryParams.region_id = region.id
+    }
+    if (product.collection_id) {
+      queryParams.collection_id = [product.collection_id]
+    }
+    const tagIds = (product.tags || [])
       .map((t) => t.id)
       .filter(Boolean) as string[]
-  }
-  queryParams.is_giftcard = false
-  queryParams.fields = PRODUCT_CARD_FIELDS
+    if (tagIds.length > 0) {
+      queryParams.tag_id = tagIds
+    }
+    queryParams.is_giftcard = false
+    queryParams.fields = PRODUCT_CARD_FIELDS
 
-  const products = await listProducts({
-    queryParams,
-    countryCode,
-  }).then(({ response }) => {
-    return response.products.filter(
+    const { response } = await listProducts({
+      queryParams,
+      countryCode,
+    })
+
+    const products = (response?.products || []).filter(
       (responseProduct) => responseProduct.id !== product.id
     )
-  })
 
-  if (!products.length) {
+    if (!products.length) {
+      return null
+    }
+
+    return (
+      <div className="product-page-constraint">
+        <div className="flex flex-col items-center text-center mb-16">
+          <span className="text-base-regular text-gray-600 mb-6">
+            Related products
+          </span>
+          <p className="text-2xl-regular text-ui-fg-base max-w-lg">
+            You might also want to check out these products.
+          </p>
+        </div>
+
+        <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
+          {products.map((product) => (
+            <li key={product.id}>
+              <Product region={region} product={product} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  } catch (err) {
+    console.warn("RelatedProducts error:", err)
     return null
   }
-
-  return (
-    <div className="product-page-constraint">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-gray-600 mb-6">
-          Related products
-        </span>
-        <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          You might also want to check out these products.
-        </p>
-      </div>
-
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
-        {products.map((product) => (
-          <li key={product.id}>
-            <Product region={region} product={product} />
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
 }

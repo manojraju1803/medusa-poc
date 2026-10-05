@@ -6,7 +6,17 @@ const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "dk"
 
 const regionMapCache = {
-  regionMap: new Map<string, HttpTypes.StoreRegion>(),
+  regionMap: new Map<string, HttpTypes.StoreRegion>([
+    [
+      DEFAULT_REGION.toLowerCase(),
+      {
+        id: "reg_01M36H9V03QXHMQJRNGEB5B8H1",
+        name: "India",
+        currency_code: "inr",
+        countries: [{ iso_2: "in" } as any],
+      } as any,
+    ],
+  ]),
   regionMapUpdated: Date.now(),
 }
 

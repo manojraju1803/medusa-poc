@@ -17,27 +17,30 @@ const Register = ({ setCurrentView }: Props) => {
 
   return (
     <div
-      className="max-w-sm flex flex-col items-center"
+      className="w-full flex flex-col"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">
-        Become an IngredientsBazar Member
-      </h1>
-      <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        Create your IngredientsBazar Member profile, and get access to an
-        enhanced shopping experience.
-      </p>
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-[#0f172a]">
+          Register Business Account
+        </h1>
+        <p className="text-xs text-[#64748b] mt-1">
+          Create your verified IngredientsBazar buyer profile for direct manufacturer pricing and GST invoicing.
+        </p>
+      </div>
+
       {message?.state === "verification_required" && (
         <div
-          className="w-full mb-4 text-center text-base-regular text-ui-fg-base bg-ui-bg-subtle border border-ui-border-base rounded-rounded p-4"
+          className="w-full mb-4 text-xs text-[#166534] bg-[#dcfce7] border border-[#bbf7d0] rounded-xl p-3.5"
           data-testid="register-verification-message"
         >
           We sent a verification link to <strong>{message.email}</strong>.
           Please check your inbox to verify your email, then sign in.
         </div>
       )}
-      <form className="w-full flex flex-col" action={formAction}>
-        <div className="flex flex-col w-full gap-y-2">
+
+      <form className="w-full flex flex-col gap-y-3" action={formAction}>
+        <div className="grid grid-cols-2 gap-x-2">
           <Input
             label="First name"
             name="first_name"
@@ -52,65 +55,71 @@ const Register = ({ setCurrentView }: Props) => {
             autoComplete="family-name"
             data-testid="last-name-input"
           />
-          <Input
-            label="Email"
-            name="email"
-            required
-            type="email"
-            autoComplete="email"
-            data-testid="email-input"
-          />
-          <Input
-            label="Phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            data-testid="phone-input"
-          />
-          <Input
-            label="Password"
-            name="password"
-            required
-            type="password"
-            autoComplete="new-password"
-            data-testid="password-input"
-          />
         </div>
+        <Input
+          label="Work Email"
+          name="email"
+          required
+          type="email"
+          autoComplete="email"
+          data-testid="email-input"
+        />
+        <Input
+          label="Contact Phone"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          data-testid="phone-input"
+        />
+        <Input
+          label="Password (min 8 chars)"
+          name="password"
+          required
+          type="password"
+          autoComplete="new-password"
+          data-testid="password-input"
+        />
+
         <ErrorMessage
           error={message?.state === "error" ? message.error : null}
           data-testid="register-error"
         />
-        <span className="text-center text-ui-fg-base text-small-regular mt-6">
-          By creating an account, you agree to IngredientsBazar&apos;s{" "}
+
+        <span className="text-[11px] text-[#64748b] mt-2">
+          By registering, you agree to IngredientsBazar&apos;s{" "}
           <LocalizedClientLink
             href="/content/privacy-policy"
-            className="underline"
+            className="text-[#1C94D2] underline font-medium"
           >
             Privacy Policy
           </LocalizedClientLink>{" "}
           and{" "}
           <LocalizedClientLink
             href="/content/terms-of-use"
-            className="underline"
+            className="text-[#1C94D2] underline font-medium"
           >
-            Terms of Use
+            Terms of Wholesale Trade
           </LocalizedClientLink>
           .
         </span>
-        <SubmitButton className="w-full mt-6" data-testid="register-button">
-          Join
+
+        <SubmitButton
+          className="w-full mt-2 h-11 bg-[#1C94D2] hover:bg-[#0284c7] text-white text-xs font-bold rounded-xl shadow-xs transition-all"
+          data-testid="register-button"
+        >
+          Complete B2B Registration →
         </SubmitButton>
       </form>
-      <span className="text-center text-ui-fg-base text-small-regular mt-6">
-        Already a member?{" "}
+
+      <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-[#64748b]">
+        <span>Already have an account?</span>
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
-          className="underline"
+          className="font-bold text-[#1C94D2] hover:underline"
         >
-          Sign in
+          Sign In Here →
         </button>
-        .
-      </span>
+      </div>
     </div>
   )
 }

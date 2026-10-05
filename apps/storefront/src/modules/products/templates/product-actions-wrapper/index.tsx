@@ -24,8 +24,19 @@ export default async function ProductActionsWrapper({
       return null
     }
 
+    const isApproved =
+      !!product.variants?.some((v) => !!v.calculated_price) ||
+      !!(
+        customer as (HttpTypes.StoreCustomer & { groups?: { name?: string }[] }) | null
+      )?.groups?.some((g: { name?: string }) => g.name === "Approved")
+
     return (
-      <ProductActions product={product} region={region} isLoggedIn={!!customer} />
+      <ProductActions
+        product={product}
+        region={region}
+        isLoggedIn={!!customer}
+        isApproved={isApproved}
+      />
     )
   } catch {
     return null

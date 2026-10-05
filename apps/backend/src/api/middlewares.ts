@@ -27,11 +27,16 @@ async function requireApproved(
 const APPROVED_GROUP = 'Approved';
 
 async function isApproved(req: MedusaRequest): Promise<boolean> {
+  if ((req as any).__isApproved !== undefined) {
+    return (req as any).__isApproved;
+  }
+
   // Store routes authenticate with `allowUnauthenticated`, so `auth_context` is
   // absent for logged-out callers. The middleware array is typed against the base
   // `MedusaRequest`, which does not declare it.
   const actorId = (req as AuthenticatedMedusaRequest).auth_context?.actor_id;
   if (!actorId) {
+    (req as any).__isApproved = false;
     return false;
   }
 
@@ -42,7 +47,9 @@ async function isApproved(req: MedusaRequest): Promise<boolean> {
     filters: { id: actorId },
   });
 
-  return !!data[0]?.groups?.some((group) => group?.name === APPROVED_GROUP);
+  const approved = !!data[0]?.groups?.some((group) => group?.name === APPROVED_GROUP);
+  (req as any).__isApproved = approved;
+  return approved;
 }
 
 async function hidePrices(

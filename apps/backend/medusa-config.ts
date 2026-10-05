@@ -1,5 +1,6 @@
 import { loadEnv, defineConfig } from '@medusajs/framework/utils';
 
+loadEnv(process.env.NODE_ENV || 'development', __dirname);
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
 module.exports = defineConfig({
@@ -17,7 +18,15 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "super_secret_cookie_random_key_1234567890",
     },
     databaseDriverOptions: process.env.DATABASE_URL?.includes("sslmode=require") || process.env.NODE_ENV === "production"
-      ? { connection: { ssl: { rejectUnauthorized: false } } }
+      ? {
+          connection: { ssl: { rejectUnauthorized: false } },
+          pool: {
+            min: 2,
+            max: 20,
+            idleTimeoutMillis: 300000,
+            acquireTimeoutMillis: 60000,
+          },
+        }
       : { ssl: false, sslmode: "disable" },
   },
   modules: [
