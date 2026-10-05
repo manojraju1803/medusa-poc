@@ -7,8 +7,8 @@ import { getRegion } from "@lib/data/regions"
 import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
-  title: "Addresses",
-  description: "View your addresses",
+  title: "Delivery Locations & Warehouses | IngredientsBazar",
+  description: "View and manage your factory, warehouse, and delivery hub addresses.",
 }
 
 export default async function Addresses(props: {
@@ -24,12 +24,13 @@ export default async function Addresses(props: {
   }
 
   return (
-    <div className="w-full" data-testid="addresses-page-wrapper">
-      <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">Shipping Addresses</h1>
-        <p className="text-base-regular">
-          View and update your shipping addresses, you can add as many as you
-          like. Saving your addresses will make them available during checkout.
+    <div className="w-full flex flex-col gap-6" data-testid="addresses-page-wrapper">
+      <div className="flex flex-col gap-1 pb-4 border-b border-gray-100">
+        <h1 className="text-xl font-bold text-[#0f172a]">
+          Delivery Locations & Warehouses
+        </h1>
+        <p className="text-xs text-[#64748b]">
+          Save and manage delivery hubs, factory plants, and fulfillment warehouses for streamlined order checkout and freight dispatch.
         </p>
       </div>
       <AddressBook customer={customer} region={region} />

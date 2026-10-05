@@ -61,19 +61,39 @@ export const listProducts = async ({
     ...(await getCacheOptions("products")),
   }
 
+function cleanQueryParams(params: Record<string, any>) {
+  const cleaned: Record<string, any> = {}
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === "") {
+      continue
+    }
+    if (Array.isArray(value)) {
+      const filtered = value.filter((v) => v !== undefined && v !== null && v !== "")
+      if (filtered.length > 0) {
+        cleaned[key] = filtered
+      }
+      continue
+    }
+    cleaned[key] = value
+  }
+  return cleaned
+}
+
+  const query = cleanQueryParams({
+    limit,
+    offset,
+    region_id: region?.id,
+    fields:
+      "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*variants.options,+variants.metadata,+metadata,+tags,*variants.inventory_items.inventory.location_levels,description,origin_country,material",
+    ...queryParams,
+  })
+
   return sdk.client
     .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
       `/store/products`,
       {
         method: "GET",
-        query: {
-          limit,
-          offset,
-          region_id: region?.id,
-          fields:
-            "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*variants.options,+variants.metadata,+metadata,+tags,",
-          ...queryParams,
-        },
+        query,
         headers,
         next,
         cache: "force-cache",

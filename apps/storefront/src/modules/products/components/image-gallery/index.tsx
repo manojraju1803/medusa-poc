@@ -1,8 +1,10 @@
+"use client"
+
 import { HttpTypes } from "@medusajs/types"
-import { Container } from "@modules/common/components/ui"
 import Image from "next/image"
 import ProductPlaceholder from "@modules/common/icons/product-placeholder"
 import { isRealProductImageUrl } from "@lib/util/product-image"
+import React, { useState } from "react"
 
 type ImageGalleryProps = {
   images: HttpTypes.StoreProductImage[]
@@ -10,47 +12,64 @@ type ImageGalleryProps = {
 
 const ImageGallery = ({ images }: ImageGalleryProps) => {
   const realImages = images.filter((image) => isRealProductImageUrl(image.url))
+  const [activeIdx, setActiveIdx] = useState(0)
 
   if (!realImages.length) {
     return (
-      <div className="flex items-start relative">
-        <div className="flex flex-col flex-1 small:mx-16">
-          <Container className="relative aspect-square w-full overflow-hidden bg-ui-bg-subtle flex flex-col items-center justify-center gap-y-2 text-ui-fg-muted">
-            <ProductPlaceholder size={56} />
-            <span className="txt-compact-small">No image available</span>
-          </Container>
-        </div>
+      <div className="w-full aspect-square relative rounded-2xl bg-[#f8fafc] border border-gray-100 flex flex-col items-center justify-center gap-y-3 text-[#64748b]">
+        <ProductPlaceholder size={64} />
+        <span className="text-xs font-medium">No verified image uploaded yet</span>
       </div>
     )
   }
 
+  const activeImage = realImages[activeIdx] || realImages[0]
+
   return (
-    <div className="flex items-start relative">
-      <div className="flex flex-col flex-1 small:mx-16 gap-y-4">
-        {realImages.map((image, index) => {
-          return (
-            <Container
-              key={image.id}
-              className="relative aspect-square w-full overflow-hidden bg-ui-bg-subtle"
-              id={image.id}
+    <div className="flex flex-col gap-4 w-full">
+      {/* Main Feature Display */}
+      <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-white border border-gray-100 flex items-center justify-center p-4 shadow-sm group">
+        {!!activeImage.url && (
+          <Image
+            src={activeImage.url}
+            priority={true}
+            className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+            alt="Product visual"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+          />
+        )}
+        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-gray-200 text-[10px] font-bold text-[#166534] shadow-xs">
+          100% Authentic Lot
+        </div>
+      </div>
+
+      {/* Multi-Image Thumbnails if > 1 */}
+      {realImages.length > 1 && (
+        <div className="flex items-center gap-3 overflow-x-auto pb-1 no-scrollbar">
+          {realImages.map((image, index) => (
+            <button
+              key={image.id || index}
+              onClick={() => setActiveIdx(index)}
+              className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all bg-white p-1 ${
+                activeIdx === index
+                  ? "border-[#1C94D2] shadow-sm ring-2 ring-[#1C94D2]/20"
+                  : "border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100"
+              }`}
             >
-              {!!image.url && (
+              {image.url && (
                 <Image
                   src={image.url}
-                  priority={index <= 2 ? true : false}
-                  className="absolute inset-0 rounded-rounded"
-                  alt={`Product image ${index + 1}`}
+                  alt={`Thumbnail ${index + 1}`}
                   fill
-                  sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-                  style={{
-                    objectFit: "contain",
-                  }}
+                  className="object-contain p-1"
+                  sizes="80px"
                 />
               )}
-            </Container>
-          )
-        })}
-      </div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

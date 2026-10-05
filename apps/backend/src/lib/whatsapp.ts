@@ -14,7 +14,12 @@ export function normalizePhoneNumber(rawPhone: string, defaultCountryCode = "91"
   let cleaned = rawPhone.replace(/[^\d+]/g, "")
   if (cleaned.startsWith("+")) {
     cleaned = cleaned.substring(1)
-  } else if (cleaned.length === 10) {
+  }
+  // Strip leading zero common in Indian local format (e.g., 07619114115 -> 7619114115)
+  if (cleaned.startsWith("0") && cleaned.length === 11) {
+    cleaned = cleaned.substring(1)
+  }
+  if (cleaned.length === 10) {
     cleaned = `${defaultCountryCode}${cleaned}`
   }
   return cleaned
@@ -52,6 +57,48 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
+import fs from "fs"
+import path from "path"
+
+function getCredentials(): { token: string; phoneId: string } {
+  let token = ""
+  let phoneId = ""
+
+  try {
+    const candidates = [
+      path.resolve(process.cwd(), "apps/backend/.env"),
+      path.resolve(process.cwd(), ".env"),
+      path.resolve(__dirname, "../../.env"),
+      path.resolve(__dirname, "../../../.env"),
+      path.resolve(__dirname, "../../../../apps/backend/.env"),
+    ]
+    for (const envPath of candidates) {
+      if (fs.existsSync(envPath)) {
+        const content = fs.readFileSync(envPath, "utf8")
+        const tokenMatch = content.match(/^WHATSAPP_ACCESS_TOKEN=(.*)$/m)
+        if (tokenMatch && tokenMatch[1]) {
+          token = tokenMatch[1].trim().replace(/^["']|["']$/g, "")
+        }
+        const phoneMatch = content.match(/^WHATSAPP_PHONE_NUMBER_ID=(.*)$/m)
+        if (phoneMatch && phoneMatch[1]) {
+          phoneId = phoneMatch[1].trim().replace(/^["']|["']$/g, "")
+        }
+        if (token) break
+      }
+    }
+  } catch {}
+
+  if (!token) {
+    token = activeToken || process.env.WHATSAPP_ACCESS_TOKEN || ""
+  }
+  if (!phoneId) {
+    phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "616368184901733"
+  }
+
+  activeToken = token
+  return { token, phoneId }
+}
+
 /**
  * Sends an Interactive CTA URL Button message to the recipient phone number.
  */
@@ -63,8 +110,8 @@ export async function sendWhatsAppCtaMessage({
   buttonText,
   buttonUrl,
 }: SendCtaMessageParams): Promise<{ success: boolean; data?: any; error?: string }> {
-  let token = activeToken || process.env.WHATSAPP_ACCESS_TOKEN
-  const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID
+  const { token, phoneId } = getCredentials()
+  console.log(`[WhatsApp] Using Token prefix: "${token.substring(0, 15)}..." length: ${token.length} with Phone ID: "${phoneId}"`)
 
   if (!token || !phoneId) {
     console.warn("[WhatsApp] Credentials missing: WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID not set in env.")

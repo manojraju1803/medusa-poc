@@ -63,7 +63,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
   const currentInfo = useMemo(() => {
     if (!billingAddress) {
-      return "No billing address"
+      return <span className="text-[#64748b] font-normal italic">No GST registered billing address configured</span>
     }
 
     const country =
@@ -72,19 +72,21 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
       )?.label || billingAddress.country_code?.toUpperCase()
 
     return (
-      <div className="flex flex-col font-semibold" data-testid="current-info">
-        <span>
+      <div className="flex flex-col text-xs text-[#0f172a] leading-relaxed" data-testid="current-info">
+        <span className="font-bold text-sm">
           {billingAddress.first_name} {billingAddress.last_name}
         </span>
-        <span>{billingAddress.company}</span>
+        {billingAddress.company && (
+          <span className="text-[#1C94D2] font-semibold">🏢 {billingAddress.company}</span>
+        )}
         <span>
           {billingAddress.address_1}
           {billingAddress.address_2 ? `, ${billingAddress.address_2}` : ""}
         </span>
         <span>
-          {billingAddress.postal_code}, {billingAddress.city}
+          {billingAddress.city} - {billingAddress.postal_code}, {billingAddress.province || ""}
         </span>
-        <span>{country}</span>
+        <span className="text-[#64748b]">{country}</span>
       </div>
     )
   }, [billingAddress, regionOptions])
@@ -93,14 +95,14 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
     <form action={formAction} onReset={() => clearState()} className="w-full">
       <input type="hidden" name="addressId" value={billingAddress?.id} />
       <AccountInfo
-        label="Billing address"
+        label="GST Billing & Registered Entity Address"
         currentInfo={currentInfo}
         isSuccess={successState}
         isError={!!state.error}
         clearState={clearState}
         data-testid="account-billing-address-editor"
       >
-        <div className="grid grid-cols-1 gap-y-2">
+        <div className="grid grid-cols-1 gap-y-3">
           <div className="grid grid-cols-2 gap-x-2">
             <Input
               label="First name"
@@ -118,13 +120,13 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             />
           </div>
           <Input
-            label="Company"
+            label="Company / Legal Entity Name (for GST)"
             name="company"
             defaultValue={billingAddress?.company || undefined}
             data-testid="billing-company-input"
           />
           <Input
-            label="Phone"
+            label="Contact Phone"
             name="phone"
             type="phone"
             autoComplete="phone"
@@ -133,14 +135,14 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             data-testid="billing-phone-input"
           />
           <Input
-            label="Address"
+            label="Registered Street Address"
             name="address_1"
             defaultValue={billingAddress?.address_1 || undefined}
             required
             data-testid="billing-address-1-input"
           />
           <Input
-            label="Apartment, suite, etc."
+            label="Industrial Area / Unit / Suite"
             name="address_2"
             defaultValue={billingAddress?.address_2 || undefined}
             data-testid="billing-address-2-input"
@@ -162,7 +164,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             />
           </div>
           <Input
-            label="Province"
+            label="State / Province"
             name="province"
             defaultValue={billingAddress?.province || undefined}
             data-testid="billing-province-input"
@@ -173,7 +175,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             required
             data-testid="billing-country-code-select"
           >
-            <option value="">-</option>
+            <option value="">Select Country</option>
             {regionOptions.map((option, i) => {
               return (
                 <option key={i} value={option?.value}>

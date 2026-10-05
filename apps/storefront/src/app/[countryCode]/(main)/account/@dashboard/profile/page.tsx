@@ -9,8 +9,8 @@ import { listRegions } from "@lib/data/regions"
 import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
-  title: "Profile",
-  description: "View and edit your IngredientsBazar profile.",
+  title: "Profile & Business Details | IngredientsBazar",
+  description: "View and edit your IngredientsBazar B2B profile and GST billing info.",
 }
 
 export default async function Profile() {
@@ -22,30 +22,21 @@ export default async function Profile() {
   }
 
   return (
-    <div className="w-full" data-testid="profile-page-wrapper">
-      <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">Profile</h1>
-        <p className="text-base-regular">
-          View and update your profile information, including your name, email,
-          and phone number. You can also update your billing address, or change
-          your password.
+    <div className="w-full flex flex-col gap-6" data-testid="profile-page-wrapper">
+      <div className="flex flex-col gap-1 pb-4 border-b border-gray-100">
+        <h1 className="text-xl font-bold text-[#0f172a]">
+          Company & Contact Profile
+        </h1>
+        <p className="text-xs text-[#64748b]">
+          Manage your organization name, procurement officer details, contact numbers, and GST registered billing address.
         </p>
       </div>
-      <div className="flex flex-col gap-y-8 w-full">
+      <div className="flex flex-col gap-y-4 w-full">
         <ProfileName customer={customer} />
-        <Divider />
         <ProfileEmail customer={customer} />
-        <Divider />
         <ProfilePhone customer={customer} />
-        <Divider />
-        {/* <ProfilePassword customer={customer} />
-        <Divider /> */}
         <ProfileBillingAddress customer={customer} regions={regions} />
       </div>
     </div>
   )
-}
-
-const Divider = () => {
-  return <div className="w-full h-px bg-gray-200" />
 }

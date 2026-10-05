@@ -1,120 +1,118 @@
-import { listCategories } from "@lib/data/categories";
-import { listCollections } from "@lib/data/collections";
-import { Text, clx } from "@modules/common/components/ui";
-
-import LocalizedClientLink from "@modules/common/components/localized-client-link";
+import { listCategories } from "@lib/data/categories"
+import { listCollections } from "@lib/data/collections"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export default async function Footer() {
-  const { collections } = await listCollections({
-    fields: "*products",
-  });
-  const productCategories = await listCategories();
+  const [collectionsRes, productCategories] = await Promise.all([
+    listCollections({ fields: "*products" }).catch(() => ({ collections: [] })),
+    listCategories().catch(() => []),
+  ])
+  const collections = collectionsRes.collections
 
   return (
-    <footer className="border-t border-ui-border-base w-full">
+    <footer className="bg-[#0A2540] text-[#e0f2fe] border-t border-[#1C94D2]/20 pt-16 pb-12">
       <div className="content-container flex flex-col w-full">
-        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
-          <div>
-            <LocalizedClientLink
-              href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
-            >
-              IngredientsBazar
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
+          {/* Brand Column */}
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <LocalizedClientLink href="/" className="flex items-center gap-2">
+              <img
+                src="/logo.png"
+                alt="IngredientsBazar - Next Generation Multi Brand Ingredients Platform"
+                className="h-12 w-auto bg-white p-2 rounded-xl max-w-[240px] object-contain shadow-xs"
+              />
             </LocalizedClientLink>
+            <p className="text-xs text-[#bae6fd]/80 max-w-sm leading-relaxed">
+              India's Next Generation Multi-Brand Ingredients Platform. Connecting global food, beverage, and nutraceutical manufacturers with verified raw material suppliers.
+            </p>
+            <div className="flex items-center gap-3 pt-2 text-xs text-[#97C93E]">
+              <span>📍 Bengaluru, India</span>
+              <span>•</span>
+              <span>✉️ support@ingredientsbazar.com</span>
+            </div>
           </div>
-          <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
-            {productCategories && productCategories?.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Categories
-                </span>
-                <ul
-                  className="grid grid-cols-1 gap-2"
-                  data-testid="footer-categories"
-                >
-                  {productCategories?.slice(0, 6).map((c) => {
-                    if (c.parent_category) {
-                      return;
-                    }
 
-                    const children =
-                      c.category_children?.map((child) => ({
-                        name: child.name,
-                        handle: child.handle,
-                        id: child.id,
-                      })) || null;
-
-                    return (
-                      <li
-                        className="flex flex-col gap-2 text-ui-fg-subtle txt-small"
-                        key={c.id}
-                      >
-                        <LocalizedClientLink
-                          className={clx(
-                            "hover:text-ui-fg-base",
-                            children && "txt-small-plus"
-                          )}
-                          href={`/categories/${c.handle}`}
-                          data-testid="category-link"
-                        >
-                          {c.name}
-                        </LocalizedClientLink>
-                        {children && (
-                          <ul className="grid grid-cols-1 ml-3 gap-2">
-                            {children &&
-                              children.map((child) => (
-                                <li key={child.id}>
-                                  <LocalizedClientLink
-                                    className="hover:text-ui-fg-base"
-                                    href={`/categories/${child.handle}`}
-                                    data-testid="category-link"
-                                  >
-                                    {child.name}
-                                  </LocalizedClientLink>
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-            {collections && collections.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Collections
-                </span>
-                <ul
-                  className={clx(
-                    "grid grid-cols-1 gap-2 text-ui-fg-subtle txt-small",
-                    {
-                      "grid-cols-2": (collections?.length || 0) > 3,
-                    }
-                  )}
+          {/* Sourcing Categories */}
+          <div className="flex flex-col gap-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-white">
+              Raw Ingredients
+            </span>
+            <ul className="flex flex-col gap-2 text-xs text-[#bae6fd]/80">
+              {productCategories?.slice(0, 5).map((c) => (
+                <li key={c.id}>
+                  <LocalizedClientLink
+                    className="hover:text-[#97C93E] transition-colors"
+                    href={`/categories/${c.handle}`}
+                  >
+                    {c.name}
+                  </LocalizedClientLink>
+                </li>
+              ))}
+              <li>
+                <LocalizedClientLink
+                  className="hover:text-white font-semibold text-[#38bdf8]"
+                  href="/store"
                 >
-                  {collections?.slice(0, 6).map((c) => (
-                    <li key={c.id}>
-                      <LocalizedClientLink
-                        className="hover:text-ui-fg-base"
-                        href={`/collections/${c.handle}`}
-                      >
-                        {c.title}
-                      </LocalizedClientLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                  View All Categories →
+                </LocalizedClientLink>
+              </li>
+            </ul>
+          </div>
+
+          {/* Quick Links */}
+          <div className="flex flex-col gap-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-white">
+              Marketplace
+            </span>
+            <ul className="flex flex-col gap-2 text-xs text-[#bae6fd]/80">
+              <li>
+                <LocalizedClientLink className="hover:text-[#97C93E] transition-colors" href="/store">
+                  Product Catalog
+                </LocalizedClientLink>
+              </li>
+              <li>
+                <LocalizedClientLink className="hover:text-[#97C93E] transition-colors" href="/account">
+                  B2B Buyer Account
+                </LocalizedClientLink>
+              </li>
+              <li>
+                <LocalizedClientLink className="hover:text-[#97C93E] transition-colors" href="/cart">
+                  Wholesale Cart
+                </LocalizedClientLink>
+              </li>
+              <li>
+                <LocalizedClientLink className="hover:text-[#97C93E] transition-colors" href="/account/orders">
+                  Track Orders
+                </LocalizedClientLink>
+              </li>
+            </ul>
+          </div>
+
+          {/* Compliance & Quality */}
+          <div className="flex flex-col gap-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-white">
+              Compliance
+            </span>
+            <ul className="flex flex-col gap-2 text-xs text-[#bae6fd]/80">
+              <li>✓ FSSAI Regulated</li>
+              <li>✓ ISO 9001:2015 Standards</li>
+              <li>✓ GMP Audited Suppliers</li>
+              <li>✓ Halal & Kosher Traceability</li>
+              <li>✓ Batch Lab CoAs Included</li>
+            </ul>
           </div>
         </div>
-        <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
-          <Text className="txt-compact-small">
-            © {new Date().getFullYear()} IngredientsBazar. All rights reserved.
-          </Text>
+
+        {/* Bottom Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-[#bae6fd]/60 gap-4">
+          <p>© {new Date().getFullYear()} IngredientsBazar Technologies Pvt. Ltd. All rights reserved.</p>
+          <div className="flex gap-6">
+            <span className="hover:text-[#97C93E] cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-[#97C93E] cursor-pointer">Terms of Sourcing</span>
+            <span className="hover:text-[#97C93E] cursor-pointer">Quality Guarantee</span>
+          </div>
         </div>
       </div>
     </footer>
-  );
+  )
 }

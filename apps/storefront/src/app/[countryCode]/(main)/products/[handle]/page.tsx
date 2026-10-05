@@ -13,7 +13,11 @@ type Props = {
 export async function generateStaticParams() {
   try {
     const countryCodes = await listRegions().then((regions) =>
-      regions?.map((r) => r.countries?.map((c) => c.iso_2)).flat()
+      regions
+        ?.map((r: HttpTypes.StoreRegion) =>
+          r.countries?.map((c: HttpTypes.StoreRegionCountry) => c.iso_2)
+        )
+        .flat()
     )
 
     if (!countryCodes) {
@@ -55,23 +59,33 @@ export async function generateStaticParams() {
 function getImagesForVariant(
   product: HttpTypes.StoreProduct,
   selectedVariantId?: string
-) {
-  if (!selectedVariantId || !product.variants) {
-    return product.images
+): HttpTypes.StoreProductImage[] | null {
+  let images: HttpTypes.StoreProductImage[] | null = product.images ?? null
+
+  if (selectedVariantId && product.variants) {
+    const variant = product.variants.find((v) => v.id === selectedVariantId)
+    if (variant && variant.images?.length) {
+      const imageIdsMap = new Map(variant.images.map((i) => [i.id, true]))
+      images = product.images?.filter((i) => imageIdsMap.has(i.id)) ?? null
+    }
   }
 
-  const variant = product.variants!.find((v) => v.id === selectedVariantId)
-  if (!variant || !variant.images?.length) {
-    return product.images
+  if ((!images || images.length === 0) && product.thumbnail) {
+    return [{ id: "thumbnail", url: product.thumbnail }] as HttpTypes.StoreProductImage[]
   }
 
-  const imageIdsMap = new Map(variant.images!.map((i) => [i.id, true]))
-  return product.images?.filter((i) => imageIdsMap.has(i.id)) ?? null
+  return images
 }
+
+import { getBaseURL } from "@lib/util/env"
+import { getProductPrice } from "@lib/util/get-product-price"
+import { isProductInStock } from "@lib/util/product"
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const { handle, countryCode } = params
+  const baseUrl = getBaseURL()
+
   try {
     const region = await getRegion(countryCode)
 
@@ -90,12 +104,42 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       return { title: "Product Not Found | IngredientsBazar" }
     }
 
+    const rawTitle = product.title || "Product"
+    const cleanTitle = `${rawTitle} — Industrial Wholesale B2B Sourcing | IngredientsBazar`
+    const rawDesc = product.description || product.title || ""
+    const cleanDesc = rawDesc
+      ? String(rawDesc).replace(/<[^>]*>?/gm, "").slice(0, 160)
+      : `Buy ${rawTitle} with verified Certificate of Analysis (CoA), transparent tiered wholesale pricing, and pan-India freight delivery on IngredientsBazar.`
+
+    const canonicalUrl = `${baseUrl}/${countryCode}/products/${handle}`
+
     return {
-      title: `${product.title} | IngredientsBazar`,
-      description: `${product.description ?? product.title}`,
+      title: cleanTitle,
+      description: cleanDesc,
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
-        title: `${product.title} | IngredientsBazar`,
-        description: `${product.description ?? product.title}`,
+        title: cleanTitle,
+        description: cleanDesc,
+        url: canonicalUrl,
+        siteName: "IngredientsBazar",
+        type: "website",
+        images: product.thumbnail
+          ? [
+              {
+                url: product.thumbnail,
+                width: 800,
+                height: 800,
+                alt: rawTitle,
+              },
+            ]
+          : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: cleanTitle,
+        description: cleanDesc,
         images: product.thumbnail ? [product.thumbnail] : [],
       },
     }
@@ -107,6 +151,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function ProductPage(props: Props) {
   const params = await props.params
   const searchParams = await props.searchParams
+  const baseUrl = getBaseURL()
 
   const region = await getRegion(params.countryCode)
   const selectedVariantId = searchParams?.v_id
@@ -131,14 +176,84 @@ export default async function ProductPage(props: Props) {
   }
 
   const images = getImagesForVariant(pricedProduct, selectedVariantId)
+  const inStock = isProductInStock(pricedProduct)
+  const { cheapestPrice } = getProductPrice({ product: pricedProduct })
+
+  const safeTitle = pricedProduct.title || "Product"
+  const rawProductDesc = pricedProduct.description || pricedProduct.title || ""
+  const safeDescription = rawProductDesc
+    ? String(rawProductDesc).replace(/<[^>]*>?/gm, "").slice(0, 300)
+    : "Verified natural raw ingredient with Certificate of Analysis."
+
+  // Schema.org Product & Breadcrumb JSON-LD
+  const productJsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: safeTitle,
+    image: pricedProduct.thumbnail ? [pricedProduct.thumbnail] : [],
+    description: safeDescription,
+    sku: pricedProduct.id,
+    mpn: pricedProduct.hs_code || pricedProduct.id,
+    brand: {
+      "@type": "Brand",
+      name: (pricedProduct.metadata?.brand as string) || (pricedProduct.subtitle as string) || "IngredientsBazar Verified",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `${baseUrl}/${params.countryCode}/products/${params.handle}`,
+      priceCurrency: region.currency_code?.toUpperCase() || "INR",
+      price: cheapestPrice?.calculated_price ? (cheapestPrice.calculated_price_number || 0) : "0",
+      itemCondition: "https://schema.org/NewCondition",
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "IngredientsBazar",
+      },
+    },
+  }
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${baseUrl}/${params.countryCode}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Store",
+        item: `${baseUrl}/${params.countryCode}/store`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: safeTitle,
+        item: `${baseUrl}/${params.countryCode}/products/${params.handle}`,
+      },
+    ],
+  }
 
   return (
-    <ProductTemplate
-      product={pricedProduct}
-      region={region}
-      countryCode={params.countryCode}
-      images={images ?? []}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <ProductTemplate
+        product={pricedProduct}
+        region={region}
+        countryCode={params.countryCode}
+        images={images ?? []}
+      />
+    </>
   )
 }
 
