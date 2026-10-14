@@ -1,12 +1,13 @@
 import {
   defineMiddlewares,
-  AuthenticatedMedusaRequest,
   MedusaNextFunction,
   MedusaRequest,
   MedusaResponse,
 } from '@medusajs/framework/http';
-import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 import { MedusaError } from '@medusajs/framework/utils';
+import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
+import { priceTierMiddlewares } from './store/price-tiers/middlewares';
+import { isApproved } from './utils/is-approved';
 
 async function requireApproved(
   req: MedusaRequest,
@@ -24,25 +25,16 @@ async function requireApproved(
   );
 }
 
-const APPROVED_GROUP = 'Approved';
+// Raw price rows. No store client needs them: they carry base prices without a
+// pricing context, so they would leak prices even to logged-out callers.
+const RAW_PRICE_SEGMENTS = new Set(['prices', 'price_rules']);
 
-async function isApproved(req: MedusaRequest): Promise<boolean> {
-  // Store routes authenticate with `allowUnauthenticated`, so `auth_context` is
-  // absent for logged-out callers. The middleware array is typed against the base
-  // `MedusaRequest`, which does not declare it.
-  const actorId = (req as AuthenticatedMedusaRequest).auth_context?.actor_id;
-  if (!actorId) {
-    return false;
-  }
+// The sanctioned customer-facing price, resolved per customer.
+const CALCULATED_PRICE_SEGMENT = 'calculated_price';
 
-  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
-  const { data } = await query.graph({
-    entity: 'customer',
-    fields: ['id', 'groups.name'],
-    filters: { id: actorId },
-  });
-
-  return !!data[0]?.groups?.some((group) => group?.name === APPROVED_GROUP);
+// "*variants.prices" and "variants.prices.amount" both yield a "prices" segment.
+function fieldSegments(field: string): string[] {
+  return field.replace(/^[*+-]+/, '').split('.');
 }
 
 async function hidePrices(
@@ -50,21 +42,33 @@ async function hidePrices(
   res: MedusaResponse,
   next: MedusaNextFunction,
 ) {
-  if (await isApproved(req)) {
+  const fields = req.queryConfig?.fields;
+  if (!fields) {
     return next();
   }
 
-  if (req.queryConfig?.fields) {
-    req.queryConfig.fields = req.queryConfig.fields.filter(
-      (field) => !field.includes('calculated_price'),
-    );
-  }
+  const withoutRawPrices = fields.filter(
+    (field) => !fieldSegments(field).some((s) => RAW_PRICE_SEGMENTS.has(s)),
+  );
+
+  const requestsCalculatedPrice = withoutRawPrices.some((field) =>
+    fieldSegments(field).includes(CALCULATED_PRICE_SEGMENT),
+  );
+
+  req.queryConfig.fields =
+    requestsCalculatedPrice && !(await isApproved(req))
+      ? withoutRawPrices.filter(
+          (field) => !fieldSegments(field).includes(CALCULATED_PRICE_SEGMENT),
+        )
+      : withoutRawPrices;
 
   next();
 }
 
 export default defineMiddlewares({
   routes: [
+    ...priceListSlabMiddlewares,
+    ...priceTierMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',

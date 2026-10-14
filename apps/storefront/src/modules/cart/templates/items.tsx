@@ -4,12 +4,14 @@ import { Heading, Table } from "@modules/common/components/ui"
 
 import Item from "@modules/cart/components/item"
 import SkeletonLineItem from "@modules/skeletons/components/skeleton-line-item"
+import { VariantPriceTiers } from "types/global"
 
 type ItemsTemplateProps = {
   cart?: HttpTypes.StoreCart
+  priceTiers?: VariantPriceTiers[]
 }
 
-const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
+const ItemsTemplate = ({ cart, priceTiers }: ItemsTemplateProps) => {
   const items = cart?.items
   return (
     <div>
@@ -42,6 +44,9 @@ const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
                       key={item.id}
                       item={item}
                       currencyCode={cart?.currency_code}
+                      priceTiers={priceTiers?.find(
+                        (tiers) => tiers.variant_id === item.variant_id
+                      )}
                     />
                   )
                 })

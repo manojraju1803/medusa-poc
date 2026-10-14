@@ -2,14 +2,18 @@
 
 import { addToCart } from "@lib/data/cart"
 import { useIntersection } from "@lib/hooks/use-in-view"
+import { minQuantityOf } from "@lib/util/min-quantity"
+import { findPriceTier } from "@lib/util/price-tiers"
 import { HttpTypes } from "@medusajs/types"
-import { Button } from "@modules/common/components/ui"
+import { Button, clx } from "@modules/common/components/ui"
 import Divider from "@modules/common/components/divider"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { VariantPriceTiers } from "types/global"
+import PriceTierTable from "../price-tier-table"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
@@ -19,6 +23,7 @@ type ProductActionsProps = {
   region: HttpTypes.StoreRegion
   disabled?: boolean
   isLoggedIn?: boolean
+  priceTiers?: VariantPriceTiers[]
 }
 
 const optionsAsKeymap = (
@@ -34,15 +39,27 @@ export default function ProductActions({
   product,
   disabled,
   isLoggedIn,
+  priceTiers,
 }: ProductActionsProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [options, setOptions] = useState<Record<string, string | undefined>>({})
+  // A single-variant product is preselected in the initial state, not only in
+  // the effect below: effects don't run on the server, so otherwise the
+  // server-rendered page would show the quantity-1 "From" price, no slab table
+  // and no minimum until hydration.
+  const [options, setOptions] = useState<Record<string, string | undefined>>(
+    () =>
+      product.variants?.length === 1
+        ? optionsAsKeymap(product.variants[0].options) ?? {}
+        : {}
+  )
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [quantity, setQuantity] = useState(1)
+  const [quantity, setQuantity] = useState(() =>
+    product.variants?.length === 1 ? minQuantityOf(product.variants[0]) : 1
+  )
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -97,10 +114,30 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
+  const minQuantity = useMemo(
+    () => minQuantityOf(selectedVariant),
+    [selectedVariant]
+  )
+
   useEffect(() => {
-    const minQuantity = Number(selectedVariant?.metadata?.min_quantity)
-    setQuantity(Number.isFinite(minQuantity) && minQuantity > 0 ? minQuantity : 1)
-  }, [selectedVariant])
+    setQuantity(minQuantity)
+  }, [minQuantity])
+
+  // Typing below the minimum is allowed (clamping mid-typing would turn "3" on
+  // the way to "30" into 25), but ordering is blocked. The backend's
+  // minimum-quantity hooks remain the real enforcement.
+  const belowMinimum = quantity < minQuantity
+
+  const variantTiers = useMemo(
+    () => priceTiers?.find((v) => v.variant_id === selectedVariant?.id),
+    [priceTiers, selectedVariant]
+  )
+
+  // Below the minimum, show the entry slab rather than no price at all.
+  const activeTier = findPriceTier(
+    variantTiers?.tiers,
+    Math.max(quantity, minQuantity)
+  )
 
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
@@ -175,12 +212,22 @@ export default function ProductActions({
           product={product}
           variant={selectedVariant}
           isLoggedIn={isLoggedIn}
+          tier={activeTier}
+          quantity={belowMinimum ? undefined : quantity}
         />
+
+        {variantTiers && variantTiers.tiers.length > 1 && (
+          <PriceTierTable
+            tiers={variantTiers.tiers}
+            currencyCode={variantTiers.currency_code}
+            activeFrom={activeTier?.from}
+          />
+        )}
 
         <div className="flex gap-x-2">
           <input
             type="number"
-            min={1}
+            min={minQuantity}
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
             disabled={!!disabled || isAdding}
@@ -194,7 +241,8 @@ export default function ProductActions({
               !selectedVariant ||
               !!disabled ||
               isAdding ||
-              !isValidVariant
+              !isValidVariant ||
+              belowMinimum
             }
             variant="primary"
             className="w-full h-10"
@@ -208,6 +256,17 @@ export default function ProductActions({
                 : "Add to cart"}
           </Button>
         </div>
+        {minQuantity > 1 && (
+          <span
+            className={clx("text-small-regular", {
+              "text-ui-fg-error": belowMinimum,
+              "text-ui-fg-subtle": !belowMinimum,
+            })}
+            data-testid="min-quantity-hint"
+          >
+            Minimum order: {minQuantity}
+          </span>
+        )}
         <ErrorMessage error={error} data-testid="add-to-cart-error-message" />
         <MobileActions
           product={product}
@@ -220,6 +279,8 @@ export default function ProductActions({
           error={error}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
+          activeTier={activeTier}
+          addDisabled={belowMinimum}
         />
       </div>
     </>

@@ -4,13 +4,16 @@ import EmptyCartMessage from "../components/empty-cart-message"
 import SignInPrompt from "../components/sign-in-prompt"
 import Divider from "@modules/common/components/divider"
 import { HttpTypes } from "@medusajs/types"
+import { VariantPriceTiers } from "types/global"
 
 const CartTemplate = ({
   cart,
   customer,
+  priceTiers,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
+  priceTiers: VariantPriceTiers[]
 }) => {
   return (
     <div className="py-12">
@@ -24,7 +27,7 @@ const CartTemplate = ({
                   <Divider />
                 </>
               )}
-              <ItemsTemplate cart={cart} />
+              <ItemsTemplate cart={cart} priceTiers={priceTiers} />
             </div>
             <div className="relative">
               <div className="flex flex-col gap-y-8 sticky top-12">

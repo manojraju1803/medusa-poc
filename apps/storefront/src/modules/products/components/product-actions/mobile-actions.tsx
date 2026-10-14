@@ -7,10 +7,12 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
+import { convertToLocale } from "@lib/util/money"
 import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
 import ErrorMessage from "@modules/checkout/components/error-message"
+import { PriceTier } from "types/global"
 
 type MobileActionsProps = {
   product: HttpTypes.StoreProduct
@@ -23,6 +25,10 @@ type MobileActionsProps = {
   show: boolean
   optionsDisabled: boolean
   error?: string | null
+  // The quantity slab for the selected quantity, if any
+  activeTier?: PriceTier
+  // e.g. the selected quantity is below the minimum order
+  addDisabled?: boolean
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -36,6 +42,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   show,
   optionsDisabled,
   error,
+  activeTier,
+  addDisabled,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -79,7 +87,18 @@ const MobileActions: React.FC<MobileActionsProps> = ({
             <div className="flex items-center gap-x-2">
               <span data-testid="mobile-title">{product.title}</span>
               <span>—</span>
-              {selectedPrice ? (
+              {selectedPrice && activeTier ? (
+                <span className="text-ui-fg-base">
+                  {convertToLocale({
+                    amount: activeTier.unit_amount,
+                    currency_code: selectedPrice.currency_code,
+                  })}
+                  <span className="text-small-regular text-ui-fg-subtle">
+                    {" "}
+                    / unit
+                  </span>
+                </span>
+              ) : selectedPrice ? (
                 <div className="flex items-end gap-x-2 text-ui-fg-base">
                   {selectedPrice.price_type === "sale" && (
                     <p>
@@ -121,7 +140,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               </Button>}
               <Button
                 onClick={handleAddToCart}
-                disabled={!inStock || !variant}
+                disabled={!inStock || !variant || !!addDisabled}
                 className="w-full"
                 isLoading={isAdding}
                 data-testid="mobile-cart-button"
