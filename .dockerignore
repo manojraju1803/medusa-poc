@@ -16,3 +16,8 @@ coverage
 *.log
 dist
 build
+**/.env*
+!**/.env.template
+self.local
+
+apps/backend/src/migration-scripts
