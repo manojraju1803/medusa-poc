@@ -15,6 +15,8 @@ export default function HeaderSearch() {
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const { countryCode } = useParams()
+  const latestQueryRef = useRef(query)
+  latestQueryRef.current = query
 
   // Debounced search when query changes (waiting briefly between keystrokes)
   useEffect(() => {
@@ -26,20 +28,34 @@ export default function HeaderSearch() {
       return
     }
 
+    let isCurrent = true
     setIsLoading(true)
+
     const timeoutId = setTimeout(async () => {
       try {
         const results = await getSearchSuggestions(trimmed, 8)
+        // Ignore responses for an outdated query
+        if (!isCurrent || latestQueryRef.current.trim() !== trimmed) {
+          return
+        }
         setSuggestions(results)
       } catch (error) {
+        if (!isCurrent || latestQueryRef.current.trim() !== trimmed) {
+          return
+        }
         console.error("Search failed:", error)
         setSuggestions([])
       } finally {
-        setIsLoading(false)
+        if (isCurrent && latestQueryRef.current.trim() === trimmed) {
+          setIsLoading(false)
+        }
       }
     }, 280)
 
-    return () => clearTimeout(timeoutId)
+    return () => {
+      isCurrent = false
+      clearTimeout(timeoutId)
+    }
   }, [query])
 
   // Handle clicking outside to close suggestions dropdown

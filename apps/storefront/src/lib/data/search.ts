@@ -44,34 +44,8 @@ export async function getSearchSuggestions(
       thumbnail: p.thumbnail ?? null,
       brand_name: p.brand_name ?? null,
     }))
-  } catch (_error) {
-    // Fallback if search-suggestions custom route is unreachable
-    try {
-      const fallback = await sdk.client.fetch<{
-        products: {
-          id: string
-          title: string
-          handle: string
-          thumbnail: string | null
-        }[]
-      }>(`/store/products`, {
-        method: "GET",
-        query: {
-          q: trimmed,
-          limit,
-          fields: "id,title,handle,thumbnail",
-        },
-        cache: "no-store",
-      })
-
-      return (fallback.products || []).map((p) => ({
-        id: p.id,
-        title: p.title,
-        handle: p.handle,
-        thumbnail: p.thumbnail ?? null,
-      }))
-    } catch {
-      return []
-    }
+  } catch (error) {
+    console.error("Failed to fetch search suggestions:", error)
+    return []
   }
 }

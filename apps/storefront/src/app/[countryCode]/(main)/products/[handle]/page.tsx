@@ -59,19 +59,24 @@ export async function generateStaticParams() {
 function getImagesForVariant(
   product: HttpTypes.StoreProduct,
   selectedVariantId?: string
-): HttpTypes.StoreProductImage[] | null {
-  let images: HttpTypes.StoreProductImage[] | null = product.images ?? null
+): HttpTypes.StoreProductImage[] {
+  let images: HttpTypes.StoreProductImage[] = product.images ? [...product.images] : []
 
   if (selectedVariantId && product.variants) {
     const variant = product.variants.find((v) => v.id === selectedVariantId)
     if (variant && variant.images?.length) {
       const imageIdsMap = new Map(variant.images.map((i) => [i.id, true]))
-      images = product.images?.filter((i) => imageIdsMap.has(i.id)) ?? null
+      const variantFiltered = product.images?.filter((i) => imageIdsMap.has(i.id))
+      if (variantFiltered && variantFiltered.length > 0) {
+        images = variantFiltered
+      }
     }
   }
 
-  if ((!images || images.length === 0) && product.thumbnail) {
-    return [{ id: "thumbnail", url: product.thumbnail }] as HttpTypes.StoreProductImage[]
+  if (images.length === 0 && product.thumbnail) {
+    images = [{ id: "thumbnail", url: product.thumbnail }] as HttpTypes.StoreProductImage[]
+  } else if (product.thumbnail && !images.some((i) => i.url === product.thumbnail)) {
+    images.unshift({ id: "thumbnail", url: product.thumbnail } as HttpTypes.StoreProductImage)
   }
 
   return images

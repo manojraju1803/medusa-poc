@@ -69,7 +69,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         <div className="lg:col-span-7 flex flex-col gap-y-6">
           {/* Image Gallery */}
           <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs overflow-hidden">
-            <ImageGallery images={images} />
+            <ImageGallery images={images} thumbnail={product.thumbnail} />
           </div>
 
           {/* Product Overview & Structured Content from Description */}
