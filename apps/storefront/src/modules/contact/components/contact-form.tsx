@@ -29,7 +29,7 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
     setError(null)
     setStatus("sending")
     try {
-      await submitInquiry({
+      const res = await submitInquiry({
         type: "contact",
         name: text("name"),
         email: text("email"),
@@ -38,6 +38,7 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
         message: text("message"),
         metadata: { subject: text("subject") || undefined, category },
       })
+      if (!res.ok) throw new Error(res.error)
       setStatus("sent")
     } catch {
       setStatus("idle")

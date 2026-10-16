@@ -21,16 +21,26 @@ export type InquiryInput = {
   metadata?: Record<string, unknown>
 }
 
-export type Inquiry = { id: string; type: InquiryType; created_at: string }
+export type InquiryResult =
+  | { ok: true; inquiry: { id: string; type: InquiryType; created_at: string } }
+  | { ok: false; error: string }
 
-export async function submitInquiry(body: InquiryInput): Promise<Inquiry> {
-  const { inquiry } = await sdk.client.fetch<{ inquiry: Inquiry }>(
-    "/store/inquiries",
-    {
+// POST /store/inquiries. Guests allowed; a signed-in customer is attached by
+// the backend from the auth header.
+export async function submitInquiry(body: InquiryInput): Promise<InquiryResult> {
+  try {
+    const { inquiry } = await sdk.client.fetch<{
+      inquiry: { id: string; type: InquiryType; created_at: string }
+    }>("/store/inquiries", {
       method: "POST",
       body,
       headers: await getAuthHeaders(),
+    })
+    return { ok: true, inquiry }
+  } catch (e) {
+    return {
+      ok: false,
+      error: (e as Error)?.message || "Could not send your request",
     }
-  )
-  return inquiry
+  }
 }

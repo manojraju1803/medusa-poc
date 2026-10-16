@@ -5,14 +5,17 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import StoreTemplate from "@modules/store/templates"
 
 export const metadata: Metadata = {
-  title: "Store",
-  description: "Explore all of our products.",
+  title: "Ingredients",
+  description: "Browse verified ingredients by category and brand.",
 }
 
 type StorePageSearchParams = Record<string, string | string[] | undefined> & {
   sortBy?: SortOptions
   page?: string
   optionValueIds?: string | string[]
+  category?: string | string[]
+  brand?: string | string[]
+  view?: string
 }
 
 type Params = {
@@ -22,9 +25,12 @@ type Params = {
   }>
 }
 
+const asList = (v?: string | string[]) =>
+  (Array.isArray(v) ? v : v ? [v] : []).filter(Boolean)
+
 export default async function StorePage(props: Params) {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
+  const params = await props.params
+  const searchParams = await props.searchParams
   const { sortBy, page } = searchParams
   const optionValueIds = parseOptionValueIds(searchParams)
 
@@ -34,6 +40,9 @@ export default async function StorePage(props: Params) {
       page={page}
       countryCode={params.countryCode}
       optionValueIds={optionValueIds}
+      categoryHandles={asList(searchParams.category)}
+      brandHandles={asList(searchParams.brand)}
+      viewMode={searchParams.view === "list" ? "list" : "grid"}
     />
   )
 }
