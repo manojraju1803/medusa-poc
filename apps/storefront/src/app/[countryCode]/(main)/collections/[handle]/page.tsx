@@ -5,6 +5,7 @@ import { getCollectionByHandle, listCollections } from "@lib/data/collections"
 import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
+import { getCollectionWithMetadata } from "@modules/suppliers/data"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { parseOptionValueIds } from "@lib/util/product-option-filters"
 
@@ -64,7 +65,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   const metadata = {
     title: `${collection.title} | IngredientsBazar`,
-    description: `${collection.title} collection`,
+    description: `${collection.title} products on IngredientsBazar`,
   } as Metadata
 
   return metadata
@@ -76,9 +77,8 @@ export default async function CollectionPage(props: Props) {
   const { sortBy, page } = searchParams
   const optionValueIds = parseOptionValueIds(searchParams)
 
-  const collection = await getCollectionByHandle(params.handle).then(
-    (collection) => collection
-  )
+  // With metadata (country / description / logo) for the supplier header.
+  const collection = await getCollectionWithMetadata(params.handle)
 
   if (!collection) {
     notFound()

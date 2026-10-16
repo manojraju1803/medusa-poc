@@ -1,39 +1,63 @@
-import React from "react"
+import React, { Suspense } from "react"
 
-import UnderlineLink from "@modules/common/components/interactive-link"
+import { HttpTypes } from "@medusajs/types"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 import AccountNav from "../components/account-nav"
-import { HttpTypes } from "@medusajs/types"
+import ApprovalBanner from "../components/approval-banner"
+import { accountTypeLabel, isCustomerApproved } from "../lib/approval"
 
 interface AccountLayoutProps {
   customer: HttpTypes.StoreCustomer | null
   children: React.ReactNode
 }
 
-const AccountLayout: React.FC<AccountLayoutProps> = ({
-  customer,
-  children,
-}) => {
+const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
+  // Logged out: the login / register screens use the full width.
+  if (!customer) {
+    return (
+      <div className="flex-1 bg-[#f8fffe]" data-testid="account-page">
+        {children}
+      </div>
+    )
+  }
+
+  const approved = await isCustomerApproved()
+
   return (
-    <div className="flex-1 small:py-12" data-testid="account-page">
-      <div className="flex-1 content-container h-full max-w-5xl mx-auto bg-white flex flex-col">
-        <div className="grid grid-cols-1  small:grid-cols-[240px_1fr] py-12">
-          <div>{customer && <AccountNav customer={customer} />}</div>
-          <div className="flex-1">{children}</div>
-        </div>
-        <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
+    <div className="flex-1 bg-[#f8fffe]" data-testid="account-page">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8">
+        <Suspense fallback={null}>
+          <ApprovalBanner approved={approved} />
+        </Suspense>
+        <div className="grid grid-cols-1 small:grid-cols-[260px_1fr] gap-6">
           <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
+            <AccountNav
+              customer={customer}
+              approved={approved}
+              accountType={accountTypeLabel(customer)}
+            />
+          </div>
+          <div className="flex-1 bg-white border border-[#e2f3eb] rounded-2xl shadow-sm p-6">
+            {children}
+          </div>
+        </div>
+        <div className="mt-8 flex flex-col small:flex-row items-start small:items-center justify-between gap-4 bg-white border border-[#e2f3eb] rounded-2xl p-6">
+          <div>
+            <h3 className="text-base font-bold text-[#0f172a] mb-1">
+              Got questions?
+            </h3>
+            <span className="text-sm text-[#64748b]">
+              Our sourcing team is happy to help with orders, pricing and
+              approvals.
             </span>
           </div>
-          <div>
-            <UnderlineLink href="/customer-service">
-              Customer Service
-            </UnderlineLink>
-          </div>
+          <LocalizedClientLink
+            href="/contact"
+            className="px-5 py-2.5 bg-[#006B4F] hover:bg-[#005a42] text-white text-sm font-semibold rounded-xl transition-colors"
+          >
+            Contact us
+          </LocalizedClientLink>
         </div>
       </div>
     </div>
