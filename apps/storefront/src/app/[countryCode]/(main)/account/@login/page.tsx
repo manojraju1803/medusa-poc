@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { Suspense } from "react"
 
 import LoginTemplate from "@modules/account/templates/login-template"
 
@@ -8,5 +9,9 @@ export const metadata: Metadata = {
 }
 
 export default function Login() {
-  return <LoginTemplate />
+  return (
+    <Suspense fallback={null}>
+      <LoginTemplate />
+    </Suspense>
+  )
 }
