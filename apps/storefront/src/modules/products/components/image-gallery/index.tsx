@@ -7,14 +7,20 @@ import { isRealProductImageUrl } from "@lib/util/product-image"
 import React, { useState } from "react"
 
 type ImageGalleryProps = {
-  images: HttpTypes.StoreProductImage[]
+  images?: HttpTypes.StoreProductImage[] | null
+  thumbnail?: string | null
 }
 
-const ImageGallery = ({ images }: ImageGalleryProps) => {
-  const realImages = images.filter((image) => isRealProductImageUrl(image.url))
+const ImageGallery = ({ images, thumbnail }: ImageGalleryProps) => {
+  let validImages = (images || []).filter((image) => isRealProductImageUrl(image.url))
+  
+  if (validImages.length === 0 && isRealProductImageUrl(thumbnail)) {
+    validImages = [{ id: "thumbnail", url: thumbnail } as HttpTypes.StoreProductImage]
+  }
+
   const [activeIdx, setActiveIdx] = useState(0)
 
-  if (!realImages.length) {
+  if (!validImages.length) {
     return (
       <div className="w-full aspect-square relative rounded-2xl bg-[#f8fafc] border border-gray-100 flex flex-col items-center justify-center gap-y-3 text-[#64748b]">
         <ProductPlaceholder size={64} />
@@ -23,7 +29,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
     )
   }
 
-  const activeImage = realImages[activeIdx] || realImages[0]
+  const activeImage = validImages[activeIdx] || validImages[0]
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -45,9 +51,9 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
       </div>
 
       {/* Multi-Image Thumbnails if > 1 */}
-      {realImages.length > 1 && (
+      {validImages.length > 1 && (
         <div className="flex items-center gap-3 overflow-x-auto pb-1 no-scrollbar">
-          {realImages.map((image, index) => (
+          {validImages.map((image, index) => (
             <button
               key={image.id || index}
               onClick={() => setActiveIdx(index)}

@@ -61,7 +61,7 @@ Since brand was not originally stored as a relational field, a custom `brand` mo
 
 #### 3. Product-to-Brand Module Link
 - **File**: `apps/backend/src/links/product-brand.ts`
-- Links `ProductModule.linkable.product` with `BrandModule.linkable.brand`.
+- Links `ProductModule.linkable.product` with `BrandModule.linkable.brand` using `{ linkable: ProductModule.linkable.product, isList: true }` so that one brand can have multiple products.
 
 #### 4. Medusa Configuration & Database Migration
 - **Config**: Registered in `apps/backend/medusa-config.ts` under `modules`.
@@ -76,11 +76,13 @@ Since brand was not originally stored as a relational field, a custom `brand` mo
 
 #### Logic Flow:
 1. Validates query parameter `q` (minimum 3 characters).
-2. Executes dual graph queries using Medusa's `query.graph`:
-   - **Product Query**: Finds products where `title` or `handle` matches `%$q%` using `$ilike`.
-   - **Brand Query**: Finds brands where `name` matches `%$q%` and retrieves the linked published products.
-3. Merges and deduplicates products by `product.id`.
-4. Maps results to a lightweight representation without prices:
+2. Scopes products to active sales channel(s) (from publishable API key context or request query), querying `product_sales_channel` and checking `sales_channels.id` to prevent showing products not sold in this store.
+3. Executes graph queries using Medusa's `query.graph`:
+   - **Product Query**: Finds products where `title` or `handle` matches `%$q%` using `$ilike`, strictly filtered by sales channel.
+   - **Brand Query**: Finds brands where `name` matches `%$q%` and retrieves the linked published products (plural `products` list), strictly filtered by sales channel.
+4. Logs real errors via `console.error` if brand or product queries fail.
+5. Merges and deduplicates products by `product.id`.
+6. Maps results to a lightweight representation without prices:
    ```json
    {
      "products": [
@@ -102,7 +104,7 @@ Since brand was not originally stored as a relational field, a custom `brand` mo
 - **File**: `apps/storefront/src/lib/data/search.ts`
 - Exports the Server Action `getSearchSuggestions(query, limit = 8)`.
 - Calls `/store/search-suggestions` with `no-store` cache configuration for real-time responsiveness.
-- Includes fallback logic to `/store/products?q=...` if the suggestions endpoint is unreachable.
+- Logs errors explicitly via `console.error` instead of hiding real failures behind fallback routes or empty catch blocks.
 
 ---
 
@@ -113,7 +115,7 @@ Since brand was not originally stored as a relational field, a custom `brand` mo
 
 #### UI Highlights:
 - **Search Input**: Clean rounded search input with search icon, live loading spinner, and quick-clear (`✕`) button.
-- **Debounced Listener**: `useEffect` hook waits 280ms between keystrokes before invoking `getSearchSuggestions`.
+- **Debounced Listener with Outdated Response Protection**: `useEffect` hook waits 280ms between keystrokes before invoking `getSearchSuggestions`. Ignores responses if the query has changed or a newer request has fired, preventing slow responses from overwriting newer suggestions.
 - **Suggestions Dropdown**:
   - Displays thumbnail image, product name, and brand tag.
   - No price displayed anywhere.

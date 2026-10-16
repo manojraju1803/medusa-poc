@@ -84,7 +84,7 @@ function cleanQueryParams(params: Record<string, any>) {
     offset,
     region_id: region?.id,
     fields:
-      "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*variants.options,+variants.metadata,+metadata,+tags,*variants.inventory_items.inventory.location_levels,description,origin_country,material",
+      "id,title,subtitle,description,handle,thumbnail,created_at,origin_country,material,type_id,collection_id,*images,*tags,*metadata,*collection,*categories,*options,*variants,*variants.images,*variants.options,+variants.metadata,*variants.inventory_items.inventory.location_levels,+variants.inventory_quantity,*variants.calculated_price",
     ...queryParams,
   })
 
