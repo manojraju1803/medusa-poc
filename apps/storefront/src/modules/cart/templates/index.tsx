@@ -2,9 +2,24 @@ import ItemsTemplate from "./items"
 import Summary from "./summary"
 import EmptyCartMessage from "../components/empty-cart-message"
 import SignInPrompt from "../components/sign-in-prompt"
-import Divider from "@modules/common/components/divider"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { VariantPriceTiers } from "types/global"
+
+const TRUST = [
+  {
+    label: "Secure checkout",
+    d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+  },
+  {
+    label: "GST invoice",
+    d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+  },
+  {
+    label: "Dedicated support",
+    d: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
+  },
+]
 
 const CartTemplate = ({
   cart,
@@ -16,35 +31,55 @@ const CartTemplate = ({
   priceTiers: VariantPriceTiers[]
 }) => {
   return (
-    <div className="py-12">
-      <div className="content-container" data-testid="cart-container">
+    <div className="min-h-screen bg-[#f8fffe]" data-testid="cart-container">
+      <section className="relative overflow-hidden bg-[#0d3320]">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320] via-[#0d3320]/95 to-[#006B4F]/60" />
+        <div className="relative max-w-[1440px] mx-auto px-4 small:px-6 py-8">
+          <div className="flex flex-col small:flex-row items-start small:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-1.5 mb-3 text-[11px] text-[#86efac]/70">
+                <LocalizedClientLink href="/" className="hover:text-[#4ade80]">
+                  Home
+                </LocalizedClientLink>
+                <span>/</span>
+                <span className="text-[#86efac]">My Cart</span>
+              </div>
+              <h1 className="text-3xl small:text-4xl font-extrabold text-white mb-1.5">
+                My Cart
+              </h1>
+              <p className="text-sm text-[#86efac]/80 max-w-sm">
+                Review your selected ingredients and proceed to checkout
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4 small:gap-6">
+              {TRUST.map((t) => (
+                <div key={t.label} className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#006B4F]/40 border border-[#4ade80]/20 flex items-center justify-center text-[#4ade80]">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d={t.d} />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-[#86efac] font-medium">{t.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-[1440px] mx-auto px-4 small:px-6 py-7">
         {cart?.items?.length ? (
-          <div className="grid grid-cols-1 small:grid-cols-[1fr_360px] gap-x-40">
-            <div className="flex flex-col bg-white py-6 gap-y-6">
-              {!customer && (
-                <>
-                  <SignInPrompt />
-                  <Divider />
-                </>
-              )}
+          <div className="flex flex-col xl:flex-row gap-6">
+            <div className="flex-1 min-w-0 flex flex-col gap-5">
+              {!customer && <SignInPrompt />}
               <ItemsTemplate cart={cart} priceTiers={priceTiers} />
             </div>
-            <div className="relative">
-              <div className="flex flex-col gap-y-8 sticky top-12">
-                {cart && cart.region && (
-                  <>
-                    <div className="bg-white py-6">
-                      <Summary cart={cart} />
-                    </div>
-                  </>
-                )}
-              </div>
+            <div className="w-full xl:w-[340px] shrink-0">
+              {cart.region && <Summary cart={cart} />}
             </div>
           </div>
         ) : (
-          <div>
-            <EmptyCartMessage />
-          </div>
+          <EmptyCartMessage />
         )}
       </div>
     </div>

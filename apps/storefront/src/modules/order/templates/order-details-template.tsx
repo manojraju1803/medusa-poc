@@ -1,44 +1,30 @@
-"use client"
-
-import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Help from "@modules/order/components/help"
-import Items from "@modules/order/components/items"
-import OrderDetails from "@modules/order/components/order-details"
-import OrderSummary from "@modules/order/components/order-summary"
-import ShippingDetails from "@modules/order/components/shipping-details"
+import OrderView from "@modules/order/components/order-view"
 import React from "react"
 
 type OrderDetailsTemplateProps = {
   order: HttpTypes.StoreOrder
+  metadata?: Record<string, unknown> | null
 }
 
 const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
   order,
+  metadata,
 }) => {
   return (
-    <div className="flex flex-col justify-center gap-y-4">
+    <div className="flex flex-col gap-y-4" data-testid="order-details-container">
       <div className="flex gap-2 justify-between items-center">
-        <h1 className="text-2xl-semi">Order details</h1>
+        <h1 className="text-2xl font-extrabold text-[#0f172a]">Order details</h1>
         <LocalizedClientLink
           href="/account/orders"
-          className="flex gap-2 items-center text-ui-fg-subtle hover:text-ui-fg-base"
+          className="flex gap-1.5 items-center text-sm font-semibold text-[#0757a8] hover:underline"
           data-testid="back-to-overview-button"
         >
-          <XMark /> Back to overview
+          ← Back to orders
         </LocalizedClientLink>
       </div>
-      <div
-        className="flex flex-col gap-4 h-full bg-white w-full"
-        data-testid="order-details-container"
-      >
-        <OrderDetails order={order} showStatus />
-        <Items order={order} />
-        <ShippingDetails order={order} />
-        <OrderSummary order={order} />
-        <Help />
-      </div>
+      <OrderView order={order} metadata={metadata} />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { mapKeys } from "lodash"
 import React, { useEffect, useMemo, useState } from "react"
 import AddressSelect from "../address-select"
 import CountrySelect from "../country-select"
+import ProvinceSelect from "../province-select"
 
 const ShippingAddress = ({
   customer,
@@ -25,7 +26,11 @@ const ShippingAddress = ({
     "shipping_address.company": cart?.shipping_address?.company || "",
     "shipping_address.postal_code": cart?.shipping_address?.postal_code || "",
     "shipping_address.city": cart?.shipping_address?.city || "",
-    "shipping_address.country_code": cart?.shipping_address?.country_code || "",
+    "shipping_address.country_code":
+      cart?.shipping_address?.country_code ||
+      (cart?.region?.countries?.length === 1
+        ? cart.region.countries[0].iso_2 ?? ""
+        : ""),
     "shipping_address.province": cart?.shipping_address?.province || "",
     "shipping_address.phone": cart?.shipping_address?.phone || "",
     email: cart?.email || "",
@@ -175,13 +180,12 @@ const ShippingAddress = ({
           required
           data-testid="shipping-country-select"
         />
-        <Input
-          label="State / Province"
+        <ProvinceSelect
           name="shipping_address.province"
-          autoComplete="address-level1"
+          countryCode={formData["shipping_address.country_code"]}
           value={formData["shipping_address.province"]}
           onChange={handleChange}
-          data-testid="shipping-province-input"
+          testId="shipping-province-input"
         />
       </div>
       <div className="my-8">

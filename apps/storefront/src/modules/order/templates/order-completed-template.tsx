@@ -1,50 +1,61 @@
-import { Heading } from "@modules/common/components/ui"
 import { cookies as nextCookies } from "next/headers"
 
-import CartTotals from "@modules/common/components/cart-totals"
-import Help from "@modules/order/components/help"
-import Items from "@modules/order/components/items"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import OnboardingCta from "@modules/order/components/onboarding-cta"
-import OrderDetails from "@modules/order/components/order-details"
-import ShippingDetails from "@modules/order/components/shipping-details"
-import PaymentDetails from "@modules/order/components/payment-details"
+import OrderView from "@modules/order/components/order-view"
 import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
+  metadata?: Record<string, unknown> | null
 }
 
 export default async function OrderCompletedTemplate({
   order,
+  metadata,
 }: OrderCompletedTemplateProps) {
   const cookies = await nextCookies()
 
   const isOnboarding = cookies.get("_medusa_onboarding")?.value === "true"
 
   return (
-    <div className="py-6 min-h-[calc(100vh-64px)]">
-      <div className="content-container flex flex-col justify-center items-center gap-y-10 max-w-4xl h-full w-full">
+    <div className="min-h-[calc(100vh-64px)] bg-[#f8fffe]">
+      <section className="bg-[#0d3320]">
+        <div className="max-w-[1280px] mx-auto px-4 small:px-6 py-8 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-[#006B4F] flex items-center justify-center shrink-0">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-2xl small:text-3xl font-extrabold text-white">
+              Thank you! Your order is placed.
+            </h1>
+            <p className="text-sm text-[#86efac]/80 mt-1">
+              Order #{order.display_id} · we&apos;ll confirm dispatch by email.
+            </p>
+          </div>
+        </div>
+      </section>
+      <div
+        className="max-w-[1280px] mx-auto px-4 small:px-6 py-7 flex flex-col gap-5"
+        data-testid="order-complete-container"
+      >
         {isOnboarding && <OnboardingCta orderId={order.id} />}
-        <div
-          className="flex flex-col gap-4 max-w-4xl h-full bg-white w-full py-10"
-          data-testid="order-complete-container"
-        >
-          <Heading
-            level="h1"
-            className="flex flex-col gap-y-3 text-ui-fg-base text-3xl mb-4"
+        <OrderView order={order} metadata={metadata} />
+        <div className="flex flex-wrap gap-3">
+          <LocalizedClientLink
+            href="/account/orders"
+            className="px-5 py-2.5 bg-[#006B4F] hover:bg-[#005a42] text-white font-semibold text-sm rounded-xl transition-colors"
           >
-            <span>Thank you!</span>
-            <span>Your order was placed successfully.</span>
-          </Heading>
-          <OrderDetails order={order} />
-          <Heading level="h2" className="flex flex-row text-3xl-regular">
-            Summary
-          </Heading>
-          <Items order={order} />
-          <CartTotals totals={order} />
-          <ShippingDetails order={order} />
-          <PaymentDetails order={order} />
-          <Help />
+            View my orders
+          </LocalizedClientLink>
+          <LocalizedClientLink
+            href="/store"
+            className="px-5 py-2.5 border border-[#006B4F]/40 text-[#006B4F] font-semibold text-sm rounded-xl hover:bg-[#f0fdf4] transition-colors"
+          >
+            Continue shopping
+          </LocalizedClientLink>
         </div>
       </div>
     </div>

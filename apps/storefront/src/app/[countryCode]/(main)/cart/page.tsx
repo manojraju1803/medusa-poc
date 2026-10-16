@@ -2,6 +2,7 @@ import { retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { listPriceTiers } from "@lib/data/price-tiers"
 import CartTemplate from "@modules/cart/templates"
+import { CART_FIELDS } from "@modules/cart/fields"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Cart() {
-  const cart = await retrieveCart().catch((error) => {
+  const cart = await retrieveCart(undefined, CART_FIELDS).catch((error) => {
     console.error(error)
     return notFound()
   })

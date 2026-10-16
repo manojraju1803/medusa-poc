@@ -1,23 +1,26 @@
-import { Heading, Text } from "@modules/common/components/ui"
-
-import InteractiveLink from "@modules/common/components/interactive-link"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 const EmptyCartMessage = () => {
   return (
-    <div className="py-48 px-2 flex flex-col justify-center items-start" data-testid="empty-cart-message">
-      <Heading
-        level="h1"
-        className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
-      >
-        Cart
-      </Heading>
-      <Text className="text-base-regular mt-4 mb-6 max-w-[32rem]">
-        You don&apos;t have anything in your cart. Let&apos;s change that, use
-        the link below to start browsing our products.
-      </Text>
-      <div>
-        <InteractiveLink href="/store">Explore products</InteractiveLink>
+    <div
+      className="bg-white border border-gray-100 rounded-2xl shadow-sm py-20 px-4 text-center"
+      data-testid="empty-cart-message"
+    >
+      <div className="w-16 h-16 bg-[#f0fdf4] rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg className="w-8 h-8 text-[#006B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
       </div>
+      <h3 className="font-bold text-[#0f172a] mb-1">Your cart is empty</h3>
+      <p className="text-sm text-[#64748b] mb-4">
+        Browse our catalogue and add ingredients to get started.
+      </p>
+      <LocalizedClientLink
+        href="/store"
+        className="inline-block px-5 py-2.5 bg-[#006B4F] hover:bg-[#005a42] text-white font-semibold text-sm rounded-xl transition-colors"
+      >
+        Browse Ingredients
+      </LocalizedClientLink>
     </div>
   )
 }
