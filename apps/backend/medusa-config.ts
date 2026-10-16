@@ -31,7 +31,11 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
     },
-    databaseDriverOptions: { ssl: false, sslmode: 'disable' },
+    // Hosted DBs (Supabase) need SSL; local Postgres doesn't
+    databaseDriverOptions:
+      process.env.DATABASE_SSL === 'true'
+        ? { connection: { ssl: { rejectUnauthorized: false } } }
+        : { ssl: false, sslmode: 'disable' },
   },
   modules: [
     {
