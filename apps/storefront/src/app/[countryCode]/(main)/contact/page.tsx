@@ -67,7 +67,7 @@ export default async function ContactPage(props: {
             </div>
             <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4">
               <h4 className="text-sm font-bold text-[#0f172a] mb-3">
-                Our Locations
+                Our Global Presence
               </h4>
               <div className="space-y-3">
                 {LOCATIONS.map((loc) => (
