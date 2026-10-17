@@ -136,7 +136,7 @@ export const TrustedBrands = ({
           Our Trusted Brands
         </div>
         <h2 className="text-2xl font-bold text-[#0f172a] mb-1">
-          Partnered with Leading Brands
+          Partnered with Global Leaders
         </h2>
         <p className="text-sm text-[#64748b]">
           Sourcing from {brands.length} brand{brands.length === 1 ? "" : "s"}
