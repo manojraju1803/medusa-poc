@@ -32,6 +32,8 @@ const normalise = (s: string) =>
   s
     .toLowerCase()
     .replace(/&/g, " ")
+    // catalogue spells it "Sweetner"
+    .replace(/sweetener/g, "sweetner")
     .split(/[^a-z0-9]+/)
     .filter((w) => w && w !== "and")
     .map((w) => (w.length > 3 && w.endsWith("s") ? w.slice(0, -1) : w))
