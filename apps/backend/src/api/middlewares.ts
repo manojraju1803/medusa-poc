@@ -9,6 +9,7 @@ import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
 import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
 import { adminDemoMiddlewares } from './admin/demo-middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
+import { stockLevelMiddlewares } from './store/stock-levels/middlewares';
 import { priceTierMiddlewares } from './store/price-tiers/middlewares';
 import { isApproved } from './utils/is-approved';
 
@@ -75,6 +76,7 @@ export default defineMiddlewares({
     ...priceListSlabMiddlewares,
     ...priceTierMiddlewares,
     ...inquiryMiddlewares,
+    ...stockLevelMiddlewares,
     ...approvalMiddlewares,
     ...adminDemoMiddlewares,
     {
