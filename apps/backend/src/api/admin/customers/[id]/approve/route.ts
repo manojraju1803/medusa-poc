@@ -1,10 +1,18 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 import { linkCustomersToCustomerGroupWorkflow } from '@medusajs/medusa/core-flows';
+import { AdminPostCustomerApproval } from '../../../demo-middlewares';
 
-export async function POST(req: MedusaRequest, res: MedusaResponse) {
+export async function POST(
+  req: MedusaRequest<AdminPostCustomerApproval>,
+  res: MedusaResponse,
+) {
   const { id } = req.params;
-  const { approved } = req.body as { approved: boolean };
+  const { approved } = req.validatedBody;
+
+  if (typeof approved !== 'boolean') {
+    return res.status(400).json({ message: '`approved` must be a boolean' });
+  }
 
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 

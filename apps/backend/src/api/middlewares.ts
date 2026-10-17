@@ -7,6 +7,7 @@ import {
 import { MedusaError } from '@medusajs/framework/utils';
 import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
 import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
+import { adminDemoMiddlewares } from './admin/demo-middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
 import { priceTierMiddlewares } from './store/price-tiers/middlewares';
 import { isApproved } from './utils/is-approved';
@@ -34,6 +35,9 @@ const RAW_PRICE_SEGMENTS = new Set(['prices', 'price_rules']);
 // The sanctioned customer-facing price, resolved per customer.
 const CALCULATED_PRICE_SEGMENT = 'calculated_price';
 
+// Stock levels are shown to approved buyers only, like prices.
+const STOCK_SEGMENT = 'inventory_quantity';
+
 // "*variants.prices" and "variants.prices.amount" both yield a "prices" segment.
 function fieldSegments(field: string): string[] {
   return field.replace(/^[*+-]+/, '').split('.');
@@ -53,15 +57,14 @@ async function hidePrices(
     (field) => !fieldSegments(field).some((s) => RAW_PRICE_SEGMENTS.has(s)),
   );
 
-  const requestsCalculatedPrice = withoutRawPrices.some((field) =>
-    fieldSegments(field).includes(CALCULATED_PRICE_SEGMENT),
-  );
+  const isGated = (field: string) =>
+    fieldSegments(field).some(
+      (s) => s === CALCULATED_PRICE_SEGMENT || s === STOCK_SEGMENT,
+    );
 
   req.queryConfig.fields =
-    requestsCalculatedPrice && !(await isApproved(req))
-      ? withoutRawPrices.filter(
-          (field) => !fieldSegments(field).includes(CALCULATED_PRICE_SEGMENT),
-        )
+    withoutRawPrices.some(isGated) && !(await isApproved(req))
+      ? withoutRawPrices.filter((field) => !isGated(field))
       : withoutRawPrices;
 
   next();
@@ -73,6 +76,7 @@ export default defineMiddlewares({
     ...priceTierMiddlewares,
     ...inquiryMiddlewares,
     ...approvalMiddlewares,
+    ...adminDemoMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',
