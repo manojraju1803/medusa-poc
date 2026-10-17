@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { listOrders } from "@lib/data/orders"
 import TransferRequestForm from "@modules/account/components/transfer-request-form"
 import OrdersTable from "@modules/order/components/orders-table"
+import { orderStatus } from "@modules/order/components/status-badge"
 
 export const metadata: Metadata = {
   title: "Orders",
@@ -17,6 +18,17 @@ export default async function Orders() {
     notFound()
   }
 
+  const statuses = orders.map(orderStatus)
+  const count = (st: string) => statuses.filter((x) => x === st).length
+  const summary = [
+    { label: "Total Orders", val: orders.length, color: "bg-blue-50 text-blue-700" },
+    { label: "Pending", val: count("Pending") + count("Confirmed"), color: "bg-amber-50 text-amber-700" },
+    { label: "Packed", val: count("Packed"), color: "bg-purple-50 text-purple-700" },
+    { label: "Shipped", val: count("Shipped"), color: "bg-blue-50 text-blue-700" },
+    { label: "Delivered", val: count("Delivered"), color: "bg-[#f0fdf4] text-[#006B4F]" },
+    { label: "Cancelled", val: count("Cancelled"), color: "bg-red-50 text-red-600" },
+  ]
+
   return (
     <div className="w-full" data-testid="orders-page-wrapper">
       <div className="mb-6 flex flex-col gap-y-1">
@@ -24,6 +36,14 @@ export default async function Orders() {
         <p className="text-sm text-[#64748b]">
           Track and manage your ingredient orders.
         </p>
+      </div>
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-4">
+        {summary.map((c) => (
+          <div key={c.label} className={`${c.color} rounded-xl p-3 text-center`}>
+            <div className="text-xl font-extrabold">{c.val}</div>
+            <div className="text-[10px] font-medium mt-0.5">{c.label}</div>
+          </div>
+        ))}
       </div>
       <OrdersTable orders={orders} />
       <div className="mt-10 pt-8 border-t border-gray-100">
