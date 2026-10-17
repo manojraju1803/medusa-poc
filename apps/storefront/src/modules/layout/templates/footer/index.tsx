@@ -1,23 +1,79 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { LeafIcon } from "@modules/layout/components/ib-icons"
-import { getMenuCategories } from "@modules/layout/lib/menu-categories"
+
+const linkClass =
+  "text-left text-xs text-white/70 hover:text-[#86efac] transition-colors"
 
 const INFORMATION_LINKS = [
-  "About Us",
-  "Delivery Information",
-  "FAQ",
-  "Terms & Conditions",
-  "Privacy Policy",
-  "Returns",
+  { label: "About Us", href: "#" },
+  { label: "Delivery Information", href: "#" },
+  { label: "FAQ", href: "#" },
+  { label: "Terms & Conditions", href: "#" },
+  { label: "Privacy Policy", href: "#" },
+  { label: "Bulk Enquiry", href: "/contact" },
+  { label: "Promotions", href: "/deals" },
 ]
 
-const QUICK_LINKS = [
-  { label: "All Products", href: "/store" },
+const EXTRAS_LINKS = [
+  { label: "Transaction", href: "/account/orders" },
   { label: "Our Brands", href: "/suppliers" },
-  { label: "Compare Ingredients", href: "/compare" },
-  { label: "My Account", href: "/account" },
+  { label: "Returns", href: "#" },
+  { label: "Product Development", href: "/contact" },
   { label: "Contact", href: "/contact" },
+  { label: "Our Blog", href: "#" },
+  { label: "Deal of Month", href: "/deals" },
 ]
+
+const CARE = [
+  {
+    label: "Business Hours",
+    value: "Mon–Sat, 9AM–6PM IST",
+    icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />,
+  },
+  {
+    label: "Warehouse",
+    value: "Bangalore, Karnataka",
+    icon: (
+      <>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0z" />
+        <circle cx="12" cy="11" r="3" strokeWidth={2} />
+      </>
+    ),
+  },
+  {
+    label: "Phone",
+    value: "+91 90350 22477",
+    href: "tel:+919035022477",
+    icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.3a1 1 0 01.95.68l1.5 4.5a1 1 0 01-.5 1.2l-2.25 1.13a11 11 0 005.5 5.5l1.13-2.26a1 1 0 011.2-.49l4.49 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.7 21 3 14.3 3 6V5z" />,
+  },
+  {
+    label: "Email",
+    value: "sales@ingredientsbazar.com",
+    href: "mailto:sales@ingredientsbazar.com",
+    icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.9 5.3a2 2 0 002.2 0L21 8m-2-3H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2z" />,
+  },
+]
+
+const SOCIALS = [
+  { label: "LinkedIn", path: <path d="M6.5 8.5H3.3V19h3.2V8.5zM4.9 3.2A1.9 1.9 0 104.9 7a1.9 1.9 0 000-3.8zM19 13c0-3.2-1.7-4.7-4-4.7-1.8 0-2.7 1-3.1 1.7V8.5H8.7V19h3.2v-5.2c0-1.4.3-2.8 2.1-2.8 1.8 0 1.8 1.7 1.8 2.9V19H19v-6z" /> },
+  { label: "Facebook", path: <path d="M14 8h3V4.2c-.5-.1-2.2-.2-4.1-.2C9 4 6.4 6.4 6.4 10.8V14H3v4.3h3.4V29H11V18.3h3.8l.6-4.3H11v-2.8C11 10 11.3 8 14 8z" transform="scale(.75)" /> },
+  { label: "Instagram", path: <><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="17.5" cy="6.5" r="1" /></> },
+  { label: "X", path: <path d="M4 4l6.7 8.9L4.4 20H7l4.9-5.5L16 20h4l-6.2-8.3L20.6 4H18l-5.4 6.1L8 4H4z" /> },
+]
+
+const FooterLinks = ({ links }: { links: { label: string; href: string }[] }) => (
+  <ul className="space-y-2.5">
+    {links.map((l) => (
+      <li key={l.label}>
+        {l.href === "#" ? (
+          <a href="#" className={linkClass}>{l.label}</a>
+        ) : (
+          <LocalizedClientLink href={l.href} className={linkClass}>{l.label}</LocalizedClientLink>
+        )}
+      </li>
+    ))}
+  </ul>
+)
 
 const FooterHeading = ({ children }: { children: React.ReactNode }) => (
   <div className="mb-5">
@@ -28,11 +84,8 @@ const FooterHeading = ({ children }: { children: React.ReactNode }) => (
   </div>
 )
 
-const linkClass =
-  "text-left text-xs text-white/70 hover:text-[#86efac] transition-colors"
 
-export default async function Footer() {
-  const categories = (await getMenuCategories()).slice(0, 7)
+export default function Footer() {
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-br from-[#087f5b] via-[#075e54] to-[#081d3a] text-white font-sans">
@@ -56,81 +109,43 @@ export default async function Footer() {
             <LeafIcon className="w-5 h-5 text-[#86efac]" />
           </div>
           <div>
-            <LocalizedClientLink href="/" className="text-xl font-extrabold tracking-tight">
-              Ingredients Bazar
+            <LocalizedClientLink href="/">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Ingredients Bazar" className="h-8 w-auto object-contain brightness-0 invert" />
             </LocalizedClientLink>
-            <p className="text-[10px] text-white/60 mt-1">
-              Premium B2B ingredient sourcing
-            </p>
+            <p className="text-[10px] text-white/60 mt-1">Premium B2B ingredient sourcing</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           <div>
             <FooterHeading>Information</FooterHeading>
-            <ul className="space-y-2.5">
-              {INFORMATION_LINKS.map((label) => (
-                <li key={label}>
-                  <a href="#" className={linkClass}>
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <FooterLinks links={INFORMATION_LINKS} />
           </div>
 
           <div>
-            <FooterHeading>Quick Links</FooterHeading>
-            <ul className="space-y-2.5">
-              {QUICK_LINKS.map((l) => (
-                <li key={l.label}>
-                  <LocalizedClientLink href={l.href} className={linkClass}>
-                    {l.label}
-                  </LocalizedClientLink>
-                </li>
-              ))}
-            </ul>
+            <FooterHeading>Extras</FooterHeading>
+            <FooterLinks links={EXTRAS_LINKS} />
           </div>
-
-          {categories.length > 0 && (
-            <div>
-              <FooterHeading>Categories</FooterHeading>
-              <ul className="space-y-2.5" data-testid="footer-categories">
-                {categories.map((c) => (
-                  <li key={c.id}>
-                    <LocalizedClientLink
-                      href={`/categories/${c.handle}`}
-                      className={linkClass}
-                      data-testid="category-link"
-                    >
-                      {c.name}
-                    </LocalizedClientLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
 
           <div>
             <FooterHeading>Customer Care</FooterHeading>
-            <div className="space-y-4 text-xs text-white/80">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">
-                  Warehouse
+            <div className="space-y-4">
+              {CARE.map((item) => (
+                <div key={item.label} className="flex items-start gap-3">
+                  <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-[#86efac]">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">{item.icon}</svg>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">{item.label}</div>
+                    {item.href ? (
+                      <a href={item.href} className="text-xs text-white/80 hover:text-[#86efac] transition-colors break-words">{item.value}</a>
+                    ) : (
+                      <div className="text-xs leading-relaxed text-white/80">{item.value}</div>
+                    )}
+                  </div>
                 </div>
-                <div className="mt-0.5">Bangalore, Karnataka</div>
-              </div>
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">
-                  Enquiries
-                </div>
-                <LocalizedClientLink
-                  href="/contact"
-                  className="mt-0.5 inline-block hover:text-[#86efac] transition-colors"
-                >
-                  Send us a message →
-                </LocalizedClientLink>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -152,6 +167,12 @@ export default async function Footer() {
                 </div>
               ))}
             </div>
+            <LocalizedClientLink
+              href="/contact"
+              className="block w-full mt-4 py-2.5 border border-[#86efac]/40 text-[#86efac] hover:bg-white/10 text-xs font-bold rounded-xl transition-colors text-center"
+            >
+              Payment Assistance
+            </LocalizedClientLink>
           </div>
         </div>
       </div>
@@ -159,19 +180,19 @@ export default async function Footer() {
       <div className="relative bg-[#06152b]/65 border-t border-white/10">
         <div className="max-w-[1440px] mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            {["LinkedIn", "Facebook", "Instagram", "X"].map((label) => (
+            {SOCIALS.map((social) => (
               <a
-                key={label}
+                key={social.label}
                 href="#"
-                aria-label={label}
-                className="h-8 px-2.5 flex items-center justify-center rounded-lg bg-white/10 text-[11px] font-semibold text-white/70 hover:bg-[#4ade80] hover:text-[#052e16] transition-colors"
+                aria-label={social.label}
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white/70 hover:bg-[#4ade80] hover:text-[#052e16] transition-colors"
               >
-                {label === "LinkedIn" ? "in" : label === "Facebook" ? "f" : label === "Instagram" ? "ig" : "X"}
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">{social.path}</svg>
               </a>
             ))}
           </div>
           <p className="text-xs text-white/60 text-center sm:text-right">
-            © {new Date().getFullYear()} Ingredients Bazar. All rights reserved.
+            ingredientsbazar.com | © {new Date().getFullYear()} All rights reserved.
           </p>
         </div>
       </div>

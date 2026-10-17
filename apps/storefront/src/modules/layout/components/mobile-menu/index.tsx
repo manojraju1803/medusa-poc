@@ -4,19 +4,10 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import HeaderSearch from "../header-search"
-import { ChevronDownIcon, CloseIcon, MenuIcon } from "../ib-icons"
-import { MenuCategory } from "../mega-menu"
-import { NAV_LINKS } from "../nav-links"
+import { CloseIcon, MenuIcon } from "../ib-icons"
 
-const MobileMenu = ({
-  categories,
-  isLoggedIn,
-}: {
-  categories: MenuCategory[]
-  isLoggedIn: boolean
-}) => {
+const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const [open, setOpen] = useState(false)
-  const [catsOpen, setCatsOpen] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => setOpen(false), [pathname])
@@ -25,11 +16,20 @@ const MobileMenu = ({
 
   const links = [
     { label: "Home", href: "/" },
-    ...NAV_LINKS,
-    { label: "Wishlist", href: "/account/wishlist" },
-    { label: "Compare", href: "/compare" },
-    { label: "Cart", href: "/cart" },
-    { label: isLoggedIn ? "My Account" : "Sign Up / Login", href: "/account" },
+    { label: "Nutraceuticals", href: "/store" },
+    { label: "Food Ingredients", href: "/store" },
+    { label: "Supplier Directory", href: "/suppliers" },
+    { label: "Deal of Month", href: "/deals" },
+    { label: "Contact Us", href: "/contact" },
+    ...(isLoggedIn
+      ? [
+          { label: "My Orders", href: "/account/orders" },
+          { label: "My Cart", href: "/cart" },
+          { label: "Compare", href: "/compare" },
+          { label: "Wishlist", href: "/account/wishlist" },
+          { label: "My Account", href: "/account" },
+        ]
+      : [{ label: "Sign Up / Login", href: "/account" }]),
   ]
 
   return (
@@ -52,48 +52,7 @@ const MobileMenu = ({
         >
           <HeaderSearch className="mt-3 mb-3" onSubmitted={close} />
           <ul>
-            {links.slice(0, 1).map((l) => (
-              <li key={l.label}>
-                <LocalizedClientLink
-                  href={l.href}
-                  onClick={close}
-                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#006B4F]"
-                >
-                  {l.label}
-                </LocalizedClientLink>
-              </li>
-            ))}
-            {categories.length > 0 && (
-              <li className="border-b border-gray-50">
-                <button
-                  type="button"
-                  onClick={() => setCatsOpen((o) => !o)}
-                  aria-expanded={catsOpen}
-                  className="w-full flex items-center justify-between px-2 py-3 text-sm font-medium text-[#374151] hover:text-[#006B4F]"
-                >
-                  Categories
-                  <ChevronDownIcon
-                    className={`w-4 h-4 transition-transform ${catsOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {catsOpen && (
-                  <ul className="grid grid-cols-2 gap-x-3 pb-3 pl-2">
-                    {categories.map((c) => (
-                      <li key={c.id}>
-                        <LocalizedClientLink
-                          href={`/categories/${c.handle}`}
-                          onClick={close}
-                          className="block py-1.5 text-xs font-semibold text-[#0757a8] hover:text-[#006B4F]"
-                        >
-                          {c.name}
-                        </LocalizedClientLink>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            )}
-            {links.slice(1).map((l) => (
+            {links.map((l) => (
               <li key={l.label}>
                 <LocalizedClientLink
                   href={l.href}

@@ -41,7 +41,7 @@ const HeaderSearch = ({
       />
       <button
         type="submit"
-        className="px-3 py-2 text-xs font-semibold text-[#006B4F] hover:bg-[#f0fdf4]"
+        className="sr-only"
       >
         Search
       </button>
