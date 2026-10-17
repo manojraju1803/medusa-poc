@@ -67,8 +67,17 @@ const StoreTemplate = async ({
 
   return (
     <div className="bg-[#f8fffe] min-h-screen" data-testid="category-container">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
+      <div className="relative bg-white border-b border-gray-100 overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-[38%] hidden lg:block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/home-hero.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent" />
+        </div>
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
           <nav className="flex items-center gap-2 text-xs text-[#9ca3af] mb-4">
             <LocalizedClientLink href="/" className="hover:text-[#006B4F]">
               Home
@@ -86,6 +95,28 @@ const StoreTemplate = async ({
             Browse verified ingredients by category and brand. Approved business
             buyers see bulk prices, quantity slabs and live stock.
           </p>
+          <form
+            action={`/${countryCode}/search`}
+            method="get"
+            className="flex gap-0 max-w-[620px] mt-5"
+          >
+            <div className="flex flex-1 items-center bg-white border border-gray-200 rounded-l-xl overflow-hidden focus-within:border-[#006B4F] focus-within:ring-2 focus-within:ring-[#006B4F]/10 transition-all">
+              <svg className="w-4 h-4 text-gray-400 ml-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                name="q"
+                placeholder="Search by ingredient name or supplier…"
+                className="flex-1 px-3 py-3.5 text-sm outline-none bg-transparent"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-6 py-3.5 bg-[#006B4F] hover:bg-[#005a42] text-white font-semibold text-sm rounded-r-xl transition-colors shrink-0"
+            >
+              Search
+            </button>
+          </form>
         </div>
       </div>
 
