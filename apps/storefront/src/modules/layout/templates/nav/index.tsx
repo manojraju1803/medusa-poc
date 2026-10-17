@@ -104,7 +104,7 @@ export default async function Nav() {
 
           <HeaderSearch className="flex-1 hidden md:flex max-w-[320px] ml-auto" />
 
-          <div className="flex items-center gap-1 ml-auto md:ml-0">
+          <div className="flex items-center gap-1">
             {customer && (
               <>
             <IconLink href="/account/wishlist" label="Wishlist" testId="nav-wishlist-link">
