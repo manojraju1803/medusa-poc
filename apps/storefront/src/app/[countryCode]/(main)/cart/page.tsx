@@ -1,6 +1,7 @@
 import { retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
 import { listPriceTiers } from "@lib/data/price-tiers"
+import { isCustomerApproved } from "@modules/account/lib/approval"
 import CartTemplate from "@modules/cart/templates"
 import { CART_FIELDS } from "@modules/cart/fields"
 import { Metadata } from "next"
@@ -21,14 +22,20 @@ export default async function Cart() {
     cart?.items?.flatMap((item) => (item.product_id ? [item.product_id] : [])) ??
     []
 
-  const [customer, priceTiers] = await Promise.all([
+  const [customer, priceTiers, approved] = await Promise.all([
     retrieveCustomer(),
     cart?.region_id
       ? listPriceTiers({ productIds, regionId: cart.region_id })
       : [],
+    isCustomerApproved(),
   ])
 
   return (
-    <CartTemplate cart={cart} customer={customer} priceTiers={priceTiers} />
+    <CartTemplate
+      cart={cart}
+      customer={customer}
+      priceTiers={priceTiers}
+      approved={approved}
+    />
   )
 }

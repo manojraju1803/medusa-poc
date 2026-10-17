@@ -25,11 +25,15 @@ const CartTemplate = ({
   cart,
   customer,
   priceTiers,
+  approved,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
   priceTiers: VariantPriceTiers[]
+  approved: boolean
 }) => {
+  const pending = !!customer && !approved
+
   return (
     <div className="min-h-screen bg-[#f8fffe]" data-testid="cart-container">
       <section className="relative overflow-hidden bg-[#0d3320]">
@@ -68,7 +72,16 @@ const CartTemplate = ({
       </section>
 
       <div className="max-w-[1440px] mx-auto px-4 small:px-6 py-7">
-        {cart?.items?.length ? (
+        {pending ? (
+          <div className="py-24 text-center">
+            <h2 className="text-xl font-semibold text-[#0d3320] mb-2">
+              Your account is awaiting approval
+            </h2>
+            <p className="text-sm text-[#0d3320]/70">
+              Cart unlocks once approved.
+            </p>
+          </div>
+        ) : cart?.items?.length ? (
           <div className="flex flex-col xl:flex-row gap-6">
             <div className="flex-1 min-w-0 flex flex-col gap-5">
               {!customer && <SignInPrompt />}
