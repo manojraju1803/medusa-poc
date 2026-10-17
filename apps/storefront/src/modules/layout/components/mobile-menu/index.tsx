@@ -29,7 +29,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           { label: "Wishlist", href: "/account/wishlist" },
           { label: "My Account", href: "/account" },
         ]
-      : [{ label: "Sign Up / Login", href: "/account" }]),
+      : []),
   ]
 
   return (
