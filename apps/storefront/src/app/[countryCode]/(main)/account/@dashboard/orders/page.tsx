@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 
 import { notFound } from "next/navigation"
+import { retrieveCustomer } from "@lib/data/customer"
 import { listOrders } from "@lib/data/orders"
 import TransferRequestForm from "@modules/account/components/transfer-request-form"
 import OrdersTable from "@modules/order/components/orders-table"
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Orders() {
-  const orders = await listOrders(50)
+  // Guests also render this slot; don't ask the API for their orders
+  const customer = await retrieveCustomer().catch(() => null)
+  const orders = customer ? await listOrders(50).catch(() => null) : null
 
   if (!orders) {
     notFound()
