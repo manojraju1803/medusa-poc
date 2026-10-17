@@ -101,11 +101,11 @@ export default async function ComparePage(props: Props) {
           <span>›</span>
           <span className="text-[#0f172a] font-medium">Compare</span>
         </nav>
-        <div className="flex items-end justify-between gap-4 mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm">
           <div>
-            <h1 className="text-2xl font-extrabold text-[#0f172a]">Compare ingredients</h1>
-            <p className="text-xs text-[#64748b] mt-1">
-              Side by side, up to {COMPARE_MAX} products.
+            <h1 className="text-sm font-bold text-[#0f172a]">Comparing {ordered.length} Ingredients</h1>
+            <p className="text-[10px] text-[#6b7280]">
+              Select up to {COMPARE_MAX} products to compare side by side
             </p>
           </div>
           {ordered.length > 0 && <CompareClear />}
@@ -129,13 +129,13 @@ export default async function ComparePage(props: Props) {
             <table className="w-full min-w-[640px] text-sm" data-testid="compare-table">
               <thead>
                 <tr>
-                  <th className="w-36 p-4" />
+                  <th className="w-[160px] bg-[#f8fffe] border-b border-gray-100 px-4 py-4 text-left text-[10px] font-bold uppercase text-[#6b7280] align-top">Feature</th>
                   {ordered.map((p) => {
                     const src = [p.thumbnail, ...(p.images?.map((i) => i.url) ?? [])].find(
                       isRealProductImageUrl
                     )
                     return (
-                      <th key={p.id} className="p-4 align-top text-left font-normal">
+                      <th key={p.id} className="border-b border-gray-100 px-4 py-4 bg-white min-w-[200px] align-top text-left font-normal">
                         <div className="relative aspect-square w-full max-w-[180px] rounded-xl border border-gray-100 bg-white overflow-hidden mb-3">
                           {src && (
                             <Image src={src} alt={p.title ?? ""} fill sizes="180px" className="object-contain p-2" />
@@ -156,18 +156,39 @@ export default async function ComparePage(props: Props) {
                 </tr>
               </thead>
               <tbody>
-                {rows.map(([label, render]) => (
-                  <tr key={label} className="border-t border-gray-100">
-                    <th className="p-4 text-left text-xs font-semibold text-[#64748b] align-top">
+                {rows.map(([label, render], ri) => (
+                  <tr key={label} className={ri % 2 === 0 ? "bg-white" : "bg-[#f8fffe]"}>
+                    <th className="px-4 py-3 text-left text-[10px] font-bold text-[#6b7280] uppercase tracking-wide whitespace-nowrap align-top">
                       {label}
                     </th>
                     {ordered.map((p) => (
-                      <td key={p.id} className="p-4 text-xs font-semibold text-[#0f172a] align-top">
+                      <td key={p.id} className="px-4 py-3 text-xs text-[#374151] align-top">
                         {render(p)}
                       </td>
                     ))}
                   </tr>
                 ))}
+                <tr className="bg-[#f8fffe]">
+                  <th className="px-4 py-3 text-left text-[10px] font-bold text-[#6b7280] uppercase">Actions</th>
+                  {ordered.map((p) => (
+                    <td key={p.id} className="px-4 py-3">
+                      <div className="flex flex-col gap-1.5">
+                        <LocalizedClientLink
+                          href={`/products/${p.handle}#inquiry`}
+                          className="w-full py-1.5 text-center bg-[#006B4F] text-white text-[10px] font-bold rounded-lg hover:bg-[#005a42] transition-colors"
+                        >
+                          Request Quote
+                        </LocalizedClientLink>
+                        <LocalizedClientLink
+                          href={`/products/${p.handle}#inquiry`}
+                          className="w-full py-1.5 text-center border border-[#006B4F]/40 text-[#006B4F] text-[10px] font-bold rounded-lg hover:bg-[#f0fdf4] transition-colors"
+                        >
+                          Request Sample
+                        </LocalizedClientLink>
+                      </div>
+                    </td>
+                  ))}
+                </tr>
               </tbody>
             </table>
           </div>
