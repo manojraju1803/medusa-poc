@@ -37,7 +37,15 @@ const CartTemplate = ({
   return (
     <div className="min-h-screen bg-[#f8fffe]" data-testid="cart-container">
       <section className="relative overflow-hidden bg-[#0d3320]">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320] via-[#0d3320]/95 to-[#006B4F]/60" />
+        <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/home-hero.jpg"
+            alt=""
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320]/95 via-[#0d3320]/85 to-transparent" />
+        </div>
         <div className="relative max-w-[1440px] mx-auto px-4 small:px-6 py-8">
           <div className="flex flex-col small:flex-row items-start small:items-center justify-between gap-6">
             <div>

@@ -33,9 +33,16 @@ export default async function CollectionTemplate({
 
   return (
     <div className="min-h-screen bg-[#f8fffe]" data-testid="supplier-profile">
-      <div className="bg-gradient-to-r from-[#0d3320] to-[#006B4F] h-28" />
+      <div className="relative bg-[#0d3320] h-36 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/home-hero.jpg"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
+        />
+      </div>
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm -mt-10 p-5 mb-6">
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm -mt-6 relative p-5 mb-5">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <SupplierLogo supplier={supplier} size="lg" />
             <div className="flex-1 min-w-0">
@@ -68,16 +75,22 @@ export default async function CollectionTemplate({
             </div>
             <div className="flex flex-wrap gap-2">
               <LocalizedClientLink
-                href={`/contact?subject=${encodeURIComponent(`Enquiry about ${supplier.title}`)}`}
+                href={`/contact?subject=${encodeURIComponent(`Quote request: ${supplier.title}`)}`}
                 className="px-4 py-2 bg-[#006B4F] text-white text-xs font-bold rounded-xl hover:bg-[#005a42] transition-colors"
               >
-                Contact
+                Request Quote
               </LocalizedClientLink>
               <LocalizedClientLink
-                href="/suppliers"
+                href={`/contact?subject=${encodeURIComponent(`Sample request: ${supplier.title}`)}`}
+                className="px-4 py-2 border border-[#006B4F]/40 text-[#006B4F] text-xs font-bold rounded-xl hover:bg-[#f0fdf4] transition-colors"
+              >
+                Request Sample
+              </LocalizedClientLink>
+              <LocalizedClientLink
+                href={`/contact?subject=${encodeURIComponent(`Enquiry about ${supplier.title}`)}`}
                 className="px-4 py-2 border border-gray-200 text-[#374151] text-xs font-bold rounded-xl hover:bg-gray-50 transition-colors"
               >
-                All suppliers
+                Contact
               </LocalizedClientLink>
             </div>
           </div>
