@@ -20,7 +20,6 @@ import {
   InstructionVideos,
   MarketplaceComparison,
   OrderProcess,
-  Testimonials,
   WhyChooseUs,
 } from "@modules/home/components/marketing-sections"
 import ProductRow from "@modules/home/components/product-row"
@@ -183,7 +182,6 @@ export default async function Home(props: {
       <MarketplaceComparison />
       <TrustedBrands brands={brands} productCounts={brandCounts} />
       <WhyChooseUs />
-      <Testimonials />
       <CtaBanner />
     </div>
   )
