@@ -144,7 +144,7 @@ const Register = ({ setCurrentView }: Props) => {
             <AuthField
               label="First Name"
               name="first_name"
-              placeholder="Ravi"
+              placeholder="John"
               autoComplete="given-name"
               required
               data-testid="first-name-input"
@@ -152,7 +152,7 @@ const Register = ({ setCurrentView }: Props) => {
             <AuthField
               label="Last Name"
               name="last_name"
-              placeholder="Kumar"
+              placeholder="Doe"
               autoComplete="family-name"
               required
               data-testid="last-name-input"
