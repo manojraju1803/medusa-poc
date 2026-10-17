@@ -2,6 +2,8 @@
 
 import { addToCart } from "@lib/data/cart"
 import { useIntersection } from "@lib/hooks/use-in-view"
+import { minQuantityOf } from "@lib/util/min-quantity"
+import { findPriceTier } from "@lib/util/price-tiers"
 import { getVariantInventoryQuantity, isProductInStock } from "@lib/util/product"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
@@ -11,6 +13,8 @@ import OptionSelect from "@modules/products/components/product-actions/option-se
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { VariantPriceTiers } from "types/global"
+import PriceTierTable from "../price-tier-table"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
@@ -23,6 +27,7 @@ type ProductActionsProps = {
   disabled?: boolean
   isLoggedIn?: boolean
   isApproved?: boolean
+  priceTiers?: VariantPriceTiers[]
 }
 
 const optionsAsKeymap = (
@@ -39,6 +44,7 @@ export default function ProductActions({
   disabled,
   isLoggedIn,
   isApproved: isApprovedProp,
+  priceTiers,
 }: ProductActionsProps) {
   const isApproved =
     isApprovedProp ??
@@ -60,10 +66,10 @@ export default function ProductActions({
     return initialVariant ? optionsAsKeymap(initialVariant.options) ?? {} : {}
   }, [initialVariant])
 
-  const initialMinQuantity = useMemo(() => {
-    const min = Number(initialVariant?.metadata?.min_quantity)
-    return Number.isFinite(min) && min > 0 ? min : 1
-  }, [initialVariant])
+  const initialMinQuantity = useMemo(
+    () => minQuantityOf(initialVariant),
+    [initialVariant]
+  )
 
   const [options, setOptions] = useState<Record<string, string | undefined>>(initialOptions)
   const [isAdding, setIsAdding] = useState(false)
@@ -146,14 +152,27 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
-  const minQuantity = useMemo(() => {
-    const min = Number(selectedVariant?.metadata?.min_quantity)
-    return Number.isFinite(min) && min > 0 ? min : 1
-  }, [selectedVariant])
+  const minQuantity = useMemo(
+    () => minQuantityOf(selectedVariant),
+    [selectedVariant]
+  )
 
   useEffect(() => {
     setQuantity((prev) => (prev < minQuantity ? minQuantity : prev))
   }, [minQuantity])
+
+  const belowMinimum = quantity < minQuantity
+
+  const variantTiers = useMemo(
+    () => priceTiers?.find((v) => v.variant_id === selectedVariant?.id),
+    [priceTiers, selectedVariant]
+  )
+
+  // Below the minimum, show the entry slab rather than no price at all.
+  const activeTier = findPriceTier(
+    variantTiers?.tiers,
+    Math.max(quantity, minQuantity)
+  )
 
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
@@ -224,8 +243,18 @@ export default function ProductActions({
             product={product}
             variant={selectedVariant}
             isLoggedIn={isLoggedIn}
+            tier={activeTier}
+            quantity={belowMinimum ? undefined : quantity}
           />
         </div>
+
+        {variantTiers && variantTiers.tiers.length > 1 && (
+          <PriceTierTable
+            tiers={variantTiers.tiers}
+            currencyCode={variantTiers.currency_code}
+            activeFrom={activeTier?.from}
+          />
+        )}
 
         {/* Variant Stock & MOQ indicator */}
         <div className="flex items-center justify-between text-xs py-1">
@@ -317,7 +346,8 @@ export default function ProductActions({
                 !selectedVariant ||
                 !!disabled ||
                 isAdding ||
-                !isValidVariant
+                !isValidVariant ||
+                belowMinimum
               }
               variant="primary"
               className="w-full h-11 bg-[#1C94D2] hover:bg-[#0284c7] text-white font-bold rounded-xl shadow-sm transition-all"
@@ -346,6 +376,8 @@ export default function ProductActions({
           error={error}
           show={!inView}
           optionsDisabled={!!disabled || isAdding || !isApproved}
+          activeTier={activeTier}
+          addDisabled={belowMinimum || !isApproved}
         />
       </div>
     </>

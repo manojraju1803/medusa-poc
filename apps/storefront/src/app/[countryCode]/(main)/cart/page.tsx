@@ -1,5 +1,6 @@
 import { retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
+import { listPriceTiers } from "@lib/data/price-tiers"
 import CartTemplate from "@modules/cart/templates"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
@@ -15,7 +16,18 @@ export default async function Cart() {
     return notFound()
   })
 
-  const customer = await retrieveCustomer()
+  const productIds =
+    cart?.items?.flatMap((item) => (item.product_id ? [item.product_id] : [])) ??
+    []
 
-  return <CartTemplate cart={cart} customer={customer} />
+  const [customer, priceTiers] = await Promise.all([
+    retrieveCustomer(),
+    cart?.region_id
+      ? listPriceTiers({ productIds, regionId: cart.region_id })
+      : [],
+  ])
+
+  return (
+    <CartTemplate cart={cart} customer={customer} priceTiers={priceTiers} />
+  )
 }

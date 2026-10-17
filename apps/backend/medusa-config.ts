@@ -17,17 +17,21 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET || "super_secret_jwt_random_key_1234567890",
       cookieSecret: process.env.COOKIE_SECRET || "super_secret_cookie_random_key_1234567890",
     },
-    databaseDriverOptions: process.env.DATABASE_URL?.includes("sslmode=require") || process.env.NODE_ENV === "production"
-      ? {
-          connection: { ssl: { rejectUnauthorized: false } },
-          pool: {
-            min: 2,
-            max: 20,
-            idleTimeoutMillis: 300000,
-            acquireTimeoutMillis: 60000,
-          },
-        }
-      : { ssl: false, sslmode: "disable" },
+    // Hosted DBs (Supabase) need SSL; local Postgres doesn't
+    databaseDriverOptions:
+      process.env.DATABASE_SSL === 'true' ||
+      process.env.DATABASE_URL?.includes("sslmode=require") ||
+      process.env.NODE_ENV === "production"
+        ? {
+            connection: { ssl: { rejectUnauthorized: false } },
+            pool: {
+              min: 2,
+              max: 20,
+              idleTimeoutMillis: 300000,
+              acquireTimeoutMillis: 60000,
+            },
+          }
+        : { ssl: false, sslmode: 'disable' },
   },
   modules: [
     {
