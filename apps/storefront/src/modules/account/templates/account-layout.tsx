@@ -26,11 +26,11 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
 
   return (
     <div className="flex-1 bg-[#f8fffe]" data-testid="account-page">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <Suspense fallback={null}>
           <ApprovalBanner approved={approved} />
         </Suspense>
-        <div className="grid grid-cols-1 small:grid-cols-[260px_1fr] gap-6">
+        <div className="grid grid-cols-1 small:grid-cols-[220px_1fr] gap-5">
           <div>
             <AccountNav
               customer={customer}
@@ -38,7 +38,7 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
               accountType={accountTypeLabel(customer)}
             />
           </div>
-          <div className="flex-1 bg-white border border-[#e2f3eb] rounded-2xl shadow-sm p-6">
+          <div className="flex-1 min-w-0 bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
             {children}
           </div>
         </div>
