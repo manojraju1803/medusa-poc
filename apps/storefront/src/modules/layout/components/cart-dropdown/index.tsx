@@ -89,14 +89,14 @@ const CartDropdown = ({
             aria-label={`Cart (${totalItems})`}
           >
             <span className="relative">
-              <BagIcon className="w-5 h-5" />
+              <BagIcon className="w-4 h-4" />
               {totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
             </span>
-            <span className="text-[10px] leading-none">Cart</span>
+            <span className="text-[9px] leading-none">Cart</span>
           </LocalizedClientLink>
         </PopoverButton>
         <Transition

@@ -111,13 +111,13 @@ export default async function Nav() {
             {customer && (
               <>
             <IconLink href="/account/wishlist" label="Wishlist" testId="nav-wishlist-link">
-              <HeartIcon className="w-5 h-5" />
+              <HeartIcon className="w-4 h-4" />
             </IconLink>
             <IconLink href="/compare" label="Compare" testId="nav-compare-link">
-              <CompareIcon className="w-5 h-5" />
+              <CompareIcon className="w-4 h-4" />
             </IconLink>
             <IconLink href="/account/orders" label="Orders" testId="nav-orders-link">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
             </IconLink>
             <Suspense
               fallback={
@@ -126,8 +126,8 @@ export default async function Nav() {
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
-                  <BagIcon className="w-5 h-5" />
-                  <span className="text-[10px] leading-none">Cart</span>
+                  <BagIcon className="w-4 h-4" />
+                  <span className="text-[9px] leading-none">Cart</span>
                 </LocalizedClientLink>
               }
             >
