@@ -10,10 +10,6 @@ export async function POST(
   const { id } = req.params;
   const { approved } = req.validatedBody;
 
-  if (typeof approved !== 'boolean') {
-    return res.status(400).json({ message: '`approved` must be a boolean' });
-  }
-
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 
   const { data: groups } = await query.graph({

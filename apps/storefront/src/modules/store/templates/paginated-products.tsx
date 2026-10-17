@@ -86,7 +86,7 @@ export default async function PaginatedProducts({
         className={
           viewMode === "list"
             ? "flex flex-col gap-3 w-full"
-            : "grid grid-cols-2 w-full small:grid-cols-3 large:grid-cols-4 gap-4"
+            : "grid grid-cols-2 w-full xl:grid-cols-3 2xl:grid-cols-4 gap-4"
         }
         data-testid="products-list"
       >
