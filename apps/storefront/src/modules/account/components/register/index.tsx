@@ -17,9 +17,9 @@ type Props = {
 
 type AccountType = "buyer" | "supplier"
 
-const ROLES: { key: AccountType; label: string; desc: string }[] = [
-  { key: "buyer", label: "Buyer", desc: "Source ingredients for my business" },
-  { key: "supplier", label: "Supplier", desc: "List and sell my brand's ingredients" },
+const ROLES: { key: AccountType; label: string; icon: string; desc: string }[] = [
+  { key: "buyer", label: "Buyer", icon: "🛒", desc: "Source ingredients for my formulations" },
+  { key: "supplier", label: "Supplier", icon: "🏭", desc: "List and sell my brand's ingredients" },
 ]
 
 const BUYER_TYPES = [
@@ -119,6 +119,9 @@ const Register = ({ setCurrentView }: Props) => {
                       </svg>
                     </div>
                   )}
+                  <span className="text-xl mb-1.5" aria-hidden="true">
+                    {opt.icon}
+                  </span>
                   <span
                     className={`text-sm font-bold ${
                       active ? "text-[#006B4F]" : "text-[#0f172a]"
@@ -126,7 +129,7 @@ const Register = ({ setCurrentView }: Props) => {
                   >
                     {opt.label}
                   </span>
-                  <span className="text-[11px] text-[#9ca3af] leading-snug mt-0.5">
+                  <span className="text-[10px] text-[#9ca3af] leading-snug mt-0.5">
                     {opt.desc}
                   </span>
                 </button>

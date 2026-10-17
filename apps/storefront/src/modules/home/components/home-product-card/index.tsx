@@ -1,6 +1,7 @@
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import CompareToggle from "@modules/products/components/compare-toggle"
 import PreviewPrice from "@modules/products/components/product-preview/price"
 
 export type PriceAccess = "guest" | "pending" | "approved"
@@ -103,12 +104,28 @@ const HomeProductCard = ({
           </div>
         </div>
 
+        <div className="flex items-center gap-2 mb-3">
+          <CompareToggle productId={product.id} />
+          <span className="text-gray-200">|</span>
+          <LocalizedClientLink
+            href={`/products/${product.handle}#inquiry`}
+            className="text-[11px] text-[#006B4F] hover:text-[#005a42] font-medium"
+          >
+            Request Sample
+          </LocalizedClientLink>
+        </div>
         <div className="flex gap-2 mt-auto">
           <LocalizedClientLink
-            href={`/products/${product.handle}`}
+            href={`/products/${product.handle}#inquiry`}
             className="flex-1 py-2 text-center text-xs font-semibold bg-[#006B4F] hover:bg-[#005a42] text-white rounded-lg transition-colors"
           >
-            View Details
+            Request Quote
+          </LocalizedClientLink>
+          <LocalizedClientLink
+            href={`/products/${product.handle}`}
+            className="px-3 py-2 text-xs font-semibold border border-[#006B4F]/40 text-[#006B4F] hover:bg-[#f0fdf4] rounded-lg transition-colors"
+          >
+            Details
           </LocalizedClientLink>
         </div>
       </div>

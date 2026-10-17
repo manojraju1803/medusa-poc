@@ -6,10 +6,11 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 
 const CATEGORIES = [
   "General Inquiries",
-  "Buyer Support",
-  "Supplier Support",
   "Partnerships",
+  "Supplier Support",
+  "Buyer Support",
   "Technical Support",
+  "Media & Press",
 ]
 
 const inputClass =
