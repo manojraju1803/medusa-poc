@@ -177,8 +177,17 @@ export default function ProductCard({
       </div>
       <div className="p-3.5 flex flex-col flex-1 gap-1">
         {title}
-        {brandLine}
-        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 my-2 bg-[#f8fffe] border border-[#e2f3eb] rounded-lg p-2.5">
+        {brand ? (
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="w-5 h-5 bg-[#006B4F]/10 rounded flex items-center justify-center shrink-0">
+              <span className="text-[8px] font-bold text-[#006B4F]">
+                {brand.title.slice(0, 2).toUpperCase()}
+              </span>
+            </div>
+            <div className="min-w-0 flex">{brandLine}</div>
+          </div>
+        ) : null}
+        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 my-2 bg-[#fafffe] border border-[#f0fdf4] rounded-lg p-2.5">
           {specs.map(([l, v]) => (
             <div key={l}>
               <span className="text-[9px] text-[#9ca3af] block uppercase tracking-wide">{l}</span>
@@ -189,8 +198,15 @@ export default function ProductCard({
         <div className="mb-2">
           <CardPrice product={product} viewer={viewer} />
         </div>
-        <div className="flex items-center mb-3 pb-3 border-b border-gray-50">
+        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-50">
           <CompareToggle productId={product.id} />
+          <span className="text-gray-100">|</span>
+          <LocalizedClientLink
+            href={`/products/${product.handle}#inquiry`}
+            className="text-[10px] text-[#006B4F] hover:text-[#005a42] font-medium"
+          >
+            Request Sample
+          </LocalizedClientLink>
         </div>
         <div className="flex gap-1.5 mt-auto">
           <LocalizedClientLink
