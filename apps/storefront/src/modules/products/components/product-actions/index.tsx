@@ -12,9 +12,9 @@ import OptionSelect from "@modules/products/components/product-actions/option-se
 import { UNIT, Viewer, tierSaving } from "@modules/products/lib/access"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react"
 import { VariantPriceTiers } from "types/global"
-import PriceTierTable from "../price-tier-table"
+import { convertToLocale } from "@lib/util/money"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
@@ -189,6 +189,26 @@ export default function ProductActions({
 
   const stockQty = selectedVariant?.inventory_quantity
 
+  const currencyCode =
+    variantTiers?.currency_code ??
+    selectedVariant?.calculated_price?.currency_code ??
+    undefined
+  // Rows of the qty x payment grid: the real slabs, else the MOQ at base price.
+  const gridRows: { from: number; label: string; amount?: number }[] =
+    variantTiers && variantTiers.tiers.length
+      ? variantTiers.tiers.map((t) => ({
+          from: t.from,
+          label: t.to == null ? `${t.from}+ ${UNIT}` : `${t.from}–${t.to} ${UNIT}`,
+          amount: t.unit_amount,
+        }))
+      : [
+          {
+            from: minQuantity,
+            label: `${minQuantity} ${UNIT}`,
+            amount: selectedVariant?.calculated_price?.calculated_amount ?? undefined,
+          },
+        ]
+
   const actionsRef = useRef<HTMLDivElement>(null)
 
   const inView = useIntersection(actionsRef, "0px")
@@ -236,6 +256,9 @@ export default function ProductActions({
   if (!approved) {
     const moq = minQuantityOf(product.variants?.[0])
     return (
+      <div className="p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
+      <LocationBlock />
+      <h2 className="text-sm font-bold text-[#0f172a] mt-7 mb-3">Select Qty & Payment</h2>
       <div
         className="rounded-xl border border-[#e2f3eb] bg-[#f8fffe] p-5 flex flex-col gap-3"
         data-testid="price-gate"
@@ -277,6 +300,7 @@ export default function ProductActions({
             Minimum order: {moq} {UNIT}
           </span>
         )}
+      </div>
       </div>
     )
   }
@@ -321,54 +345,109 @@ export default function ProductActions({
           )}
         </div>
 
-        {typeof stockQty === "number" && selectedVariant?.manage_inventory && (
-          <div
-            className={clx(
-              "rounded-xl border p-3 text-sm font-medium",
-              stockQty > 0
-                ? "bg-[#f3fde9] border-lime-300 text-[#0f172a]"
-                : "bg-amber-50 border-amber-300 text-amber-800"
-            )}
-            data-testid="stock-line"
-          >
-            {stockQty > 0
-              ? `${stockQty.toLocaleString("en-IN")} ${UNIT} in stock · Bangalore warehouse`
-              : "Out of stock · Bangalore warehouse"}
-          </div>
-        )}
-
-        {variantTiers && variantTiers.tiers.length > 1 && (
-          <div className="rounded-xl border border-gray-100 p-3">
-            <div className="text-xs font-bold text-[#0f172a] mb-2">
-              Quantity pricing ({UNIT})
-            </div>
-            <PriceTierTable
-              tiers={variantTiers.tiers}
-              currencyCode={variantTiers.currency_code}
-              activeFrom={activeTier?.from}
-            />
-          </div>
-        )}
-
-        <div>
-          <div className="text-xs font-bold text-[#0f172a] mb-2">Payment term</div>
-          <div className="flex flex-wrap gap-2" data-testid="payment-terms">
-            {PAYMENT_TERMS.map((term) => (
-              <button
-                key={term.value}
-                type="button"
-                onClick={() => choosePaymentTerm(term.value)}
-                aria-pressed={paymentTerm === term.value}
+        <div className="p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
+          <LocationBlock>
+            {typeof stockQty === "number" && selectedVariant?.manage_inventory ? (
+              <div
                 className={clx(
-                  "px-4 py-2 text-xs font-bold rounded-xl border transition-all",
-                  paymentTerm === term.value
-                    ? "bg-[#006B4F] border-[#006B4F] text-white"
-                    : "bg-white border-gray-200 text-[#0f172a] hover:border-[#006B4F]/40"
+                  "mt-5 rounded-xl border p-4 flex items-start gap-3",
+                  stockQty > 0 ? "bg-[#f3fde9] border-lime-400" : "bg-amber-50 border-amber-300"
                 )}
+                data-testid="stock-line"
               >
-                {term.label}
-              </button>
-            ))}
+                <CheckIcon className={stockQty > 0 ? "text-lime-500" : "text-amber-500"} />
+                <div>
+                  <div className={clx("text-xs font-semibold", stockQty > 0 ? "text-lime-600" : "text-amber-700")}>
+                    General availability: {stockQty > 0 ? "In Stock" : "Out of Stock"}
+                  </div>
+                  <div className="text-sm font-medium text-[#0f172a] mt-0.5">
+                    Stock Quantity (Bangalore): {stockQty > 0 ? `${stockQty.toLocaleString("en-IN")} ${UNIT}` : "0"}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </LocationBlock>
+
+          <div className="flex items-start justify-between gap-3 mt-7 mb-3">
+            <div>
+              <h2 className="text-sm font-bold text-[#0f172a]">Select Qty & Payment — Tap to choose</h2>
+              <p className="text-[10px] text-[#64748b] mt-0.5">
+                Price per {UNIT} by quantity slab. Payment term does not change the price.
+              </p>
+            </div>
+            <div className="shrink-0 px-3 py-2 bg-gray-100 rounded-xl text-[10px] font-semibold text-[#64748b] text-center">
+              {quantity}{UNIT} · {PAYMENT_TERMS.find((t) => t.value === paymentTerm)?.label ?? "Select term"}
+            </div>
+          </div>
+
+          <div className="overflow-x-auto pb-2" data-testid="payment-terms">
+            <table className="w-full min-w-[360px] border-separate border-spacing-x-1.5 border-spacing-y-1" data-testid="price-tier-table">
+              <thead>
+                <tr>
+                  <th className="w-20 px-1 py-2 text-left text-[10px] font-medium text-[#64748b]">Qty</th>
+                  {PAYMENT_TERMS.map((term) => (
+                    <th
+                      key={term.value}
+                      className={clx(
+                        "min-w-[82px] px-1 py-2 text-center text-[10px] font-semibold",
+                        paymentTerm === term.value ? "text-[#0098d8]" : "text-[#64748b]"
+                      )}
+                    >
+                      {term.value === "advance" ? "Adv." : term.label.replace(" days", "D")}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {gridRows.map((row) => {
+                  const rowActive = activeTier ? activeTier.from === row.from : row === gridRows[0]
+                  return (
+                    <tr key={row.from} data-testid="price-tier-row" data-active={rowActive}>
+                      <th className={clx("px-1 py-1.5 text-left text-xs font-bold", rowActive ? "text-[#0098d8]" : "text-[#0f172a]")}>
+                        {row.label}
+                      </th>
+                      {PAYMENT_TERMS.map((term) => {
+                        const selected = rowActive && paymentTerm === term.value
+                        return (
+                          <td key={term.value} className="p-0.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setQuantity(Math.max(row.from, minQuantity))
+                                choosePaymentTerm(term.value)
+                              }}
+                              aria-pressed={selected}
+                              className={clx(
+                                "w-full min-h-12 px-2 py-1.5 rounded-xl border text-center transition-all",
+                                selected
+                                  ? "bg-[#0098d8] border-[#0098d8] text-white shadow-sm"
+                                  : "bg-gray-50 border-gray-100 text-[#0f172a] hover:border-[#0098d8]/40"
+                              )}
+                            >
+                              <span className="block text-xs font-extrabold">
+                                {row.amount != null && currencyCode
+                                  ? convertToLocale({ amount: row.amount, currency_code: currencyCode })
+                                  : "—"}
+                              </span>
+                              <span className={clx("block text-[8px]", selected ? "text-white/80" : "text-[#64748b]")}>
+                                {row.amount != null ? `/${UNIT}` : "Not available"}
+                              </span>
+                            </button>
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 mt-1 pt-2 border-t border-gray-100 text-[9px] text-[#64748b]">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#0098d8]" /> Selected
+            </span>
+            {saving && <span>Save {saving.percent}% at {saving.from}+ {UNIT}</span>}
           </div>
         </div>
 
@@ -463,6 +542,33 @@ export default function ProductActions({
           addDisabled={belowMinimum}
         />
       </div>
+    </>
+  )
+}
+
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg className={clx("w-5 h-5 shrink-0 mt-0.5", className)} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+// One real warehouse (Bangalore), so a single fixed location chip.
+function LocationBlock({ children }: { children?: ReactNode }) {
+  return (
+    <>
+      <h2 className="flex items-center gap-2 text-sm font-bold text-[#0f172a] mb-3">
+        <svg className="w-4 h-4 text-[#0098d8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 21s7-4.35 7-11a7 7 0 10-14 0c0 6.65 7 11 7 11z" />
+          <circle cx="12" cy="10" r="2" />
+        </svg>
+        Select Location
+      </h2>
+      <div className="flex flex-wrap gap-2">
+        <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-bold rounded-xl border bg-[#0098d8] border-[#0098d8] text-white shadow-sm">
+          Bangalore
+        </span>
+      </div>
+      {children}
     </>
   )
 }

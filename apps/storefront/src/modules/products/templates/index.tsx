@@ -7,7 +7,9 @@ import { minQuantityOf } from "@lib/util/min-quantity"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import QuoteSampleForm from "@modules/inquiry/components/quote-sample-form"
-import CompareToggle from "@modules/products/components/compare-toggle"
+import CompareProductsModal, { CompareItem } from "@modules/products/components/compare-products-modal"
+import { convertToLocale } from "@lib/util/money"
+import { CARD_FIELDS } from "@modules/products/lib/fields"
 import ImageGallery from "@modules/products/components/image-gallery"
 import ProductActions from "@modules/products/components/product-actions"
 import RelatedProducts from "@modules/products/components/related-products"
@@ -77,6 +79,64 @@ const ProductTemplate = async ({
       : []),
   ]
 
+  // Compare: this product plus up to 3 others from its most specific category.
+  const peers = primaryCategory
+    ? await listProducts({
+        regionId: region.id,
+        queryParams: { category_id: [primaryCategory.id], limit: 8, fields: CARD_FIELDS },
+      })
+        .then(({ response }) => response.products.filter((p) => p.id !== product.id).slice(0, 3))
+        .catch(() => [])
+    : []
+  const priceOf = (p: HttpTypes.StoreProduct) =>
+    viewer === "approved" ? p.variants?.[0]?.calculated_price ?? undefined : undefined
+  const comparePool = [product, ...peers]
+  const knownPrices = comparePool
+    .map((p) => priceOf(p)?.calculated_amount)
+    .filter((a): a is number => typeof a === "number")
+  const bestPrice = knownPrices.length > 1 ? Math.min(...knownPrices) : undefined
+  const compareItems: CompareItem[] = comparePool.map((p) => {
+    const cp = priceOf(p)
+    const amount = cp?.calculated_amount
+    return {
+      id: p.id,
+      handle: p.handle ?? "",
+      title: p.title ?? "",
+      thumbnail: p.thumbnail,
+      brand: (p.id === product.id ? brand?.title : p.collection?.title) ?? undefined,
+      price:
+        typeof amount === "number" && cp?.currency_code
+          ? `${convertToLocale({ amount, currency_code: cp.currency_code })}/${UNIT}`
+          : undefined,
+      best: bestPrice !== undefined && amount === bestPrice,
+      moq: `${minQuantityOf(p.variants?.[0])} ${UNIT}`,
+      hsn: hsnOf(p),
+    }
+  })
+
+  const currentPrice = priceOf(product)
+  const origin = product.origin_country || firstVariant?.origin_country || brandCountry
+  const material = product.material || firstVariant?.material
+  const specs = (
+    [
+      ["Brand", brand?.title],
+      ["Category", primaryCategory?.name],
+      ["Origin", origin],
+      ["MOQ", `${moq} ${UNIT}`],
+      ["Material", material],
+      ["HSN Code", hsn],
+      ["SKU", firstVariant?.sku],
+    ] as [string, string | null | undefined][]
+  ).filter((r): r is [string, string] => !!r[1])
+
+  // Documents only when the product carries them: metadata.documents = [{ name, url, type? }].
+  const rawDocs = product.metadata?.documents
+  const documents = Array.isArray(rawDocs)
+    ? (rawDocs as Record<string, unknown>[]).filter(
+        (d) => d && typeof d.name === "string" && typeof d.url === "string"
+      ) as { name: string; url: string; type?: string }[]
+    : []
+
   const customerName = [customer?.first_name, customer?.last_name]
     .filter(Boolean)
     .join(" ")
@@ -95,14 +155,6 @@ const ProductTemplate = async ({
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] gap-6">
           <div className="self-start bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm">
             <ImageGallery images={images} title={product.title} />
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4" data-testid="spec-chips">
-              {chips.map(([label, value]) => (
-                <div key={label} className="bg-[#f8fffe] border border-[#e2f3eb] rounded-lg p-3">
-                  <div className="text-[9px] uppercase tracking-wider text-[#64748b]">{label}</div>
-                  <div className="text-xs font-bold text-[#0f172a] mt-1 break-words">{value}</div>
-                </div>
-              ))}
-            </div>
             {product.description && (
               <div className="mt-5 pt-5 border-t border-gray-100">
                 <h2 className="text-base font-extrabold text-[#0f172a]">Product Description</h2>
@@ -111,6 +163,33 @@ const ProductTemplate = async ({
                   data-testid="product-description"
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
+              </div>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4" data-testid="spec-chips">
+              {chips.map(([label, value]) => (
+                <div key={label} className="bg-[#f8fffe] border border-[#e2f3eb] rounded-lg p-3">
+                  <div className="text-[9px] uppercase tracking-wider text-[#64748b]">{label}</div>
+                  <div className="text-xs font-bold text-[#0f172a] mt-1 break-words">{value}</div>
+                </div>
+              ))}
+            </div>
+            {currentPrice?.calculated_amount != null && currentPrice.currency_code && (
+              <div className="mt-4 p-4 bg-[#f8fffe] border border-[#e2f3eb] rounded-xl">
+                <h2 className="text-base font-extrabold text-[#0f172a]">Price Decrease & Expected Savings</h2>
+                <p className="text-[10px] text-[#64748b] mt-0.5">Expected values are forecasts, not guaranteed prices.</p>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  {[
+                    ["Current Price", `${convertToLocale({ amount: currentPrice.calculated_amount, currency_code: currentPrice.currency_code })}/${UNIT}`],
+                    ["Expected Price", "Not available"],
+                    ["Expected Decrease", "Not available"],
+                    ["Expected Savings", "Not available"],
+                  ].map(([label, value]) => (
+                    <div key={label} className="bg-white border border-gray-100 rounded-lg p-2.5">
+                      <div className="text-[9px] text-[#64748b]">{label}</div>
+                      <div className="text-xs font-extrabold text-[#0f172a] mt-1">{value}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -158,13 +237,67 @@ const ProductTemplate = async ({
             <div className="grid grid-cols-2 gap-2">
               <a
                 href="#inquiry"
-                className="py-2.5 text-center bg-[#0757a8] hover:bg-[#064985] text-white text-sm font-bold rounded-xl"
+                className="py-3 text-center bg-[#0757a8] hover:bg-[#064985] text-white text-sm font-bold rounded-xl"
               >
-                Request quote / sample
+                Request Quote
               </a>
-              <CompareToggle productId={product.id} variant="button" />
+              <a
+                href="#inquiry"
+                className="py-3 text-center border border-[#006B4F]/40 text-[#006B4F] text-sm font-semibold rounded-xl hover:bg-[#f0fdf4]"
+              >
+                Request Sample
+              </a>
+              <div className="col-span-2 grid">
+                <CompareProductsModal
+                  items={compareItems}
+                  currentId={product.id}
+                  categoryName={primaryCategory?.name}
+                />
+              </div>
             </div>
           </div>
+        </div>
+
+        <Suspense fallback={null}>
+          <RelatedProducts
+            product={product}
+            categoryIds={categories.map((c) => c.id)}
+            countryCode={countryCode}
+            viewer={viewer}
+          />
+        </Suspense>
+
+        <div
+          className={`grid grid-cols-1 gap-5 mt-6 ${documents.length ? "lg:grid-cols-[1fr_320px]" : ""}`}
+        >
+          <section className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm" data-testid="tech-specs">
+            <h2 className="text-lg font-extrabold text-[#0f172a] mb-4">Technical Specifications</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2">
+              {specs.map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-4 py-3 border-b border-gray-100 sm:odd:pr-5 sm:even:pl-5">
+                  <span className="text-xs text-[#64748b]">{label}</span>
+                  <span className="text-xs font-semibold text-[#0f172a] text-right">{value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          {documents.length > 0 && (
+            <section className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+              <h2 className="text-lg font-extrabold text-[#0f172a] mb-4">Documents</h2>
+              {documents.map((doc) => (
+                <a
+                  key={doc.url}
+                  href={doc.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-left border border-gray-100 rounded-xl p-3 mb-2 hover:border-[#006B4F]/30"
+                >
+                  <div className="text-xs font-bold text-[#0f172a]">{doc.name}</div>
+                  {doc.type && <div className="text-[10px] text-[#64748b] mt-1">{doc.type}</div>}
+                </a>
+              ))}
+            </section>
+          )}
         </div>
 
         <section
@@ -189,14 +322,6 @@ const ProductTemplate = async ({
           />
         </section>
 
-        <Suspense fallback={null}>
-          <RelatedProducts
-            product={product}
-            categoryIds={categories.map((c) => c.id)}
-            countryCode={countryCode}
-            viewer={viewer}
-          />
-        </Suspense>
       </div>
     </div>
   )
