@@ -27,6 +27,10 @@ const Thumb = ({ src, alt }: { src?: string | null; alt: string }) =>
     </div>
   )
 
+// Round down to an honest "90+" style figure.
+const roundStat = (n: number) =>
+  n >= 10 ? `${(Math.floor(n / 10) * 10).toLocaleString("en-IN")}+` : String(n)
+
 export const StatStrip = ({
   stats,
 }: {
@@ -52,7 +56,7 @@ export const StatStrip = ({
                   </svg>
                 </div>
                 <span className="text-2xl lg:text-3xl font-extrabold text-[#0f172a]">
-                  {stat.value.toLocaleString("en-IN")}
+                  {roundStat(stat.value)}
                 </span>
               </div>
               <span className="text-xs font-medium text-[#64748b] text-center">
@@ -61,51 +65,6 @@ export const StatStrip = ({
             </div>
           ))}
         </div>
-      </div>
-    </section>
-  )
-}
-
-export const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
-  if (!categories.length) return null
-
-  return (
-    <section className="max-w-[1440px] mx-auto px-6 py-12">
-      <SectionHeader
-        title="Browse by Category"
-        desc="Explore our ingredient categories from verified suppliers"
-        viewAllHref="/store"
-      />
-      <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1 snap-x">
-        {categories.map((cat) => (
-          <LocalizedClientLink
-            key={cat.id}
-            href={`/categories/${cat.handle}`}
-            className="group snap-start shrink-0 w-[170px] md:w-[200px] bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-[#006B4F]/30 hover:shadow-md transition-all"
-          >
-            <div className="h-[120px] bg-green-50 overflow-hidden">
-              <Thumb src={cat.image} alt={cat.name} />
-            </div>
-            <div className="p-3">
-              <div className="text-sm font-semibold text-[#0f172a] mb-1 group-hover:text-[#006B4F] transition-colors leading-snug line-clamp-1">
-                {cat.name}
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-[#64748b]">
-                  {cat.productCount > 0 && (
-                    <div>
-                      {cat.productCount} product{cat.productCount === 1 ? "" : "s"}
-                    </div>
-                  )}
-                  {cat.subCount > 0 && <div>{cat.subCount} sub-categories</div>}
-                </div>
-                <div className="w-6 h-6 bg-[#f0fdf4] border border-[#dcfce7] group-hover:bg-[#006B4F] group-hover:border-[#006B4F] rounded-md flex items-center justify-center transition-colors">
-                  <ChevronRightIcon className="w-3.5 h-3.5 text-[#006B4F] group-hover:text-white transition-colors" />
-                </div>
-              </div>
-            </div>
-          </LocalizedClientLink>
-        ))}
       </div>
     </section>
   )

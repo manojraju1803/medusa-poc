@@ -9,10 +9,10 @@ import {
   APPLICATION_HANDLES,
   Applications,
   CategoryCard,
-  CategoryStrip,
   StatStrip,
   TrustedBrands,
 } from "@modules/home/components/catalogue-sections"
+import CategoryStrip from "@modules/home/components/category-carousel"
 import { PriceAccess } from "@modules/home/components/home-product-card"
 import Hero from "@modules/home/components/hero"
 import {
@@ -164,7 +164,7 @@ export default async function Home(props: {
       />
       <ProductRow
         title="New Arrivals"
-        desc="Recently added to the catalogue"
+        desc="Recently added ingredients from verified suppliers"
         products={newArrivals}
         access={access}
         badge="New"
@@ -172,8 +172,8 @@ export default async function Home(props: {
         viewAllHref="/store?sortBy=created_at"
       />
       <ProductRow
-        title="Trending Now"
-        desc="Popular picks across our categories"
+        title="Trending Products"
+        desc="High-interest ingredients buyers are sourcing across key applications"
         products={trending}
         access={access}
         badge="Trending"
