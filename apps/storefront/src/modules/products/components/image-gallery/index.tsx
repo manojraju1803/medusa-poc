@@ -48,6 +48,16 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
           </div>
         )}
       </div>
+      {realImages.length === 1 && (
+        <div className="flex items-center gap-3 mt-3">
+          <span className="relative w-20 h-14 shrink-0 rounded-lg overflow-hidden bg-white ring-2 ring-[#0098d8] ring-offset-2">
+            <Image src={realImages[0].url!} alt="" fill sizes="80px" className="object-contain p-1" />
+          </span>
+          <p className="text-[10px] leading-relaxed text-[#64748b]">
+            Only one verified image is available for this product. Additional images will appear here when supplied.
+          </p>
+        </div>
+      )}
       {realImages.length > 1 && (
         <div className="flex items-center gap-3 mt-3 overflow-x-auto pb-1">
           {realImages.map((image, i) => (
