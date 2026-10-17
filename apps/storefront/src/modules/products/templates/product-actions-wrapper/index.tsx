@@ -3,6 +3,7 @@ import { HttpTypes } from "@medusajs/types"
 import ProductActions from "@modules/products/components/product-actions"
 import { retrieveCart } from "@lib/data/cart"
 import { listPriceTiers } from "@lib/data/price-tiers"
+import { StockLevel, listStockLevels } from "@lib/data/stock-levels"
 import { Viewer, forViewer } from "@modules/products/lib/access"
 
 /**
@@ -32,12 +33,21 @@ export default async function ProductActionsWrapper({
     return null
   }
 
+  // Stock per warehouse, per variant; fetched for approved viewers only.
+  const stockLevels: Record<string, StockLevel[]> = {}
+  if (approved) {
+    const ids = (product.variants ?? []).map((v) => v.id)
+    const levels = await Promise.all(ids.map((vid) => listStockLevels(vid)))
+    ids.forEach((vid, i) => (stockLevels[vid] = levels[i]))
+  }
+
   return (
     <ProductActions
       product={forViewer(product, viewer)}
       region={region}
       viewer={viewer}
       priceTiers={approved ? priceTiers : []}
+      stockLevels={approved ? stockLevels : {}}
       cart={cart ? { id: cart.id, metadata: cart.metadata } : null}
     />
   )

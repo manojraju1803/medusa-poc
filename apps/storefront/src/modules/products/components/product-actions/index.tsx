@@ -14,6 +14,7 @@ import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react"
 import { VariantPriceTiers } from "types/global"
+import type { StockLevel } from "@lib/data/stock-levels"
 import { convertToLocale } from "@lib/util/money"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
@@ -35,7 +36,18 @@ type ProductActionsProps = {
   priceTiers?: VariantPriceTiers[]
   // The current cart, if any, for the payment-term label
   cart?: { id: string; metadata?: Record<string, unknown> | null } | null
+  // Stock per warehouse, keyed by variant id (approved viewers only)
+  stockLevels?: Record<string, StockLevel[]>
 }
+
+// MOCK for the demo: freight uplift per warehouse city. Display only; cart and
+// checkout still use the base price.
+const LOCATION_PRICE_FACTOR: Record<string, number> = {
+  Bangalore: 1,
+  Mumbai: 1.02,
+  Delhi: 1.04,
+}
+const BASE_CITY = "Bangalore"
 
 const optionsAsKeymap = (
   variantOptions: HttpTypes.StoreProductVariant["options"],
@@ -55,6 +67,7 @@ export default function ProductActions({
   viewer = "guest",
   priceTiers,
   cart,
+  stockLevels,
 }: ProductActionsProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -83,6 +96,7 @@ export default function ProductActions({
       : undefined
   )
   const [hasCart, setHasCart] = useState(!!cart?.id)
+  const [city, setCity] = useState(BASE_CITY)
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -163,6 +177,12 @@ export default function ProductActions({
   )
   const saving = tierSaving(variantTiers?.tiers)
 
+  const factor = LOCATION_PRICE_FACTOR[city] ?? 1
+  const atCity = (amount: number) => Math.round(amount * factor * 100) / 100
+  const cityTier = activeTier
+    ? { ...activeTier, unit_amount: atCity(activeTier.unit_amount) }
+    : undefined
+
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
     // If we don't manage inventory, we can always add to cart
@@ -187,7 +207,17 @@ export default function ProductActions({
     return false
   }, [selectedVariant])
 
-  const stockQty = selectedVariant?.inventory_quantity
+  const levels =
+    stockLevels?.[selectedVariant?.id ?? product.variants?.[0]?.id ?? ""] ?? []
+  const cities = levels.length
+    ? Array.from(new Set(levels.map((l) => l.city)))
+    : [BASE_CITY]
+  const cityLevels = levels.filter((l) => l.city === city)
+  const stockQty = levels.length
+    ? cityLevels.length
+      ? cityLevels.reduce((n, l) => n + (l.stocked_quantity || 0), 0)
+      : undefined
+    : selectedVariant?.inventory_quantity
 
   const currencyCode =
     variantTiers?.currency_code ??
@@ -199,13 +229,16 @@ export default function ProductActions({
       ? variantTiers.tiers.map((t) => ({
           from: t.from,
           label: t.to == null ? `${t.from}+ ${UNIT}` : `${t.from}–${t.to} ${UNIT}`,
-          amount: t.unit_amount,
+          amount: atCity(t.unit_amount),
         }))
       : [
           {
             from: minQuantity,
             label: `${minQuantity} ${UNIT}`,
-            amount: selectedVariant?.calculated_price?.calculated_amount ?? undefined,
+            amount:
+              selectedVariant?.calculated_price?.calculated_amount != null
+                ? atCity(selectedVariant.calculated_price.calculated_amount)
+                : undefined,
           },
         ]
 
@@ -332,7 +365,7 @@ export default function ProductActions({
             product={product}
             variant={selectedVariant}
             isLoggedIn
-            tier={activeTier}
+            tier={cityTier}
             quantity={belowMinimum ? undefined : quantity}
           />
           {saving && (
@@ -346,8 +379,8 @@ export default function ProductActions({
         </div>
 
         <div className="p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
-          <LocationBlock>
-            {typeof stockQty === "number" && selectedVariant?.manage_inventory ? (
+          <LocationBlock cities={cities} selected={city} onSelect={setCity}>
+            {typeof stockQty === "number" && (levels.length || selectedVariant?.manage_inventory) ? (
               <div
                 className={clx(
                   "mt-5 rounded-xl border p-4 flex items-start gap-3",
@@ -361,7 +394,7 @@ export default function ProductActions({
                     General availability: {stockQty > 0 ? "In Stock" : "Out of Stock"}
                   </div>
                   <div className="text-sm font-medium text-[#0f172a] mt-0.5">
-                    Stock Quantity (Bangalore): {stockQty > 0 ? `${stockQty.toLocaleString("en-IN")} ${UNIT}` : "0"}
+                    Stock Quantity ({city}): {stockQty > 0 ? `${stockQty.toLocaleString("en-IN")} ${UNIT}` : "0"}
                   </div>
                 </div>
               </div>
@@ -449,6 +482,9 @@ export default function ProductActions({
             </span>
             {saving && <span>Save {saving.percent}% at {saving.from}+ {UNIT}</span>}
           </div>
+          <p className="mt-2 text-[10px] text-[#64748b]" data-testid="location-price-note">
+            Prices for {city} include freight. Bangalore is the base warehouse.
+          </p>
         </div>
 
         <div className="flex gap-x-2">
@@ -538,7 +574,7 @@ export default function ProductActions({
           error={error}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
-          activeTier={activeTier}
+          activeTier={cityTier}
           addDisabled={belowMinimum}
         />
       </div>
@@ -552,8 +588,19 @@ const CheckIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
-// One real warehouse (Bangalore), so a single fixed location chip.
-function LocationBlock({ children }: { children?: ReactNode }) {
+// Warehouse chips from the stock levels; guests and unapproved viewers get
+// the single fixed Bangalore chip.
+function LocationBlock({
+  children,
+  cities = [BASE_CITY],
+  selected = BASE_CITY,
+  onSelect,
+}: {
+  children?: ReactNode
+  cities?: string[]
+  selected?: string
+  onSelect?: (city: string) => void
+}) {
   return (
     <>
       <h2 className="flex items-center gap-2 text-sm font-bold text-[#0f172a] mb-3">
@@ -563,10 +610,24 @@ function LocationBlock({ children }: { children?: ReactNode }) {
         </svg>
         Select Location
       </h2>
-      <div className="flex flex-wrap gap-2">
-        <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-bold rounded-xl border bg-[#0098d8] border-[#0098d8] text-white shadow-sm">
-          Bangalore
-        </span>
+      <div className="flex flex-wrap gap-2" data-testid="location-chips">
+        {cities.map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => onSelect?.(c)}
+            disabled={!onSelect}
+            aria-pressed={c === selected}
+            className={clx(
+              "inline-flex items-center justify-center px-4 py-2 text-xs font-bold rounded-xl border",
+              c === selected
+                ? "bg-[#0098d8] border-[#0098d8] text-white shadow-sm"
+                : "bg-white border-gray-200 text-[#0f172a] hover:border-[#0098d8]/40"
+            )}
+          >
+            {c}
+          </button>
+        ))}
       </div>
       {children}
     </>
