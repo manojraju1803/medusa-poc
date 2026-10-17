@@ -8,6 +8,7 @@ import BackButton from "@modules/layout/components/back-button"
 import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
 import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
+import SiteChrome from "@modules/layout/components/site-chrome"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 
 export const metadata: Metadata = {
@@ -27,7 +28,9 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
 
   return (
     <>
-      <Nav />
+      <SiteChrome loggedIn={!!customer}>
+        <Nav />
+      </SiteChrome>
       {customer && cart && (
         <CartMismatchBanner customer={customer} cart={cart} />
       )}
@@ -39,9 +42,13 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
           shippingOptions={shippingOptions}
         />
       )}
-      <BackButton />
+      <SiteChrome loggedIn={!!customer} floatingBack>
+        <BackButton />
+      </SiteChrome>
       {props.children}
-      <Footer />
+      <SiteChrome loggedIn={!!customer}>
+        <Footer />
+      </SiteChrome>
     </>
   )
 }
