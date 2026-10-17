@@ -309,7 +309,7 @@ export const Testimonials = () => (
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-[#0f172a] mb-1">What Our Clients Say</h2>
-        <p className="text-sm text-[#64748b]">Trusted by manufacturers across India</p>
+        <p className="text-sm text-[#64748b]">Sample quotes for layout only, to be replaced with real client testimonials</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {TESTIMONIALS.map((t) => (
