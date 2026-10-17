@@ -29,7 +29,7 @@ const ProductRow = ({
     >
       <div className="max-w-[1440px] mx-auto px-6">
         <SectionHeader title={title} desc={desc} viewAllHref={viewAllHref} />
-        <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {products.map((p) => (
             <li key={p.id}>
               <HomeProductCard product={p} access={access} badge={badge} />
