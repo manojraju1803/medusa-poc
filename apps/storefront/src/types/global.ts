@@ -22,3 +22,17 @@ export type StoreFreeShippingPrice = StorePrice & {
   target_remaining: number
   remaining_percentage: number
 }
+
+// One quantity slab from GET /store/price-tiers. `to` is null for "and above".
+export type PriceTier = {
+  from: number
+  to: number | null
+  unit_amount: number
+}
+
+export type VariantPriceTiers = {
+  variant_id: string
+  min_quantity: number
+  currency_code: string
+  tiers: PriceTier[]
+}

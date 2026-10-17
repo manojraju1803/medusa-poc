@@ -140,21 +140,84 @@ You can slo run the following command from the root to start both backend and st
 pnpm dev
 ```
 
-### Logs during development
+### Day-to-day development
 
-Run Postgres and Redis in Docker and the apps on the host, so backend and
-storefront logs print straight in your terminal:
+The recommended way to work on this project: run Postgres and Redis in Docker,
+and the backend and storefront directly on your machine. Code changes reload
+right away, logs print in your terminal, and your editor can see the installed
+packages.
 
-```bash
-docker compose up postgres redis -d
-pnpm dev
-```
+**First time only**
 
-If you run the full stack with `pnpm docker:up`, use `pnpm docker:logs` to
-follow the `medusa` and `storefront` output.
+1. Install dependencies from the repo root, with pnpm:
 
-Server-side fetches in the storefront log to that terminal (or container),
-not the browser console or Network tab.
+   ```bash
+   pnpm install
+   ```
+
+   Always use pnpm. `npm install` ignores `pnpm-lock.yaml` and the pnpm
+   overrides in the root `package.json`, so it installs different versions,
+   and it creates a second lockfile.
+
+2. Start Postgres and Redis:
+
+   ```bash
+   docker compose up -d postgres redis
+   ```
+
+3. Point the backend at them in `apps/backend/.env` (the values come from
+   `docker-compose.yml`):
+
+   ```bash
+   DATABASE_URL=postgres://postgres:postgres@localhost:5432/medusa-store
+   REDIS_URL=redis://localhost:6379
+   ```
+
+4. Set `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` in `apps/storefront/.env` to a
+   publishable key from this database (admin → Settings → Publishable API
+   Keys).
+
+**Every day**
+
+| To… | Run |
+|-----|-----|
+| Start working | `docker compose up -d postgres redis`, then `pnpm dev` from the repo root |
+| Stop | `Ctrl+C` (and `docker compose stop` to stop the database too) |
+| Apply migrations | `cd apps/backend`, then `pnpm medusa db:migrate` |
+| Add a package | `cd apps/backend` (or `apps/storefront`), then `pnpm add <package>` |
+| Query the database | `docker compose exec postgres psql -U postgres -d medusa-store` |
+
+`pnpm dev` starts both apps; `pnpm backend:dev` or `pnpm storefront:dev` starts
+just one. The admin runs at `http://localhost:9000/app` and the storefront at
+`http://localhost:8000`.
+
+Nothing runs migrations for you in this setup. Run `pnpm medusa db:migrate`
+after pulling changes that add migrations or module links, after upgrading
+Medusa, and after generating a migration with
+`pnpm medusa db:generate <module>`. When nothing is pending, it does nothing.
+
+Don't start the app containers while `pnpm dev` is running: plain
+`docker compose up -d` and `pnpm docker:up` also start the `medusa` and
+`storefront` containers, which need the same ports (9000 and 8000). If you see
+a "port already in use" error, run `docker compose stop medusa storefront`.
+
+Backend and storefront logs print in the terminal running `pnpm dev`.
+Server-side fetches in the storefront log there too, not in the browser
+console or Network tab.
+
+#### Running everything in Docker instead
+
+`pnpm docker:up` runs Postgres, Redis, the backend and the storefront in
+containers. Follow their logs with `pnpm docker:logs` and stop them with
+`pnpm docker:down`. Migrations run automatically each time the backend
+container starts.
+
+- The containers read `apps/backend/.env` and `apps/storefront/.env` (not
+  `.env.local`) and swap in their own database, Redis and backend URLs, so the
+  same files work for both setups. Both setups use the same database.
+- Packages live in Docker volumes, so the `node_modules` folders on your
+  machine stay empty. Run `pnpm install` on your machine as well if you want
+  editor support.
 
 ## Configuration
 

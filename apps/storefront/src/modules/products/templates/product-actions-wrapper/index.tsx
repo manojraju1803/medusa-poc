@@ -2,6 +2,7 @@ import { listProducts } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
 import ProductActions from "@modules/products/components/product-actions"
 import { retrieveCustomer } from "@lib/data/customer"
+import { listPriceTiers } from "@lib/data/price-tiers"
 
 /**
  * Fetches real time pricing for a product and renders the product actions component.
@@ -14,11 +15,14 @@ export default async function ProductActionsWrapper({
   region: HttpTypes.StoreRegion
 }) {
   try {
-    const [product, customer] = await Promise.all([
+    const [product, customer, priceTiers] = await Promise.all([
       listProducts({ queryParams: { id: [id] }, regionId: region?.id })
         .then(({ response }) => response?.products?.[0])
         .catch(() => null),
       retrieveCustomer().catch(() => null),
+      listPriceTiers({ productIds: [id], regionId: region?.id }).catch(
+        () => []
+      ),
     ])
     if (!product) {
       return null
@@ -36,6 +40,7 @@ export default async function ProductActionsWrapper({
         region={region}
         isLoggedIn={!!customer}
         isApproved={isApproved}
+        priceTiers={priceTiers}
       />
     )
   } catch {

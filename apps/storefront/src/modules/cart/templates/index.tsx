@@ -5,13 +5,16 @@ import SignInPrompt from "../components/sign-in-prompt"
 import Divider from "@modules/common/components/divider"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
+import { VariantPriceTiers } from "types/global"
 
 const CartTemplate = ({
   cart,
   customer,
+  priceTiers,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
+  priceTiers: VariantPriceTiers[]
 }) => {
   return (
     <div className="bg-[#fcfdfd] min-h-screen">
@@ -37,7 +40,7 @@ const CartTemplate = ({
                   <Divider />
                 </>
               )}
-              <ItemsTemplate cart={cart} />
+              <ItemsTemplate cart={cart} priceTiers={priceTiers} />
             </div>
 
             {/* Right Summary Column (4 cols, Sticky) */}
