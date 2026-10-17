@@ -28,7 +28,7 @@ export default async function SuppliersPage() {
       />
       {suppliers.length > 0 && (
         <div className="bg-white border-b border-gray-100">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-around gap-4">
             {stats.map((s) => (
               <div key={s.l} className="text-center">
                 <div className="text-xl font-extrabold text-[#006B4F]">
@@ -40,7 +40,7 @@ export default async function SuppliersPage() {
           </div>
         </div>
       )}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <SupplierDirectory suppliers={suppliers} />
       </div>
     </div>

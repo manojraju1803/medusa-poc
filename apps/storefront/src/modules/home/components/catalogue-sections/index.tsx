@@ -41,7 +41,7 @@ export const StatStrip = ({
 
   return (
     <section className="bg-[#f0fdf4] border-y border-[#dcfce7]">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-6">
+      <div className="max-w-[1440px] mx-auto px-6 py-6">
         <div
           className={`grid grid-cols-2 ${
             shown.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"
@@ -86,7 +86,7 @@ export const Applications = ({ apps }: { apps: CategoryCard[] }) => {
 
   return (
     <section className="bg-[#f8fffe] border-y border-[#e2f3eb] py-12">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+      <div className="max-w-[1440px] mx-auto px-6">
         <SectionHeader
           title="Ingredients by Application"
           desc="Find the right ingredients for your formulation needs"
@@ -130,7 +130,7 @@ export const TrustedBrands = ({
   if (!brands.length) return null
 
   return (
-    <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-10">
+    <section className="max-w-[1440px] mx-auto px-6 py-10">
       <div className="text-center mb-7">
         <div className="text-xs font-bold text-[#006B4F] uppercase tracking-wider mb-2">
           Our Trusted Brands

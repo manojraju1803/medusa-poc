@@ -68,7 +68,7 @@ export default async function SearchTemplate({
       >
         <SearchForm q={term} />
       </PageBanner>
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-8 space-y-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8 space-y-10">
         {brands.length > 0 && (
           <section data-testid="search-brands">
             <h2 className="text-lg font-bold text-[#0f172a] mb-4">Brands</h2>

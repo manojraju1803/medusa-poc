@@ -77,7 +77,7 @@ const StoreTemplate = async ({
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent" />
         </div>
-        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-8">
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
           <nav className="flex items-center gap-2 text-xs text-[#9ca3af] mb-4">
             <LocalizedClientLink href="/" className="hover:text-[#006B4F]">
               Home
@@ -120,7 +120,7 @@ const StoreTemplate = async ({
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-6 flex flex-col small:flex-row gap-5">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 flex flex-col small:flex-row gap-5">
         <ListingFilters categories={categoryOptions} brands={brandOptions} />
         <div className="flex-1 min-w-0">
           <ListingToolbar

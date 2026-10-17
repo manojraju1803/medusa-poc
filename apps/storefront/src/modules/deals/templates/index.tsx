@@ -186,7 +186,7 @@ export default async function DealsTemplate({
     <div className="min-h-screen bg-[#f8fffe]">
       <section className="relative overflow-hidden bg-[#0d3320]">
         <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320] via-[#0d3320]/90 to-[#0d3320]/60" />
-        <div className="relative max-w-[1440px] mx-auto px-6 lg:px-12 py-10">
+        <div className="relative max-w-[1440px] mx-auto px-6 py-10">
           <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-400/30 text-red-300 text-xs font-bold px-3 py-1.5 rounded-full mb-4">
             <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
             Deal of the Month — Bulk Savings
@@ -228,7 +228,7 @@ export default async function DealsTemplate({
         </div>
       </section>
 
-      <div id="deals" className="max-w-[1440px] mx-auto px-6 lg:px-12 py-7">
+      <div id="deals" className="max-w-[1440px] mx-auto px-6 py-7">
         <div className="flex flex-col lg:flex-row gap-5">
           <aside className="w-full lg:w-[220px] flex-shrink-0">
             <div className="bg-white border border-gray-100 rounded-xl p-4">

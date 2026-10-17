@@ -143,7 +143,7 @@ const ProductTemplate = async ({
 
   return (
     <div className="bg-[#f7faf9] min-h-screen" data-testid="product-container">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <nav className="flex items-center gap-2 text-xs text-[#64748b] mb-5">
           <LocalizedClientLink href="/" className="hover:text-[#006B4F]">Home</LocalizedClientLink>
           <span>›</span>

@@ -42,7 +42,7 @@ const Hero = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#052e16]/[.92] via-[#052e16]/[.76] to-[#052e16]/[.15]" />
       </div>
-      <div className="relative max-w-[1440px] mx-auto px-6 lg:px-12 w-full py-16">
+      <div className="relative max-w-[1440px] mx-auto px-6 w-full py-16">
         <div className="grid lg:grid-cols-[1fr_340px] gap-12 items-center">
           <div>
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-[#86efac] text-xs font-semibold px-3 py-1.5 rounded-full mb-5">

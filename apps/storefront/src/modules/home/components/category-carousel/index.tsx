@@ -28,7 +28,7 @@ const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
   if (!categories.length) return null
 
   return (
-    <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
+    <section className="max-w-[1440px] mx-auto px-6 py-12">
       <div className="flex items-center justify-between mb-6 gap-4">
         <div>
           <h2 className="text-2xl font-bold text-[#0f172a] mb-1">Browse by Category</h2>
