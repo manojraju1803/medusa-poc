@@ -38,6 +38,7 @@ module.exports = defineConfig({
         : { ssl: false, sslmode: 'disable' },
   },
   modules: [
+    { resolve: './src/modules/inquiry' },
     {
       resolve: '@medusajs/medusa/tax',
       options: {

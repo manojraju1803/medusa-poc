@@ -6,6 +6,8 @@ import {
 } from '@medusajs/framework/http';
 import { MedusaError } from '@medusajs/framework/utils';
 import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
+import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
+import { inquiryMiddlewares } from './store/inquiries/middlewares';
 import { priceTierMiddlewares } from './store/price-tiers/middlewares';
 import { isApproved } from './utils/is-approved';
 
@@ -69,6 +71,8 @@ export default defineMiddlewares({
   routes: [
     ...priceListSlabMiddlewares,
     ...priceTierMiddlewares,
+    ...inquiryMiddlewares,
+    ...approvalMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',
