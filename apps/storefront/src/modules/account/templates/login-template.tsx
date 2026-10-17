@@ -40,10 +40,19 @@ const LoginTemplate = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-64px)]">
-      <div className="hidden lg:flex lg:w-[44%] relative flex-col overflow-hidden bg-gradient-to-br from-[#052e16] via-[#0d3320] to-[#006B4F]">
+      <div className="hidden lg:flex lg:w-[48%] xl:w-[45%] relative flex-col overflow-hidden">
+        <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1615485925600-97237c4fc1ec?w=900&h=1100&fit=crop&auto=format"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#052e16]/[0.88] via-[#0d3320]/80 to-[#006B4F]/70" />
+        </div>
         <div className="relative flex flex-col h-full p-10 xl:p-12">
           <div className="inline-flex w-fit items-center gap-2 bg-white/10 border border-white/20 text-[#86efac] text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
-            <span className="w-1.5 h-1.5 bg-[#4ade80] rounded-full" />
+            <span className="w-1.5 h-1.5 bg-[#4ade80] rounded-full animate-pulse" />
             B2B ingredient marketplace
           </div>
           <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-[1.15] mb-4">
@@ -57,7 +66,7 @@ const LoginTemplate = () => {
             traders, delivered from our Bangalore warehouse.
           </p>
           <div className="text-xs font-bold text-[#4ade80] uppercase tracking-wider mb-4">
-            Why Ingredients Bazar?
+            Why Join Ingredients Bazar?
           </div>
           <ul className="space-y-4">
             {WHY_JOIN.map((item) => (
@@ -80,7 +89,7 @@ const LoginTemplate = () => {
           </ul>
         </div>
       </div>
-      <div className="flex-1 bg-[#f8fffe] flex items-start justify-center py-10 px-4 sm:px-8">
+      <div className="flex-1 bg-[#fafffe] flex items-start justify-center py-10 px-4 sm:px-8">
         <div className="w-full max-w-[520px]">
           {currentView === LOGIN_VIEW.SIGN_IN ? (
             <Login setCurrentView={setCurrentView} />
