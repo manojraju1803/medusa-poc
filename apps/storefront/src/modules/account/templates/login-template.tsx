@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation"
 
 import Register from "@modules/account/components/register"
 import Login from "@modules/account/components/login"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export enum LOGIN_VIEW {
   SIGN_IN = "sign-in",
@@ -30,7 +31,12 @@ const WHY_JOIN = [
   },
 ]
 
-const LoginTemplate = () => {
+type Props = {
+  stats?: { value: string; label: string }[]
+  categories?: { name: string; handle: string }[]
+}
+
+const LoginTemplate = ({ stats = [], categories = [] }: Props) => {
   const searchParams = useSearchParams()
   const [currentView, setCurrentView] = useState<LOGIN_VIEW>(
     searchParams.get("view") === LOGIN_VIEW.REGISTER
@@ -39,6 +45,7 @@ const LoginTemplate = () => {
   )
 
   return (
+    <>
     <div className="flex min-h-[calc(100vh-64px)]">
       <div className="hidden lg:flex lg:w-[48%] xl:w-[45%] relative flex-col overflow-hidden">
         <div className="absolute inset-0">
@@ -61,10 +68,23 @@ const LoginTemplate = () => {
             Ingredients
             <span className="text-[#4ade80]"> Bazar</span>
           </h2>
-          <p className="text-[#bbf7d0]/85 text-sm leading-relaxed max-w-sm mb-10">
+          <p className="text-[#bbf7d0]/85 text-sm leading-relaxed max-w-sm mb-8">
             Premium food and nutrition ingredients for manufacturers and
             traders, delivered from our Bangalore warehouse.
           </p>
+          {stats.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 mb-8">
+              {stats.map((st) => (
+                <div
+                  key={st.label}
+                  className="bg-white/10 border border-white/15 rounded-xl p-3 text-center"
+                >
+                  <div className="text-xl font-extrabold text-white">{st.value}</div>
+                  <div className="text-[10px] text-[#86efac]/80 mt-0.5">{st.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="text-xs font-bold text-[#4ade80] uppercase tracking-wider mb-4">
             Why Join Ingredients Bazar?
           </div>
@@ -99,6 +119,31 @@ const LoginTemplate = () => {
         </div>
       </div>
     </div>
+    {categories.length > 0 && (
+      <div className="bg-[#0d3320] border-t border-white/5">
+        <div className="max-w-[1440px] mx-auto px-6 py-5">
+          <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
+            <span className="text-[#4ade80] text-xs font-semibold mr-3 shrink-0">
+              Browse Categories:
+            </span>
+            {categories.map((cat, i) => (
+              <span key={cat.handle} className="flex items-center">
+                <LocalizedClientLink
+                  href={`/categories/${cat.handle}`}
+                  className="text-xs text-[#86efac] hover:text-white transition-colors px-2 py-1 rounded hover:bg-white/5"
+                >
+                  {cat.name}
+                </LocalizedClientLink>
+                {i < categories.length - 1 && (
+                  <span className="text-white/15 mx-1">|</span>
+                )}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }
 
