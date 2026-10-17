@@ -46,7 +46,7 @@ const CartTemplate = ({
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320]/95 via-[#0d3320]/85 to-transparent" />
         </div>
-        <div className="relative max-w-[1440px] mx-auto px-4 small:px-6 py-8">
+        <div className="relative max-w-[1440px] mx-auto px-4 small:px-6 lg:px-12 py-8">
           <div className="flex flex-col small:flex-row items-start small:items-center justify-between gap-6">
             <div>
               <div className="flex items-center gap-1.5 mb-3 text-[11px] text-[#86efac]/70">
@@ -79,7 +79,7 @@ const CartTemplate = ({
         </div>
       </section>
 
-      <div className="max-w-[1440px] mx-auto px-4 small:px-6 py-7">
+      <div className="max-w-[1440px] mx-auto px-4 small:px-6 lg:px-12 py-7">
         {pending ? (
           <div className="py-24 text-center">
             <h2 className="text-xl font-semibold text-[#0d3320] mb-2">

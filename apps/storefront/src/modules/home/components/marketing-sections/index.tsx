@@ -16,7 +16,7 @@ const ORDER_PROCESS = [
 
 export const OrderProcess = () => (
   <section className="bg-[#f8fffe] border-y border-[#e2f3eb] py-12">
-    <div className="max-w-[1440px] mx-auto px-6">
+    <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-[#0f172a] mb-1">Simple Process</h2>
         <p className="text-sm text-[#64748b]">
@@ -89,7 +89,7 @@ const GUIDES = [
 
 export const InstructionVideos = () => (
   <section className="bg-white py-14">
-    <div className="max-w-[1440px] mx-auto px-6">
+    <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
       <div className="max-w-2xl mx-auto text-center mb-9">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] text-xs font-bold uppercase tracking-wider rounded-full mb-3">
           <PlayIcon className="w-3.5 h-3.5" />
@@ -254,7 +254,7 @@ export const MarketplaceComparison = () => (
 
 export const WhyChooseUs = () => (
   <section className="bg-[#0d3320] py-14">
-    <div className="max-w-[1440px] mx-auto px-6">
+    <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold text-white mb-2">Why Ingredients Bazar?</h2>
         <p className="text-[#86efac] text-sm max-w-xl mx-auto">
@@ -281,7 +281,7 @@ export const WhyChooseUs = () => (
 )
 
 export const CtaBanner = () => (
-  <section className="max-w-[1440px] mx-auto px-6 py-12">
+  <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
     <div className="bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7] border border-[#bbf7d0] rounded-2xl p-8 lg:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
       <div>
         <h2 className="text-2xl lg:text-3xl font-bold text-[#0f172a] mb-2">

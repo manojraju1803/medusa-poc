@@ -26,7 +26,7 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
 
   return (
     <div className="flex-1 bg-[#f8fffe]" data-testid="account-page">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-6">
         <Suspense fallback={null}>
           <ApprovalBanner approved={approved} />
         </Suspense>

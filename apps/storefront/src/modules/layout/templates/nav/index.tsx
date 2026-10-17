@@ -19,7 +19,7 @@ import { getNavMenus } from "@modules/layout/lib/menu-categories"
 
 const UtilityBar = () => (
   <div className="bg-[#0d3320] text-white text-xs py-2 shrink-0">
-    <div className="max-w-[1440px] mx-auto px-6 flex items-center justify-between">
+    <div className="max-w-[1440px] mx-auto px-6 lg:px-12 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <span className="flex items-center gap-1.5 opacity-80">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 004 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" /></svg>
@@ -93,7 +93,7 @@ export default async function Nav() {
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
       <UtilityBar />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-4 py-2.5 flex items-center gap-3">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-2.5 flex items-center gap-3">
           <LocalizedClientLink
             href="/"
             className="flex items-center shrink-0"

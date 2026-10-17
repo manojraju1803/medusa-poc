@@ -10,7 +10,7 @@ const BackButton = () => {
   if (pathname.split("/").filter(Boolean).length <= 1) return null
 
   return (
-    <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 pt-3">
+    <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-12 pt-3">
       <button
         type="button"
         onClick={() => router.back()}

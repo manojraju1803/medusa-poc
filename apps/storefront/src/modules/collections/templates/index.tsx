@@ -41,7 +41,7 @@ export default async function CollectionTemplate({
           className="absolute inset-0 w-full h-full object-cover opacity-30"
         />
       </div>
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
         <div className="bg-white border border-gray-100 rounded-2xl shadow-sm -mt-6 relative p-5 mb-5">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <SupplierLogo supplier={supplier} size="lg" />

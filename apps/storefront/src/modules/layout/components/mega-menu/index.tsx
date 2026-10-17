@@ -103,7 +103,7 @@ const MegaMenu = ({
           aria-label={`${label} categories`}
           className="absolute top-full left-0 right-0 bg-white border-t border-gray-100 border-b shadow-xl z-50 max-h-[calc(100vh-5rem)] overflow-y-auto"
         >
-          <div className="max-w-[1440px] mx-auto px-7 py-6 relative">
+          <div className="max-w-[1440px] mx-auto px-7 lg:px-12 py-6 relative">
             <button
               type="button"
               onClick={() => setOpen(null)}

@@ -121,7 +121,7 @@ const LoginTemplate = ({ stats = [], categories = [] }: Props) => {
     </div>
     {categories.length > 0 && (
       <div className="bg-[#0d3320] border-t border-white/5">
-        <div className="max-w-[1440px] mx-auto px-6 py-5">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-5">
           <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
             <span className="text-[#4ade80] text-xs font-semibold mr-3 shrink-0">
               Browse Categories:

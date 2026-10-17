@@ -40,7 +40,7 @@ export default async function ContactPage(props: {
         title="Contact Us"
         subtitle="Get in touch with our expert sourcing team — we're here to help"
       />
-      <div className="max-w-[1440px] mx-auto px-6 py-8">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6">
           <ContactForm defaultSubject={subject || ""} />
           <div className="space-y-4">
