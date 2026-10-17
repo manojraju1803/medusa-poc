@@ -12,6 +12,7 @@ import {
   HeartIcon,
 } from "@modules/layout/components/ib-icons"
 import MegaMenu from "@modules/layout/components/mega-menu"
+import LogoutButton from "@modules/layout/components/logout-button"
 import MobileMenu from "@modules/layout/components/mobile-menu"
 import { FOOD_MENU, NUTRA_MENU } from "@modules/layout/components/nav-links"
 import { getNavMenus } from "@modules/layout/lib/menu-categories"
@@ -79,6 +80,8 @@ export default async function Nav() {
     [customer?.first_name, customer?.last_name].filter(Boolean).join(" ") ||
     customer?.company_name ||
     customer?.email
+  const accountType =
+    customer?.metadata?.account_type === "supplier" ? "Supplier" : "Buyer"
   const initials = (displayName || "?")
     .split(/[\s@.]+/)
     .filter(Boolean)
@@ -148,7 +151,7 @@ export default async function Nav() {
                       {displayName}
                     </span>
                     <span className="text-[9px] text-[#006B4F] leading-none mt-0.5">
-                      Buyer
+                      {accountType}
                     </span>
                   </span>
                   <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -160,7 +163,7 @@ export default async function Nav() {
                   <LocalizedClientLink href="/account/wishlist" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Wishlist</LocalizedClientLink>
                   <LocalizedClientLink href="/contact" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Request Quote</LocalizedClientLink>
                   <div className="border-t border-gray-100 mt-1 pt-1">
-                    <LocalizedClientLink href="/account" className="block w-full text-left px-4 py-2 text-sm text-[#006B4F] hover:bg-[#f0fdf4] transition-colors">My Account</LocalizedClientLink>
+                    <LogoutButton />
                   </div>
                 </div>
               </div>
