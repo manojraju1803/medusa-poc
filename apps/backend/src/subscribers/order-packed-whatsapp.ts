@@ -16,12 +16,11 @@ export default async function orderPackedWhatsAppSubscriber({
     if (!orderId && targetId?.startsWith("ful_")) {
       const { data: fulfillments } = await query.graph({
         entity: "fulfillment",
-        fields: ["id", "order_id", "orders.id"],
+        fields: ["id", "order.id"],
         filters: { id: targetId },
       })
       orderId =
-        (fulfillments?.[0] as any)?.order_id ||
-        (fulfillments?.[0] as any)?.orders?.[0]?.id
+        (fulfillments?.[0] as any)?.order?.id
     }
 
     if (!orderId) {
@@ -45,16 +44,15 @@ export default async function orderPackedWhatsAppSubscriber({
         entity: "fulfillment",
         fields: [
           "id",
-          "order_id",
-          "orders.id",
-          "orders.display_id",
-          "orders.email",
-          "orders.shipping_address.*",
-          "orders.customer.*",
+          "order.id",
+          "order.display_id",
+          "order.email",
+          "order.shipping_address.*",
+          "order.customer.*",
         ],
         filters: { id: targetId },
       })
-      const foundOrder = (fulfillments?.[0] as any)?.orders?.[0]
+      const foundOrder = (fulfillments?.[0] as any)?.order
       if (foundOrder) {
         orders = [foundOrder]
       }
@@ -104,6 +102,5 @@ export const config: SubscriberConfig = {
   event: [
     "order.fulfillment_created",
     "fulfillment.created",
-    "fulfillment.fulfillment.created",
   ],
 }

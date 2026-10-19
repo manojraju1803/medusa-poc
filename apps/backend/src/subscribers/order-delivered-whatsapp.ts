@@ -16,7 +16,7 @@ export default async function orderDeliveredWhatsAppSubscriber({
     if (!orderId && targetId) {
       const { data: fulfillments } = await query.graph({
         entity: "fulfillment",
-        fields: ["id", "order_id", "delivered_at", "orders.id"],
+        fields: ["id", "delivered_at", "order.id"],
         filters: { id: targetId },
       })
       const ful = fulfillments?.[0] as any
@@ -25,7 +25,7 @@ export default async function orderDeliveredWhatsAppSubscriber({
         if (eventName === "fulfillment.fulfillment.updated" && !ful.delivered_at) {
           return
         }
-        orderId = ful.order_id || ful.orders?.[0]?.id
+        orderId = ful.order?.id
       }
     }
 
@@ -50,16 +50,15 @@ export default async function orderDeliveredWhatsAppSubscriber({
         entity: "fulfillment",
         fields: [
           "id",
-          "order_id",
-          "orders.id",
-          "orders.display_id",
-          "orders.email",
-          "orders.shipping_address.*",
-          "orders.customer.*",
+          "order.id",
+          "order.display_id",
+          "order.email",
+          "order.shipping_address.*",
+          "order.customer.*",
         ],
         filters: { id: targetId },
       })
-      const foundOrder = (fulfillments?.[0] as any)?.orders?.[0]
+      const foundOrder = (fulfillments?.[0] as any)?.order
       if (foundOrder) {
         orders = [foundOrder]
       }
@@ -108,11 +107,9 @@ export default async function orderDeliveredWhatsAppSubscriber({
 export const config: SubscriberConfig = {
   event: [
     "delivery.created",
-    "order.completed",
     "order.delivered",
     "fulfillment.delivered",
     "order.fulfillment_delivered",
-    "fulfillment.fulfillment.updated",
   ],
 }
 
