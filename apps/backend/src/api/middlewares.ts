@@ -36,6 +36,9 @@ const RAW_PRICE_SEGMENTS = new Set(['prices', 'price_rules']);
 // The sanctioned customer-facing price, resolved per customer.
 const CALCULATED_PRICE_SEGMENT = 'calculated_price';
 
+// Stock levels are shown to approved buyers only, like prices.
+const STOCK_SEGMENT = 'inventory_quantity';
+
 // "*variants.prices" and "variants.prices.amount" both yield a "prices" segment.
 function fieldSegments(field: string): string[] {
   return field.replace(/^[*+-]+/, '').split('.');
@@ -55,15 +58,14 @@ async function hidePrices(
     (field) => !fieldSegments(field).some((s) => RAW_PRICE_SEGMENTS.has(s)),
   );
 
-  const requestsCalculatedPrice = withoutRawPrices.some((field) =>
-    fieldSegments(field).includes(CALCULATED_PRICE_SEGMENT),
-  );
+  const isGated = (field: string) =>
+    fieldSegments(field).some(
+      (s) => s === CALCULATED_PRICE_SEGMENT || s === STOCK_SEGMENT,
+    );
 
   req.queryConfig.fields =
-    requestsCalculatedPrice && !(await isApproved(req))
-      ? withoutRawPrices.filter(
-          (field) => !fieldSegments(field).includes(CALCULATED_PRICE_SEGMENT),
-        )
+    withoutRawPrices.some(isGated) && !(await isApproved(req))
+      ? withoutRawPrices.filter((field) => !isGated(field))
       : withoutRawPrices;
 
   next();
