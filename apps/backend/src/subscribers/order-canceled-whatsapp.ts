@@ -15,12 +15,10 @@ export default async function orderCanceledWhatsAppSubscriber({
     if (orderId?.startsWith("ful_")) {
       const { data: fulfillments } = await query.graph({
         entity: "fulfillment",
-        fields: ["id", "order_id", "orders.id"],
+        fields: ["id", "order.id"],
         filters: { id: orderId },
       })
-      orderId =
-        (fulfillments?.[0] as any)?.order_id ||
-        (fulfillments?.[0] as any)?.orders?.[0]?.id
+      orderId = (fulfillments?.[0] as any)?.order?.id
     }
 
     const { data: orders } = await query.graph({
