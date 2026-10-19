@@ -1,50 +1,54 @@
 import { listProducts } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
 import ProductActions from "@modules/products/components/product-actions"
-import { retrieveCustomer } from "@lib/data/customer"
+import { retrieveCart } from "@lib/data/cart"
 import { listPriceTiers } from "@lib/data/price-tiers"
+import { StockLevel, listStockLevels } from "@lib/data/stock-levels"
+import { Viewer, forViewer } from "@modules/products/lib/access"
 
 /**
  * Fetches real time pricing for a product and renders the product actions component.
+ * Prices, slabs and stock only reach the client for approved viewers.
  */
 export default async function ProductActionsWrapper({
   id,
   region,
+  viewer,
 }: {
   id: string
   region: HttpTypes.StoreRegion
+  viewer: Viewer
 }) {
-  try {
-    const [product, customer, priceTiers] = await Promise.all([
-      listProducts({ queryParams: { id: [id] }, regionId: region?.id })
-        .then(({ response }) => response?.products?.[0])
-        .catch(() => null),
-      retrieveCustomer().catch(() => null),
-      listPriceTiers({ productIds: [id], regionId: region?.id }).catch(
-        () => []
-      ),
-    ])
-    if (!product) {
-      return null
-    }
-
-    const isApproved =
-      !!product.variants?.some((v) => !!v.calculated_price) ||
-      !!(
-        customer as (HttpTypes.StoreCustomer & { groups?: { name?: string }[] }) | null
-      )?.groups?.some((g: { name?: string }) => g.name === "Approved")
-
-    return (
-      <ProductActions
-        product={product}
-        region={region}
-        isLoggedIn={!!customer}
-        isApproved={isApproved}
-        priceTiers={priceTiers}
-      />
-    )
-  } catch {
+  const approved = viewer === "approved"
+  const [product, priceTiers, cart] = await Promise.all([
+    listProducts({ queryParams: { id: [id] }, regionId: region.id }).then(
+      ({ response }) => response.products[0],
+    ),
+    approved
+      ? listPriceTiers({ productIds: [id], regionId: region.id })
+      : Promise.resolve([]),
+    approved ? retrieveCart(undefined, "id,metadata") : Promise.resolve(null),
+  ])
+  if (!product) {
     return null
   }
-}
 
+  // Stock per warehouse, per variant; fetched for approved viewers only.
+  const stockLevels: Record<string, StockLevel[]> = {}
+  if (approved) {
+    const ids = (product.variants ?? []).map((v) => v.id)
+    const levels = await Promise.all(ids.map((vid) => listStockLevels(vid)))
+    ids.forEach((vid, i) => (stockLevels[vid] = levels[i]))
+  }
+
+  return (
+    <ProductActions
+      product={forViewer(product, viewer)}
+      region={region}
+      viewer={viewer}
+      priceTiers={approved ? priceTiers : []}
+      stockLevels={approved ? stockLevels : {}}
+      cart={cart ? { id: cart.id, metadata: cart.metadata } : null}
+    />
+  )
+}

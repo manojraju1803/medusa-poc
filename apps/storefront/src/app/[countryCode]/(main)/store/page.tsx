@@ -4,30 +4,18 @@ import { parseOptionValueIds } from "@lib/util/product-option-filters"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import StoreTemplate from "@modules/store/templates"
 
-import { getBaseURL } from "@lib/util/env"
-
 export const metadata: Metadata = {
-  title: "Multi-Brand Natural Ingredients Catalog | IngredientsBazar",
-  description:
-    "Explore 370+ lab-certified raw ingredients across food, botanical, dairy, and nutraceutical manufacturing. Verified batch CoA, tiered wholesale pricing, and live inventory.",
-  alternates: {
-    canonical: `${getBaseURL()}/in/store`,
-  },
-  openGraph: {
-    title: "Multi-Brand Natural Ingredients Catalog | IngredientsBazar",
-    description:
-      "Direct B2B procurement for 100% pure botanical extracts, plant proteins, natural sweeteners, and clean-label dairy.",
-    url: `${getBaseURL()}/in/store`,
-    siteName: "IngredientsBazar",
-    type: "website",
-  },
+  title: "Ingredients",
+  description: "Browse verified ingredients by category and brand.",
 }
 
 type StorePageSearchParams = Record<string, string | string[] | undefined> & {
   sortBy?: SortOptions
   page?: string
   optionValueIds?: string | string[]
-  q?: string
+  category?: string | string[]
+  brand?: string | string[]
+  view?: string
 }
 
 type Params = {
@@ -37,10 +25,13 @@ type Params = {
   }>
 }
 
+const asList = (v?: string | string[]) =>
+  (Array.isArray(v) ? v : v ? [v] : []).filter(Boolean)
+
 export default async function StorePage(props: Params) {
   const params = await props.params
   const searchParams = await props.searchParams
-  const { sortBy, page, q } = searchParams
+  const { sortBy, page } = searchParams
   const optionValueIds = parseOptionValueIds(searchParams)
 
   return (
@@ -49,8 +40,9 @@ export default async function StorePage(props: Params) {
       page={page}
       countryCode={params.countryCode}
       optionValueIds={optionValueIds}
-      q={typeof q === "string" ? q : undefined}
+      categoryHandles={asList(searchParams.category)}
+      brandHandles={asList(searchParams.brand)}
+      viewMode={searchParams.view === "list" ? "list" : "grid"}
     />
   )
 }
-

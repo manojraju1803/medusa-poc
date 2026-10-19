@@ -18,7 +18,6 @@ export const retrieveCollection = async (id: string) => {
       }
     )
     .then(({ collection }) => collection)
-    .catch(() => null)
 }
 
 export const listCollections = async (
@@ -41,7 +40,6 @@ export const listCollections = async (
       }
     )
     .then(({ collections }) => ({ collections, count: collections.length }))
-    .catch(() => ({ collections: [], count: 0 }))
 }
 
 export const getCollectionByHandle = async (
@@ -58,6 +56,4 @@ export const getCollectionByHandle = async (
       cache: "force-cache",
     })
     .then(({ collections }) => collections[0] || null)
-    .catch(() => null)
 }
-

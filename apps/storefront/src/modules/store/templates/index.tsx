@@ -1,77 +1,148 @@
 import { Suspense } from "react"
 
+import { listCategories } from "@lib/data/categories"
+import { listCollections } from "@lib/data/collections"
+import { retrieveCustomer } from "@lib/data/customer"
 import { OptionValueIds } from "@lib/util/product-option-filters"
-import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
-import RefinementList from "@modules/store/components/refinement-list"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
+import {
+  ListingFilters,
+  ListingToolbar,
+} from "@modules/store/components/listing-controls"
+import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 import PaginatedProducts from "./paginated-products"
 
-const StoreTemplate = ({
+const StoreTemplate = async ({
   sortBy,
   page,
   countryCode,
   optionValueIds,
-  q,
+  categoryHandles = [],
+  brandHandles = [],
+  viewMode = "grid",
 }: {
   sortBy?: SortOptions
   page?: string
   countryCode: string
   optionValueIds?: OptionValueIds
-  q?: string
+  categoryHandles?: string[]
+  brandHandles?: string[]
+  viewMode?: "grid" | "list"
 }) => {
-  const pageNumber = page ? parseInt(page) : 1
+  const pageNumber = page ? parseInt(page) || 1 : 1
   const sort = sortBy || "created_at"
 
+  const [categories, { collections }, customer] = await Promise.all([
+    listCategories({
+      fields: "id,name,handle,parent_category_id",
+      parent_category_id: "null",
+      limit: 100,
+    }).catch(() => []),
+    listCollections({ fields: "id,title,handle" }).catch(() => ({
+      collections: [],
+    })),
+    retrieveCustomer(),
+  ])
+
+  const categoryOptions = categories
+    .map((c) => ({ id: c.id, handle: c.handle, title: c.name }))
+    .sort((a, b) => a.title.localeCompare(b.title))
+  const brandOptions = collections
+    .map((c) => ({ id: c.id, handle: c.handle, title: c.title }))
+    .sort((a, b) => a.title.localeCompare(b.title))
+
+  const selectedCategories = categoryOptions.filter((c) =>
+    categoryHandles.includes(c.handle)
+  )
+  const selectedBrands = brandOptions.filter((b) =>
+    brandHandles.includes(b.handle)
+  )
+
+  const chips = [
+    ...selectedCategories.map((c) => ({ param: "category", ...c })),
+    ...selectedBrands.map((b) => ({ param: "brand", ...b })),
+  ]
+
   return (
-    <div className="bg-[#fcfdfd] min-h-screen">
-      {/* Breadcrumb Navigation Bar */}
-      <div className="border-b border-gray-100 bg-[#f8fffe]">
-        <div className="content-container py-3 text-xs text-[#6b7280] flex items-center gap-1.5 flex-wrap">
-          <LocalizedClientLink href="/" className="hover:text-[#1C94D2]">
-            Home
-          </LocalizedClientLink>
-          <span>/</span>
-          <span className="text-[#0f172a] font-semibold">
-            {q ? "Search Results" : "Product Catalog"}
-          </span>
+    <div className="bg-[#f8fffe] min-h-screen" data-testid="category-container">
+      <div className="relative bg-white border-b border-gray-100 overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-[38%] hidden lg:block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/home-hero.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent" />
+        </div>
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
+          <nav className="flex items-center gap-2 text-xs text-[#9ca3af] mb-4">
+            <LocalizedClientLink href="/" className="hover:text-[#006B4F]">
+              Home
+            </LocalizedClientLink>
+            <span>›</span>
+            <span className="text-[#374151] font-medium">Ingredients</span>
+          </nav>
+          <h1
+            className="text-3xl font-extrabold text-[#0f172a] mb-2 leading-tight"
+            data-testid="store-page-title"
+          >
+            Find the Right <span className="text-[#006B4F]">Ingredient</span>
+          </h1>
+          <p className="text-sm text-[#64748b] max-w-[640px]">
+            Browse verified ingredients by category and brand. Approved business
+            buyers see bulk prices, quantity slabs and live stock.
+          </p>
+          <form
+            action={`/${countryCode}/search`}
+            method="get"
+            className="flex gap-0 max-w-[620px] mt-5"
+          >
+            <div className="flex flex-1 items-center bg-white border border-gray-200 rounded-l-xl overflow-hidden focus-within:border-[#006B4F] focus-within:ring-2 focus-within:ring-[#006B4F]/10 transition-all">
+              <svg className="w-4 h-4 text-gray-400 ml-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                name="q"
+                placeholder="Search by ingredient name or supplier…"
+                className="flex-1 px-3 py-3.5 text-sm outline-none bg-transparent"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-6 py-3.5 bg-[#006B4F] hover:bg-[#005a42] text-white font-semibold text-sm rounded-r-xl transition-colors shrink-0"
+            >
+              Search
+            </button>
+          </form>
         </div>
       </div>
 
-      {/* Main Catalog Content */}
-      <div className="content-container py-8" data-testid="category-container">
-        <div className="mb-6">
-          <h1
-            className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] tracking-tight"
-            data-testid="store-page-title"
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 flex flex-col small:flex-row gap-5">
+        <ListingFilters categories={categoryOptions} brands={brandOptions} />
+        <div className="flex-1 min-w-0">
+          <ListingToolbar
+            sortBy={sort}
+            viewMode={viewMode}
+            showPriceSort={!!customer}
+            chips={chips}
+          />
+          <Suspense
+            key={`${sort}-${pageNumber}-${viewMode}-${categoryHandles.join()}-${brandHandles.join()}`}
+            fallback={<SkeletonProductGrid />}
           >
-            {q ? `Search results for "${q}"` : "All Products Catalog"}
-          </h1>
-          <p className="text-sm text-[#64748b] mt-1">
-            Browse 370+ wholesale industrial raw ingredients with verified manufacturer sourcing, CoA compliance, and real-time inventory.
-          </p>
-        </div>
-
-        {/* 12-Column Responsive Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Sidebar: Refinement & Sort Card */}
-          <div className="lg:col-span-3 lg:sticky lg:top-24">
-            <RefinementList sortBy={sort} />
-          </div>
-
-          {/* Right Area: Paginated Products Grid */}
-          <div className="lg:col-span-9 w-full">
-            <Suspense fallback={<SkeletonProductGrid />}>
-              <PaginatedProducts
-                sortBy={sort}
-                page={pageNumber}
-                countryCode={countryCode}
-                optionValueIds={optionValueIds}
-                q={q}
-              />
-            </Suspense>
-          </div>
+            <PaginatedProducts
+              sortBy={sort}
+              page={pageNumber}
+              countryCode={countryCode}
+              optionValueIds={optionValueIds}
+              categoryIds={selectedCategories.map((c) => c.id)}
+              collectionIds={selectedBrands.map((b) => b.id)}
+              viewMode={viewMode}
+            />
+          </Suspense>
         </div>
       </div>
     </div>

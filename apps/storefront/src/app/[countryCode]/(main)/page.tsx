@@ -1,160 +1,188 @@
 import { Metadata } from "next"
 
-import FeaturedProducts from "@modules/home/components/featured-products"
-import Hero from "@modules/home/components/hero"
-import CategoryGrid from "@modules/home/components/category-grid"
-import B2bWorkflow from "@modules/home/components/b2b-workflow"
 import { listCollections } from "@lib/data/collections"
+import { retrieveCustomer } from "@lib/data/customer"
+import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
-
-import { getBaseURL } from "@lib/util/env"
+import { HttpTypes } from "@medusajs/types"
+import {
+  APPLICATION_HANDLES,
+  Applications,
+  CategoryCard,
+  StatStrip,
+  TrustedBrands,
+} from "@modules/home/components/catalogue-sections"
+import CategoryStrip from "@modules/home/components/category-carousel"
+import { PriceAccess } from "@modules/home/components/home-product-card"
+import Hero from "@modules/home/components/hero"
+import {
+  CtaBanner,
+  InstructionVideos,
+  MarketplaceComparison,
+  OrderProcess,
+  WhyChooseUs,
+} from "@modules/home/components/marketing-sections"
+import ProductRow from "@modules/home/components/product-row"
+import { getMenuCategories } from "@modules/layout/lib/menu-categories"
 
 export const metadata: Metadata = {
-  title: "IngredientsBazar — Next Generation Multi-Brand Natural Ingredients Platform",
+  title: "Ingredients Bazar",
   description:
-    "India's premier online multi-brand natural ingredients platform. Direct B2B raw material procurement for food, beverage, botanical, dairy, and nutraceutical manufacturing with verified CoAs.",
-  keywords: [
-    "natural ingredients",
-    "botanical extracts",
-    "bulk raw materials",
-    "food ingredients India",
-    "nutraceutical ingredients",
-    "WPC 80 Meggle",
-    "curcumin extract 95%",
-    "B2B raw material procurement",
-    "IngredientsBazar",
-  ],
-  alternates: {
-    canonical: `${getBaseURL()}/in`,
-  },
-  openGraph: {
-    title: "IngredientsBazar — Next Generation Multi-Brand Natural Ingredients Platform",
-    description:
-      "Direct B2B raw material procurement for food, botanical, dairy, and nutraceutical manufacturers. Sourced from 50+ audited global and Indian brands with batch lab CoAs.",
-    url: `${getBaseURL()}/in`,
-    siteName: "IngredientsBazar",
-    type: "website",
-    images: [
-      {
-        url: `${getBaseURL()}/opengraph-image.jpg`,
-        width: 1200,
-        height: 630,
-        alt: "IngredientsBazar - Next Generation Multi-Brand Ingredients Platform",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "IngredientsBazar — Multi-Brand Natural Ingredients Platform",
-    description:
-      "Direct industrial procurement for 100% pure botanical extracts, plant proteins, and certified raw materials.",
-    images: [`${getBaseURL()}/twitter-image.jpg`],
-  },
+    "Ingredients Bazar — bulk raw ingredients for manufacturers and traders.",
 }
+
+const CARD_FIELDS =
+  "id,title,handle,thumbnail,created_at,collection.id,collection.title,collection.handle,variants.id,+variants.metadata,*variants.calculated_price"
+const ROW_SIZE = 4
 
 export default async function Home(props: {
   params: Promise<{ countryCode: string }>
 }) {
-  const params = await props.params
-  const { countryCode } = params
+  const { countryCode } = await props.params
   const region = await getRegion(countryCode)
-  const baseUrl = getBaseURL()
-
-  const { collections } = await listCollections({
-    fields: "id, handle, title",
-  }).catch(() => ({ collections: [] }))
 
   if (!region) {
     return null
   }
 
-  // JSON-LD Structured Data for Google Rich Results
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${baseUrl}/#organization`,
-        name: "IngredientsBazar",
-        url: baseUrl,
-        logo: {
-          "@type": "ImageObject",
-          url: `${baseUrl}/logo.png`,
-          width: "295",
-          height: "70",
+  const fetchRow = (order: string) =>
+    listProducts({
+      regionId: region.id,
+      queryParams: { limit: 24, order, fields: CARD_FIELDS },
+    })
+      .then(({ response }) => response.products)
+      .catch(() => [] as HttpTypes.StoreProduct[])
+
+  const [customer, menuCategories, catalogue, collections, byNew, byTitle, byUpdated] =
+    await Promise.all([
+      retrieveCustomer().catch(() => null),
+      getMenuCategories(),
+      // Light-weight pass over the whole (channel-scoped) catalogue for
+      // category images/counts and brand product counts.
+      listProducts({
+        regionId: region.id,
+        queryParams: {
+          limit: 500,
+          fields: "id,thumbnail,collection_id,categories.id,categories.parent_category_id",
         },
-        description:
-          "India's next generation multi-brand natural ingredients platform connecting industrial food, beverage, and nutraceutical manufacturers with verified raw material suppliers.",
-        contactPoint: {
-          "@type": "ContactPoint",
-          contactType: "customer support",
-          email: "support@ingredientsbazar.com",
-          areaServed: "IN",
-          availableLanguage: ["English", "Hindi"],
-        },
-      },
-      {
-        "@type": "WebSite",
-        "@id": `${baseUrl}/#website`,
-        url: baseUrl,
-        name: "IngredientsBazar",
-        description:
-          "Direct B2B procurement platform for verified food, beverage, dairy and nutraceutical ingredients.",
-        publisher: {
-          "@id": `${baseUrl}/#organization`,
-        },
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: `${baseUrl}/${countryCode}/store?q={search_term_string}`,
-          },
-          "query-input": "required name=search_term_string",
-        },
-      },
-    ],
+      })
+        .then(({ response }) => response)
+        .catch(() => ({ products: [] as HttpTypes.StoreProduct[], count: 0 })),
+      listCollections({ fields: "id,title,handle,metadata" })
+        .then(({ collections }) => collections)
+        .catch(() => [] as HttpTypes.StoreCollection[]),
+      fetchRow("-created_at"),
+      fetchRow("title"),
+      fetchRow("-updated_at"),
+    ])
+
+  // Distinct products per row, preferring ones with an image.
+  const used = new Set<string>()
+  const pick = (list: HttpTypes.StoreProduct[]) => {
+    const sorted = [...list].sort(
+      (a, b) => Number(!!b.thumbnail) - Number(!!a.thumbnail)
+    )
+    const row = sorted.filter((p) => !used.has(p.id)).slice(0, ROW_SIZE)
+    row.forEach((p) => used.add(p.id))
+    return row
+  }
+  const newArrivals = pick(byNew)
+  const featured = pick(byTitle)
+  const trending = pick(byUpdated)
+
+  // Price access: the backend strips calculated_price for anyone not in the
+  // Approved group, so a visible price means the caller is approved.
+  const anyPriced = [...newArrivals, ...featured, ...trending].some((p) =>
+    p.variants?.some((v) => !!v.calculated_price)
+  )
+  const access: PriceAccess = !customer
+    ? "guest"
+    : anyPriced
+    ? "approved"
+    : "pending"
+
+  // Category cards: product count + first product image per top-level category.
+  const stats = new Map<string, { count: number; image: string | null }>()
+  const brandCounts: Record<string, number> = {}
+  for (const p of catalogue.products) {
+    const topIds = new Set(
+      (p.categories ?? []).map((c) => c.parent_category_id || c.id)
+    )
+    topIds.forEach((id) => {
+      const s = stats.get(id) ?? { count: 0, image: null }
+      s.count += 1
+      s.image = s.image || p.thumbnail || null
+      stats.set(id, s)
+    })
+    const cid = (p as HttpTypes.StoreProduct & { collection_id?: string })
+      .collection_id
+    if (cid) brandCounts[cid] = (brandCounts[cid] ?? 0) + 1
   }
 
+  const cards: CategoryCard[] = menuCategories.map((c) => ({
+    id: c.id,
+    name: c.name,
+    handle: c.handle,
+    productCount: stats.get(c.id)?.count ?? 0,
+    subCount: c.children.length,
+    image: stats.get(c.id)?.image,
+  }))
+  const hasCounts = cards.some((c) => c.productCount > 0)
+  const visible = (c: CategoryCard) => !hasCounts || c.productCount > 0
+
+  const appCards = APPLICATION_HANDLES.map((h) =>
+    cards.find((c) => c.handle === h)
+  ).filter((c): c is CategoryCard => !!c && visible(c))
+  const ingredientCards = cards
+    .filter((c) => !APPLICATION_HANDLES.includes(c.handle) && visible(c))
+    .sort((a, b) => b.productCount - a.productCount)
+
+  const brands = collections.filter(
+    (b) => !hasCounts || (brandCounts[b.id] ?? 0) > 0
+  )
+
   return (
-    <div className="flex flex-col w-full bg-white">
-      {/* Schema.org Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      {/* 1. Hero Section */}
+    <div className="font-sans bg-white">
       <Hero />
-
-      {/* 2. Browse by Category Grid */}
-      <CategoryGrid />
-
-      {/* 3. Featured Ingredients Catalog */}
-      {collections && collections.length > 0 && (
-        <section className="py-16 bg-white border-b border-gray-200">
-          <div className="content-container">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#1C94D2] mb-1 block">
-                  Top Industrial Sourcing
-                </span>
-                <h2 className="text-2xl lg:text-3xl font-bold text-[#0f172a]">
-                  Featured Raw Materials
-                </h2>
-                <p className="text-sm text-[#6b7280] mt-1">
-                  Ready-to-ship inventory with verified Certificate of Analysis (CoA)
-                </p>
-              </div>
-            </div>
-
-            <ul className="flex flex-col gap-y-12">
-              <FeaturedProducts collections={collections} region={region} />
-            </ul>
-          </div>
-        </section>
-      )}
-
-      {/* 4. B2B Sourcing Process & Compliance Strip */}
-      <B2bWorkflow />
+      <StatStrip
+        stats={[
+          { value: catalogue.count, label: "Products Available" },
+          { value: brands.length, label: "Trusted Brands" },
+          { value: ingredientCards.length, label: "Ingredient Categories" },
+          { value: appCards.length, label: "Applications Served" },
+        ]}
+      />
+      <CategoryStrip categories={ingredientCards} />
+      <Applications apps={appCards} />
+      <ProductRow
+        title="Featured Ingredients"
+        desc="Premium ingredients from verified suppliers"
+        products={featured}
+        access={access}
+        badge="Featured"
+      />
+      <ProductRow
+        title="New Arrivals"
+        desc="Recently added ingredients from verified suppliers"
+        products={newArrivals}
+        access={access}
+        badge="New"
+        tone="soft"
+        viewAllHref="/store?sortBy=created_at"
+      />
+      <ProductRow
+        title="Trending Products"
+        desc="High-interest ingredients buyers are sourcing across key applications"
+        products={trending}
+        access={access}
+        badge="Trending"
+      />
+      <OrderProcess />
+      <InstructionVideos />
+      <MarketplaceComparison />
+      <TrustedBrands brands={brands} productCounts={brandCounts} />
+      <WhyChooseUs />
+      <CtaBanner />
     </div>
   )
 }

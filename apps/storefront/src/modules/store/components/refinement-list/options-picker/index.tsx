@@ -21,8 +21,6 @@ const OptionsPicker = ({
   const [openItems, setOpenItems] = useState<string[]>([])
 
   useEffect(() => {
-    let isMounted = true
-
     const fetchOptions = async () => {
       try {
         const response = await sdk.client.fetch<{
@@ -35,21 +33,15 @@ const OptionsPicker = ({
           },
         })
 
-        if (isMounted && response?.product_options) {
+        if (response?.product_options) {
           setOptions(response.product_options)
         }
-      } catch (error: any) {
-        if (error?.name !== "AbortError" && isMounted) {
-          console.warn("Product options fetch note:", error?.message || error)
-        }
+      } catch (error) {
+        console.error("Failed to fetch product options", error)
       }
     }
 
     fetchOptions()
-
-    return () => {
-      isMounted = false
-    }
   }, [])
 
   useEffect(() => {

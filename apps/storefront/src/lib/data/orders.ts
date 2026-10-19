@@ -19,11 +19,11 @@ export const retrieveOrder = async (id: string) => {
       method: "GET",
       query: {
         fields:
-          "*payment_collections.payments,*items,*items.metadata,*items.variant,*items.product",
+          "+metadata,*payment_collections.payments,*items,*items.metadata,*items.variant,*items.product",
       },
       headers,
       next,
-      cache: "no-store",
+      cache: "force-cache",
     })
     .then(({ order }) => order)
     .catch((err) => medusaError(err))
@@ -34,49 +34,30 @@ export const listOrders = async (
   offset: number = 0,
   filters?: Record<string, unknown>
 ) => {
-  try {
-    const authHeaders = await getAuthHeaders()
-
-    // If there is no authorization header, the user is unauthenticated
-    if (!authHeaders.authorization) {
-      return []
-    }
-
-    const headers = {
-      ...authHeaders,
-    }
-
-    const next = {
-      ...(await getCacheOptions("orders")),
-    }
-
-    return await sdk.client
-      .fetch<HttpTypes.StoreOrderListResponse>(`/store/orders`, {
-        method: "GET",
-        query: {
-          limit,
-          offset,
-          order: "-created_at",
-          fields: "*items,+items.metadata,*items.variant,*items.product",
-          ...filters,
-        },
-        headers,
-        next,
-        cache: "no-store",
-      })
-      .then(({ orders }) => orders)
-  } catch (err: any) {
-    // If unauthenticated or token expired, return empty list gracefully
-    if (
-      err?.message?.includes("Unauthorized") ||
-      err?.status === 401 ||
-      String(err).includes("Unauthorized")
-    ) {
-      return []
-    }
-    console.error("Failed to list orders:", err?.message || err)
-    return []
+  const headers = {
+    ...(await getAuthHeaders()),
   }
+
+  const next = {
+    ...(await getCacheOptions("orders")),
+  }
+
+  return sdk.client
+    .fetch<HttpTypes.StoreOrderListResponse>(`/store/orders`, {
+      method: "GET",
+      query: {
+        limit,
+        offset,
+        order: "-created_at",
+        fields: "*items,+items.metadata,*items.variant,*items.product",
+        ...filters,
+      },
+      headers,
+      next,
+      cache: "force-cache",
+    })
+    .then(({ orders }) => orders)
+    .catch((err) => medusaError(err))
 }
 
 export const createTransferRequest = async (

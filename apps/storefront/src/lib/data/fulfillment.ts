@@ -9,6 +9,10 @@ export const listCartShippingMethods = async (cartId: string) => {
     ...(await getAuthHeaders()),
   }
 
+  const next = {
+    ...(await getCacheOptions("fulfillment")),
+  }
+
   return sdk.client
     .fetch<HttpTypes.StoreShippingOptionListResponse>(
       `/store/shipping-options`,
@@ -18,7 +22,8 @@ export const listCartShippingMethods = async (cartId: string) => {
           cart_id: cartId,
         },
         headers,
-        cache: "no-store",
+        next,
+        cache: "force-cache",
       }
     )
     .then(({ shipping_options }) => shipping_options)

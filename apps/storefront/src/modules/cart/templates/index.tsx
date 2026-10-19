@@ -2,74 +2,101 @@ import ItemsTemplate from "./items"
 import Summary from "./summary"
 import EmptyCartMessage from "../components/empty-cart-message"
 import SignInPrompt from "../components/sign-in-prompt"
-import Divider from "@modules/common/components/divider"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { VariantPriceTiers } from "types/global"
+
+const TRUST = [
+  {
+    label: "Secure checkout",
+    d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+  },
+  {
+    label: "GST invoice",
+    d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+  },
+  {
+    label: "Dedicated support",
+    d: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
+  },
+]
 
 const CartTemplate = ({
   cart,
   customer,
   priceTiers,
+  approved,
 }: {
   cart: HttpTypes.StoreCart | null
   customer: HttpTypes.StoreCustomer | null
   priceTiers: VariantPriceTiers[]
+  approved: boolean
 }) => {
-  return (
-    <div className="bg-[#fcfdfd] min-h-screen">
-      {/* Breadcrumbs */}
-      <div className="border-b border-gray-100 bg-[#f8fffe]">
-        <div className="content-container py-3 text-xs text-[#6b7280] flex items-center gap-1.5 flex-wrap">
-          <LocalizedClientLink href="/" className="hover:text-[#1C94D2]">
-            Home
-          </LocalizedClientLink>
-          <span>/</span>
-          <span className="text-[#0f172a] font-semibold">Wholesale Cart</span>
-        </div>
-      </div>
+  const pending = !!customer && !approved
 
-      <div className="content-container py-8" data-testid="cart-container">
-        {cart?.items?.length ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Items Column (8 cols) */}
-            <div className="lg:col-span-8 flex flex-col gap-y-6 bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs">
-              {!customer && (
-                <>
-                  <SignInPrompt />
-                  <Divider />
-                </>
-              )}
+  return (
+    <div className="min-h-screen bg-[#f8fffe]" data-testid="cart-container">
+      <section className="relative overflow-hidden bg-[#0d3320]">
+        <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/home-hero.jpg"
+            alt=""
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320]/95 via-[#0d3320]/85 to-transparent" />
+        </div>
+        <div className="relative max-w-[1440px] mx-auto px-4 small:px-6 py-8">
+          <div className="flex flex-col small:flex-row items-start small:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-1.5 mb-3 text-[11px] text-[#86efac]/70">
+                <LocalizedClientLink href="/" className="hover:text-[#4ade80]">
+                  Home
+                </LocalizedClientLink>
+                <span>/</span>
+                <span className="text-[#86efac]">My Cart</span>
+              </div>
+              <h1 className="text-3xl small:text-4xl font-extrabold text-white mb-1.5">
+                My Cart
+              </h1>
+              <p className="text-sm text-[#86efac]/80 max-w-sm">
+                Review your selected ingredients and proceed to checkout
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4 small:gap-6">
+              {TRUST.map((t) => (
+                <div key={t.label} className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#006B4F]/40 border border-[#4ade80]/20 flex items-center justify-center text-[#4ade80]">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d={t.d} />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-[#86efac] font-medium">{t.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-[1440px] mx-auto px-4 small:px-6 py-7">
+        {pending ? (
+          <div className="py-24 text-center">
+            <h2 className="text-xl font-semibold text-[#0d3320] mb-2">
+              Your account is awaiting approval
+            </h2>
+            <p className="text-sm text-[#0d3320]/70">
+              Cart unlocks once approved.
+            </p>
+          </div>
+        ) : cart?.items?.length ? (
+          <div className="flex flex-col xl:flex-row gap-6">
+            <div className="flex-1 min-w-0 flex flex-col gap-5">
+              {!customer && <SignInPrompt />}
               <ItemsTemplate cart={cart} priceTiers={priceTiers} />
             </div>
-
-            {/* Right Summary Column (4 cols, Sticky) */}
-            <div className="lg:col-span-4 lg:sticky lg:top-24">
-              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 shadow-xs flex flex-col gap-y-6">
-                {cart && cart.region && <Summary cart={cart} />}
-
-                {/* B2B Trust Points */}
-                <div className="pt-4 border-t border-gray-100 flex flex-col gap-2.5 text-xs text-[#374151]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center font-bold text-[10px] flex-shrink-0">
-                      ✓
-                    </span>
-                    <span>Direct Manufacturer Sourcing & CoA</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center font-bold text-[10px] flex-shrink-0">
-                      ✓
-                    </span>
-                    <span>GST Compliant Invoicing</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center font-bold text-[10px] flex-shrink-0">
-                      ✓
-                    </span>
-                    <span>Real-time WhatsApp tracking</span>
-                  </div>
-                </div>
-              </div>
+            <div className="w-full xl:w-[340px] shrink-0">
+              {cart.region && <Summary cart={cart} />}
             </div>
           </div>
         ) : (

@@ -35,6 +35,9 @@ module.exports = defineConfig({
   },
   modules: [
     {
+      resolve: "./src/modules/inquiry",
+    },
+    {
       resolve: "./src/modules/brand",
     },
     {
