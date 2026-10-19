@@ -4,7 +4,6 @@ import useToggleState from "@lib/hooks/use-toggle-state"
 import compareAddresses from "@lib/util/compare-addresses"
 import { CheckCircleSolid } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
-import Divider from "@modules/common/components/divider"
 import { Heading, Text } from "@modules/common/components/ui"
 import Spinner from "@modules/common/icons/spinner"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
@@ -12,6 +11,7 @@ import { useActionState } from "react"
 import BillingAddress from "../billing_address"
 import ErrorMessage from "../error-message"
 import ShippingAddress from "../shipping-address"
+import { provinceName } from "../province-select/states"
 import { SubmitButton } from "../submit-button"
 
 const Addresses = ({
@@ -25,10 +25,7 @@ const Addresses = ({
   const router = useRouter()
   const pathname = usePathname()
 
-  const isOpen =
-    searchParams.get("step") === "address" ||
-    !searchParams.get("step") ||
-    !cart?.shipping_address?.address_1
+  const isOpen = searchParams.get("step") === "address"
 
   const { state: sameAsBilling, toggle: toggleSameAsBilling } = useToggleState(
     cart?.shipping_address && cart?.billing_address
@@ -43,11 +40,11 @@ const Addresses = ({
   const [message, formAction] = useActionState(setAddresses, null)
 
   return (
-    <div className="bg-white">
+    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 small:p-6">
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
-          className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+          className="flex flex-row text-xl font-bold text-[#0f172a] gap-x-2 items-center"
         >
           Shipping Address
           {!isOpen && <CheckCircleSolid />}
@@ -56,7 +53,7 @@ const Addresses = ({
           <Text>
             <button
               onClick={handleEdit}
-              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              className="text-[#0757a8] hover:underline font-semibold"
               data-testid="edit-address-button"
             >
               Edit
@@ -78,7 +75,7 @@ const Addresses = ({
               <div>
                 <Heading
                   level="h2"
-                  className="text-3xl-regular gap-x-4 pb-6 pt-8"
+                  className="text-lg font-bold text-[#0f172a] gap-x-4 pb-6 pt-8"
                 >
                   Billing address
                 </Heading>
@@ -86,7 +83,7 @@ const Addresses = ({
                 <BillingAddress cart={cart} />
               </div>
             )}
-            <SubmitButton className="mt-6" data-testid="submit-address-button">
+            <SubmitButton className="mt-6 !bg-[#006B4F] hover:!bg-[#005a42] !rounded-xl font-bold" data-testid="submit-address-button">
               Continue to delivery
             </SubmitButton>
             <ErrorMessage error={message} data-testid="address-error-message" />
@@ -117,7 +114,12 @@ const Addresses = ({
                       {cart.shipping_address.postal_code},{" "}
                       {cart.shipping_address.city}
                     </Text>
-                    <Text className="txt-medium text-ui-fg-subtle">
+                    <Text
+                      className="txt-medium text-ui-fg-subtle"
+                      data-testid="shipping-province-summary"
+                    >
+                      {provinceName(cart.shipping_address.province)}
+                      {cart.shipping_address.province ? ", " : ""}
                       {cart.shipping_address.country_code?.toUpperCase()}
                     </Text>
                   </div>
@@ -179,7 +181,6 @@ const Addresses = ({
           </div>
         </div>
       )}
-      <Divider className="mt-8" />
     </div>
   )
 }

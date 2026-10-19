@@ -6,8 +6,8 @@ import { retrieveCustomer } from "@lib/data/customer"
 import { listOrders } from "@lib/data/orders"
 
 export const metadata: Metadata = {
-  title: "B2B Account Dashboard | IngredientsBazar",
-  description: "Overview of your account activity, wholesale orders, and delivery addresses.",
+  title: "Account",
+  description: "Overview of your account activity.",
 }
 
 export default async function OverviewTemplate() {
@@ -17,7 +17,7 @@ export default async function OverviewTemplate() {
     notFound()
   }
 
-  const orders = (await listOrders().catch(() => [])) || []
+  const orders = (await listOrders().catch(() => null)) || null
 
   return <Overview customer={customer} orders={orders} />
 }

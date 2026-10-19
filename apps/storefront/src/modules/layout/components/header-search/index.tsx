@@ -5,8 +5,17 @@ import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 import { getSearchSuggestions, SearchSuggestionProduct } from "@lib/data/search"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { SearchIcon } from "../ib-icons"
 
-export default function HeaderSearch() {
+export type HeaderSearchProps = {
+  className?: string
+  onSubmitted?: () => void
+}
+
+export default function HeaderSearch({
+  className = "",
+  onSubmitted,
+}: HeaderSearchProps) {
   const [query, setQuery] = useState("")
   const [suggestions, setSuggestions] = useState<SearchSuggestionProduct[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -18,7 +27,7 @@ export default function HeaderSearch() {
   const latestQueryRef = useRef(query)
   latestQueryRef.current = query
 
-  // Debounced search when query changes (waiting briefly between keystrokes)
+  // Debounced search when query changes
   useEffect(() => {
     const trimmed = query.trim()
 
@@ -34,7 +43,6 @@ export default function HeaderSearch() {
     const timeoutId = setTimeout(async () => {
       try {
         const results = await getSearchSuggestions(trimmed, 8)
-        // Ignore responses for an outdated query
         if (!isCurrent || latestQueryRef.current.trim() !== trimmed) {
           return
         }
@@ -75,7 +83,7 @@ export default function HeaderSearch() {
     }
   }, [])
 
-  // Submit search: navigates to full results page
+  // Submit search: navigates to full search results page
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) {
       e.preventDefault()
@@ -85,7 +93,8 @@ export default function HeaderSearch() {
 
     setIsOpen(false)
     inputRef.current?.blur()
-    router.push(`/${countryCode}/store?q=${encodeURIComponent(trimmed)}`)
+    router.push(`/${countryCode}/search?q=${encodeURIComponent(trimmed)}`)
+    onSubmitted?.()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -103,35 +112,30 @@ export default function HeaderSearch() {
     inputRef.current?.focus()
   }
 
-  const showDropdown =
-    isOpen && query.trim().length >= 3
+  const showDropdown = isOpen && query.trim().length >= 3
 
   return (
-    <div ref={containerRef} className="relative w-full" data-testid="header-search-container">
-      <form onSubmit={handleSubmit} className="relative flex items-center w-full">
-        <div className="relative w-full">
+    <div
+      ref={containerRef}
+      className={`relative w-full ${className}`}
+      data-testid="header-search-container"
+    >
+      <form
+        role="search"
+        onSubmit={handleSubmit}
+        className="relative flex items-center w-full"
+      >
+        <div className="relative w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:border-[#006B4F] focus-within:bg-white transition-all">
           {/* Search Icon */}
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-ui-fg-muted">
-            <svg
-              className="w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+          <div className="pl-3 flex items-center pointer-events-none text-gray-400 shrink-0">
+            <SearchIcon className="w-4 h-4 text-gray-400" />
           </div>
 
           {/* Search Input */}
           <input
             ref={inputRef}
-            type="text"
+            type="search"
+            name="q"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
@@ -139,11 +143,11 @@ export default function HeaderSearch() {
             }}
             onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
-            placeholder="Search ingredients, brands..."
-            className="w-full pl-9 pr-16 py-1.5 text-sm bg-ui-bg-subtle-hover border border-ui-border-base rounded-full focus:outline-none focus:ring-1 focus:ring-ui-fg-base focus:border-ui-fg-base transition-colors placeholder:text-ui-fg-muted"
+            placeholder="Search ingredients…"
+            className="flex-1 min-w-0 pl-3 pr-10 py-2 text-sm bg-transparent outline-none placeholder:text-gray-400 text-gray-700"
             data-testid="header-search-input"
             autoComplete="off"
-            aria-label="Search products"
+            aria-label="Search ingredients"
           />
 
           {/* Right Action Icons (Loading Spinner and Clear Button) */}
@@ -172,11 +176,11 @@ export default function HeaderSearch() {
               </svg>
             )}
 
-            {query && (
+            {query && !isLoading && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-ui-fg-muted hover:text-ui-fg-base p-1 rounded-full hover:bg-gray-100 transition-colors"
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
                 aria-label="Clear search"
               >
                 <svg
@@ -201,12 +205,12 @@ export default function HeaderSearch() {
       {/* Suggestions Dropdown */}
       {showDropdown && (
         <div
-          className="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-ui-border-base overflow-hidden z-50 transition-all max-h-96 overflow-y-auto"
+          className="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 transition-all max-h-96 overflow-y-auto"
           data-testid="search-suggestions-dropdown"
         >
           {suggestions.length > 0 ? (
             <div>
-              <div className="px-3 py-2 text-xs font-semibold text-ui-fg-muted uppercase tracking-wider bg-gray-50 border-b border-ui-border-base">
+              <div className="px-3.5 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-100">
                 Product Suggestions ({suggestions.length})
               </div>
               <ul className="divide-y divide-gray-100">
@@ -214,55 +218,46 @@ export default function HeaderSearch() {
                   <li key={item.id}>
                     <LocalizedClientLink
                       href={`/products/${item.handle}`}
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-gray-50 transition-colors group cursor-pointer"
+                      onClick={() => {
+                        setIsOpen(false)
+                        onSubmitted?.()
+                      }}
+                      className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-[#f0fdf4] transition-colors group cursor-pointer"
                       data-testid={`search-suggestion-item-${item.id}`}
                     >
                       {/* Product Thumbnail - No prices! */}
-                      <div className="w-10 h-10 relative flex-shrink-0 bg-gray-100 rounded-md overflow-hidden border border-gray-100">
+                      <div className="w-9 h-9 relative shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-100">
                         {item.thumbnail ? (
                           <Image
                             src={item.thumbnail}
                             alt={item.title}
                             fill
-                            sizes="40px"
+                            sizes="36px"
                             className="object-cover object-center"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
+                            <SearchIcon className="w-4 h-4 text-gray-400" />
                           </div>
                         )}
                       </div>
 
                       {/* Product Name & Brand only (STRICTLY NO PRICE) */}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                        <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#006B4F] transition-colors">
                           {item.title}
                         </p>
                         {item.brand_name && (
-                          <p className="text-xs text-gray-500 truncate">
+                          <p className="text-[10px] text-gray-500 truncate">
                             {item.brand_name}
                           </p>
                         )}
                       </div>
 
                       {/* Subtle Arrow */}
-                      <div className="text-gray-400 group-hover:text-gray-600">
+                      <div className="text-gray-400 group-hover:text-[#006B4F] transition-colors">
                         <svg
-                          className="w-4 h-4"
+                          className="w-3.5 h-3.5"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -284,12 +279,12 @@ export default function HeaderSearch() {
               <button
                 type="button"
                 onClick={() => handleSubmit()}
-                className="w-full text-left px-3.5 py-2.5 bg-gray-50 hover:bg-gray-100 text-xs font-medium text-blue-600 border-t border-gray-100 flex items-center justify-between transition-colors"
+                className="w-full text-left px-3.5 py-2.5 bg-gray-50 hover:bg-[#f0fdf4] text-xs font-semibold text-[#006B4F] border-t border-gray-100 flex items-center justify-between transition-colors"
                 data-testid="search-view-all-results-button"
               >
                 <span>
                   View all results for &ldquo;
-                  <span className="font-semibold">{query}</span>&rdquo;
+                  <span className="font-bold">{query}</span>&rdquo;
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-gray-400 bg-white border border-gray-200 px-1.5 py-0.5 rounded shadow-2xs">
                   Enter ↵
@@ -303,7 +298,7 @@ export default function HeaderSearch() {
                 <button
                   type="button"
                   onClick={() => handleSubmit()}
-                  className="mt-2 text-xs text-blue-600 hover:underline inline-block font-medium"
+                  className="mt-2 text-xs text-[#006B4F] hover:underline inline-block font-semibold"
                 >
                   Search all catalog &rarr;
                 </button>

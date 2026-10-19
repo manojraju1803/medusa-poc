@@ -6,17 +6,7 @@ const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "dk"
 
 const regionMapCache = {
-  regionMap: new Map<string, HttpTypes.StoreRegion>([
-    [
-      DEFAULT_REGION.toLowerCase(),
-      {
-        id: "reg_01M36H9V03QXHMQJRNGEB5B8H1",
-        name: "India",
-        currency_code: "inr",
-        countries: [{ iso_2: "in" } as any],
-      } as any,
-    ],
-  ]),
+  regionMap: new Map<string, HttpTypes.StoreRegion>(),
   regionMapUpdated: Date.now(),
 }
 
@@ -24,57 +14,48 @@ async function getRegionMap(cacheId: string) {
   const { regionMap, regionMapUpdated } = regionMapCache
 
   if (!BACKEND_URL) {
-    return regionMapCache.regionMap
+    throw new Error(
+      "Middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a NEXT_PUBLIC_MEDUSA_BACKEND_URL environment variable."
+    )
   }
 
   if (
     !regionMap.keys().next().value ||
     regionMapUpdated < Date.now() - 3600 * 1000
   ) {
-    try {
-      // Fetch regions with a strict 3s timeout so middleware NEVER hangs
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3000)
+    // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
+    const response = await fetch(`${BACKEND_URL}/store/regions`, {
+      method: "GET",
+      headers: {
+        "x-publishable-api-key": PUBLISHABLE_API_KEY!,
+      },
+      next: {
+        revalidate: 3600,
+        tags: [`regions-${cacheId}`],
+      },
+      cache: "force-cache",
+    })
 
-      const response = await fetch(`${BACKEND_URL}/store/regions`, {
-        method: "GET",
-        headers: {
-          "x-publishable-api-key": PUBLISHABLE_API_KEY || "",
-        },
-        signal: controller.signal,
-        next: {
-          revalidate: 3600,
-          tags: [`regions-${cacheId}`],
-        },
-      })
-
-      clearTimeout(timeoutId)
-
-      if (response.ok) {
-        const json = await response.json()
-        const { regions } = json
-
-        if (regions?.length) {
-          regions.forEach((region: HttpTypes.StoreRegion) => {
-            region.countries?.forEach((c) => {
-              regionMapCache.regionMap.set(c.iso_2?.toLowerCase() ?? "", region)
-            })
-          })
-          regionMapCache.regionMapUpdated = Date.now()
-        }
-      }
-    } catch (error) {
-      console.warn("Middleware: quick fallback used (backend offline/booting):", error)
+    if (!response.ok) {
+      throw new Error(`Backend returned ${response.status}`)
     }
-  }
 
-  // If no regions loaded yet, ensure DEFAULT_REGION is always present in map
-  if (!regionMapCache.regionMap.has(DEFAULT_REGION.toLowerCase())) {
-    regionMapCache.regionMap.set(DEFAULT_REGION.toLowerCase(), {
-      id: "reg_default",
-      name: "Default Region",
-      countries: [{ iso_2: DEFAULT_REGION.toLowerCase() }],
-    } as any)
+    const json = await response.json()
+
+    const { regions } = json
+
+    if (!regions?.length) {
+      return new Map<string, HttpTypes.StoreRegion>()
+    }
+
+    // Create a map of country codes to regions.
+    regions.forEach((region: HttpTypes.StoreRegion) => {
+      region.countries?.forEach((c) => {
+        regionMapCache.regionMap.set(c.iso_2 ?? "", region)
+      })
+    })
+
+    regionMapCache.regionMapUpdated = Date.now()
   }
 
   return regionMapCache.regionMap

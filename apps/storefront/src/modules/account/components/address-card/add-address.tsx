@@ -47,30 +47,21 @@ const AddAddress = ({
   return (
     <>
       <button
-        className="border-2 border-dashed border-gray-200 hover:border-[#1C94D2] bg-gray-50/50 hover:bg-[#f0fdf4]/50 rounded-2xl p-6 min-h-[220px] h-full w-full flex flex-col items-center justify-center gap-3 transition-all group"
+        className="border border-ui-border-base rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between"
         onClick={open}
         data-testid="add-address-button"
       >
-        <div className="w-12 h-12 rounded-full bg-white border border-gray-200 group-hover:border-[#1C94D2] group-hover:bg-[#1C94D2] text-gray-400 group-hover:text-white flex items-center justify-center transition-all shadow-xs">
-          <Plus className="w-5 h-5" />
-        </div>
-        <div className="flex flex-col items-center text-center">
-          <span className="text-sm font-bold text-[#0f172a] group-hover:text-[#1C94D2] transition-colors">
-            + Add Delivery Location / Warehouse
-          </span>
-          <span className="text-xs text-[#64748b] mt-0.5">
-            Add factory, warehouse or registered office address
-          </span>
-        </div>
+        <span className="text-base-semi">New address</span>
+        <Plus />
       </button>
 
       <Modal isOpen={state} close={close} data-testid="add-address-modal">
         <Modal.Title>
-          <Heading className="mb-2 text-lg font-bold text-[#0f172a]">Add Delivery Location</Heading>
+          <Heading className="mb-2">Add address</Heading>
         </Modal.Title>
         <form action={formAction}>
           <Modal.Body>
-            <div className="flex flex-col gap-y-3">
+            <div className="flex flex-col gap-y-2">
               <div className="grid grid-cols-2 gap-x-2">
                 <Input
                   label="First name"
@@ -88,34 +79,34 @@ const AddAddress = ({
                 />
               </div>
               <Input
-                label="Company / Facility Name"
+                label="Company"
                 name="company"
                 autoComplete="organization"
                 data-testid="company-input"
               />
               <Input
-                label="Street Address / Plot No."
+                label="Address"
                 name="address_1"
                 required
                 autoComplete="address-line1"
                 data-testid="address-1-input"
               />
               <Input
-                label="Industrial Area / Landmark / Unit"
+                label="Apartment, suite, etc."
                 name="address_2"
                 autoComplete="address-line2"
                 data-testid="address-2-input"
               />
               <div className="grid grid-cols-[144px_1fr] gap-x-2">
                 <Input
-                  label="PIN / Postal code"
+                  label="Postal code"
                   name="postal_code"
                   required
                   autoComplete="postal-code"
                   data-testid="postal-code-input"
                 />
                 <Input
-                  label="City / District"
+                  label="City"
                   name="city"
                   required
                   autoComplete="locality"
@@ -123,7 +114,7 @@ const AddAddress = ({
                 />
               </div>
               <Input
-                label="State / Province"
+                label="Province / State"
                 name="province"
                 autoComplete="address-level1"
                 data-testid="state-input"
@@ -136,7 +127,7 @@ const AddAddress = ({
                 data-testid="country-select"
               />
               <Input
-                label="Contact Phone (for delivery dispatch)"
+                label="Phone"
                 name="phone"
                 autoComplete="phone"
                 data-testid="phone-input"
@@ -144,7 +135,7 @@ const AddAddress = ({
             </div>
             {formState.error && (
               <div
-                className="text-rose-500 text-xs font-semibold py-2"
+                className="text-rose-500 text-small-regular py-2"
                 data-testid="address-error"
               >
                 {formState.error}
@@ -157,17 +148,12 @@ const AddAddress = ({
                 type="reset"
                 variant="secondary"
                 onClick={close}
-                className="h-10 text-xs rounded-xl"
+                className="h-10"
                 data-testid="cancel-button"
               >
                 Cancel
               </Button>
-              <SubmitButton
-                data-testid="save-button"
-                className="h-10 bg-[#1C94D2] hover:bg-[#0284c7] text-white text-xs font-semibold rounded-xl shadow-xs"
-              >
-                Save Delivery Location
-              </SubmitButton>
+              <SubmitButton data-testid="save-button">Save</SubmitButton>
             </div>
           </Modal.Footer>
         </form>

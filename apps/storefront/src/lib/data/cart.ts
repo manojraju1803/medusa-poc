@@ -34,6 +34,10 @@ export async function retrieveCart(cartId?: string, fields?: string) {
     ...(await getAuthHeaders()),
   }
 
+  const next = {
+    ...(await getCacheOptions("carts")),
+  }
+
   return await sdk.client
     .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
       method: "GET",
@@ -41,15 +45,11 @@ export async function retrieveCart(cartId?: string, fields?: string) {
         fields,
       },
       headers,
-      cache: "no-store",
+      next,
+      cache: "force-cache",
     })
     .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
-    .catch(async () => {
-      if (!cartId) {
-        await removeCartId().catch(() => {})
-      }
-      return null
-    })
+    .catch(() => null)
 }
 
 export async function getOrSetCart(countryCode: string) {
@@ -418,7 +418,7 @@ export async function placeOrder(cartId?: string) {
     const orderCacheTag = await getCacheTag("orders")
     revalidateTag(orderCacheTag)
 
-    await removeCartId()
+    removeCartId()
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
   }
 

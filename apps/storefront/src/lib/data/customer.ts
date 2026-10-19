@@ -6,12 +6,14 @@ import { HttpTypes } from "@medusajs/types"
 import { FetchError } from "@medusajs/js-sdk"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
+import { submitInquiry } from "./inquiries"
 import {
   getAuthHeaders,
   getCacheOptions,
   getCacheTag,
   getCartId,
   getPendingCustomer,
+  PendingCustomer,
   removeAuthToken,
   removeCartId,
   removePendingCustomer,
@@ -57,9 +59,6 @@ export const retrieveCustomer =
     return await sdk.client
       .fetch<{ customer: HttpTypes.StoreCustomer }>(`/store/customers/me`, {
         method: "GET",
-        query: {
-          fields: "*groups",
-        },
         headers,
         next,
         cache: "force-cache",
@@ -84,16 +83,52 @@ export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
   return updateRes
 }
 
+// Extra signup fields kept with the pending customer until the record exists.
+type PendingSignup = PendingCustomer & {
+  company_name?: string
+  metadata?: Record<string, unknown>
+}
+
+const formText = (formData: FormData, key: string) =>
+  ((formData.get(key) as string | null) || "").trim()
+
 export async function signup(
   _currentState: unknown,
   formData: FormData,
 ): Promise<CustomerAuthState> {
   const password = formData.get("password") as string
-  const customerForm = {
-    email: formData.get("email") as string,
-    first_name: formData.get("first_name") as string,
-    last_name: formData.get("last_name") as string,
-    phone: formData.get("phone") as string,
+  const accountType =
+    formText(formData, "account_type") === "supplier" ? "supplier" : "buyer"
+  const buyerType = formText(formData, "buyer_type")
+
+  if (!password || password.length < 8) {
+    return { state: "error", error: "Password must be at least 8 characters." }
+  }
+  if (password !== formData.get("confirm_password")) {
+    return { state: "error", error: "Passwords do not match." }
+  }
+  if (!formData.get("terms")) {
+    return { state: "error", error: "Please accept the Terms of Service." }
+  }
+
+  const metadata: Record<string, unknown> = { account_type: accountType }
+  if (accountType === "buyer" && buyerType) {
+    metadata.buyer_type = buyerType
+  }
+  if (accountType === "supplier") {
+    for (const key of ["brand_name", "country", "product_categories"]) {
+      const value = formText(formData, key)
+      if (value) metadata[key] = value
+    }
+  }
+
+  const customerForm: PendingSignup = {
+    email: formText(formData, "email"),
+    first_name: formText(formData, "first_name"),
+    last_name: formText(formData, "last_name"),
+    phone: formText(formData, "phone"),
+    company_name: formText(formData, "company_name"),
+    metadata,
   }
 
   try {
@@ -118,6 +153,19 @@ export async function signup(
   // login, which is deferred until after email verification when the backend
   // requires it.
   await setPendingCustomer(customerForm)
+
+  // Suppliers are onboarded by the team, so they also leave an inquiry. A
+  // failed inquiry must not block the account itself.
+  if (accountType === "supplier") {
+    await submitInquiry({
+      type: "supplier_registration",
+      name: `${customerForm.first_name} ${customerForm.last_name}`.trim(),
+      email: customerForm.email,
+      phone: customerForm.phone || undefined,
+      company: customerForm.company_name || undefined,
+      metadata,
+    }).catch(() => null)
+  }
 
   // Continue by logging in. The login response tells us whether the backend
   // requires email verification — we don't need a storefront-side flag.
@@ -193,7 +241,7 @@ async function completeLogin(
     .catch(() => false)
 
   if (!customerExists) {
-    const pending = await getPendingCustomer()
+    const pending = (await getPendingCustomer()) as PendingSignup | null
 
     try {
       await sdk.store.customer.create(
@@ -201,7 +249,9 @@ async function completeLogin(
           email,
           first_name: pending?.first_name,
           last_name: pending?.last_name,
-          phone: pending?.phone,
+          phone: pending?.phone || undefined,
+          company_name: pending?.company_name || undefined,
+          metadata: pending?.metadata,
         },
         {},
         { authorization: `Bearer ${token}` },

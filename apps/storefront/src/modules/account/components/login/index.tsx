@@ -1,83 +1,79 @@
+"use client"
+
 import { login } from "@lib/data/customer"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
-import ErrorMessage from "@modules/checkout/components/error-message"
-import { SubmitButton } from "@modules/checkout/components/submit-button"
-import Input from "@modules/common/components/input"
 import { useActionState } from "react"
+import AuthField, { AuthError, SubmitAuthButton } from "../auth-field"
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
 }
 
 const Login = ({ setCurrentView }: Props) => {
-  const [message, formAction] = useActionState(login, null)
+  const [message, formAction, pending] = useActionState(login, null)
 
   return (
-    <div
-      className="w-full flex flex-col"
-      data-testid="login-page"
-    >
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-[#0f172a]">
-          Sign In to Procurement Account
-        </h1>
-        <p className="text-xs text-[#64748b] mt-1">
-          Access your commercial order history, live wholesale pricing, and tax invoices.
-        </p>
-      </div>
-
-      {message?.state === "verification_required" && (
-        <div
-          className="w-full mb-6 text-xs text-[#166534] bg-[#dcfce7] border border-[#bbf7d0] rounded-xl p-3.5"
-          data-testid="login-verification-message"
-        >
-          We sent a verification link to <strong>{message.email}</strong>.
-          Please verify your email, then sign in.
+    <div className="w-full" data-testid="login-page">
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-7 sm:p-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-extrabold text-[#0f172a] mb-1">
+            Log in to your account
+          </h1>
+          <p className="text-sm text-[#64748b]">
+            Approved buyers see live prices, slabs and stock.
+          </p>
         </div>
-      )}
-
-      <form className="w-full flex flex-col gap-y-3" action={formAction}>
-        <Input
-          label="Work Email Address"
-          name="email"
-          type="email"
-          title="Enter a valid email address."
-          autoComplete="email"
-          required
-          data-testid="email-input"
-        />
-        <Input
-          label="Password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          data-testid="password-input"
-        />
-
-        <ErrorMessage
-          error={message?.state === "error" ? message.error : null}
-          data-testid="login-error-message"
-        />
-
-        <SubmitButton
-          data-testid="sign-in-button"
-          className="w-full mt-2 h-11 bg-[#1C94D2] hover:bg-[#0284c7] text-white text-xs font-bold rounded-xl shadow-xs transition-all"
-        >
-          Sign In to B2B Account →
-        </SubmitButton>
-      </form>
-
-      <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-[#64748b]">
-        <span>New wholesale buyer?</span>
+        {message?.state === "verification_required" && (
+          <div
+            className="mb-5 text-sm text-[#0f172a] bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-3"
+            data-testid="login-verification-message"
+          >
+            We sent a verification link to <strong>{message.email}</strong>.
+            Please verify your email, then sign in.
+          </div>
+        )}
+        <form action={formAction} className="space-y-4">
+          <AuthField
+            label="Work Email"
+            name="email"
+            type="email"
+            placeholder="you@company.com"
+            autoComplete="email"
+            required
+            data-testid="email-input"
+          />
+          <AuthField
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Your password"
+            autoComplete="current-password"
+            required
+            data-testid="password-input"
+          />
+          <AuthError
+            error={message?.state === "error" ? message.error : null}
+          />
+          <SubmitAuthButton
+            pending={pending}
+            pendingLabel="Signing in…"
+            data-testid="sign-in-button"
+          >
+            Log In
+          </SubmitAuthButton>
+        </form>
+      </div>
+      <p className="text-center text-sm text-[#64748b] mt-5">
+        New to Ingredients Bazar?{" "}
         <button
+          type="button"
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
-          className="font-bold text-[#1C94D2] hover:underline"
+          className="text-[#006B4F] font-semibold hover:underline"
           data-testid="register-button"
         >
-          Register Business Account →
+          Create an account
         </button>
-      </div>
+      </p>
     </div>
   )
 }

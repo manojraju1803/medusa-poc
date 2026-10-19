@@ -1,16 +1,11 @@
 "use client"
 
-import { Table, Text, clx } from "@modules/common/components/ui"
-import { updateLineItem } from "@lib/data/cart"
+import { deleteLineItem, updateLineItem } from "@lib/data/cart"
 import { minQuantityOf } from "@lib/util/min-quantity"
 import { convertToLocale } from "@lib/util/money"
 import { getNextTierNudge } from "@lib/util/price-tiers"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
-import DeleteButton from "@modules/common/components/delete-button"
-import LineItemOptions from "@modules/common/components/line-item-options"
-import LineItemPrice from "@modules/common/components/line-item-price"
-import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -19,24 +14,23 @@ import { VariantPriceTiers } from "types/global"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
-  type?: "full" | "preview"
   currencyCode: string
   // The slabs of this line's variant. Only the cart page passes them.
   priceTiers?: VariantPriceTiers
 }
 
-const Item = ({ item, type = "full", currencyCode, priceTiers }: ItemProps) => {
+const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
+  const [removing, setRemoving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const minQuantity = minQuantityOf(item.variant)
 
   const changeQuantity = async (quantity: number) => {
     setError(null)
     setUpdating(true)
 
-    const saved = await updateLineItem({
-      lineId: item.id,
-      quantity,
-    })
+    const saved = await updateLineItem({ lineId: item.id, quantity })
       .then(() => true)
       .catch((err) => {
         setError(err.message)
@@ -47,10 +41,9 @@ const Item = ({ item, type = "full", currencyCode, priceTiers }: ItemProps) => {
     return saved
   }
 
-  const minQuantity = minQuantityOf(item.variant)
-
   // Saves when the input loses focus (Enter blurs it), so typing "50" sends one
-  // request rather than one per keystroke.
+  // request rather than one per keystroke. The backend's minimum-quantity
+  // hooks have the final say; their message is shown under the line.
   const saveQuantity = async (event: FocusEvent<HTMLInputElement>) => {
     const input = event.currentTarget
     const quantity = Number(input.value)
@@ -59,9 +52,6 @@ const Item = ({ item, type = "full", currencyCode, priceTiers }: ItemProps) => {
       return
     }
 
-    // Not a whole number, or rejected by the backend (below the minimum order
-    // quantity, for one): show the saved quantity again. The backend's message
-    // is shown under the input.
     if (
       !Number.isInteger(quantity) ||
       quantity < 1 ||
@@ -71,30 +61,47 @@ const Item = ({ item, type = "full", currencyCode, priceTiers }: ItemProps) => {
     }
   }
 
+  const step = async (delta: number) => {
+    const next = item.quantity + delta
+    if (next < Math.max(1, minQuantity)) {
+      setError(`Minimum order quantity is ${minQuantity}.`)
+      return
+    }
+    await changeQuantity(next)
+  }
+
+  const remove = async () => {
+    setRemoving(true)
+    await deleteLineItem(item.id).catch((err) => {
+      setError(err.message)
+      setRemoving(false)
+    })
+  }
+
   // Computed from the saved quantity and the price the line is actually
   // charged, so it only changes once a new quantity is saved.
-  const nudge =
-    type === "full"
-      ? getNextTierNudge({
-          tiers: priceTiers?.tiers,
-          quantity: item.quantity,
-          unitPrice: item.unit_price,
-          minQuantity,
-        })
-      : undefined
+  const nudge = getNextTierNudge({
+    tiers: priceTiers?.tiers,
+    quantity: item.quantity,
+    unitPrice: item.unit_price,
+    minQuantity,
+  })
 
-  const formatAmount = (amount: number) =>
+  const fmt = (amount: number) =>
     convertToLocale({ amount, currency_code: currencyCode })
 
+  const unit = "unit"
+  const brand = item.product_collection
+
   return (
-    <Table.Row className="w-full" data-testid="product-row">
-      <Table.Cell className="!pl-0 p-4 w-24">
+    <div
+      className="px-5 py-4 hover:bg-[#f8fffe] transition-colors group"
+      data-testid="product-row"
+    >
+      <div className="flex items-start gap-4">
         <LocalizedClientLink
           href={`/products/${item.product_handle}`}
-          className={clx("flex", {
-            "w-16": type === "preview",
-            "small:w-24 w-12": type === "full",
-          })}
+          className="w-[72px] small:w-[90px] shrink-0 rounded-xl overflow-hidden border border-gray-100"
         >
           <Thumbnail
             thumbnail={item.thumbnail}
@@ -102,93 +109,131 @@ const Item = ({ item, type = "full", currencyCode, priceTiers }: ItemProps) => {
             size="square"
           />
         </LocalizedClientLink>
-      </Table.Cell>
 
-      <Table.Cell className="text-left">
-        <Text
-          className="txt-medium-plus text-ui-fg-base"
-          data-testid="product-title"
-        >
-          {item.product_title}
-        </Text>
-        <LineItemOptions variant={item.variant} data-testid="product-variant" />
-        {nudge && (
-          <Text
-            className="text-small-regular text-ui-fg-interactive mt-1"
-            data-testid="cart-slab-nudge"
-          >
-            {`Add ${nudge.addQuantity} more to get ${formatAmount(
-              nudge.unitSaving
-            )} less per unit (save ${formatAmount(
-              nudge.totalSaving
-            )} on this item).`}
-          </Text>
-        )}
-      </Table.Cell>
-
-      {type === "full" && (
-        <Table.Cell>
-          <div className="flex gap-2 items-center w-28">
-            <DeleteButton id={item.id} data-testid="product-delete-button" />
-            <input
-              // A new saved quantity remounts the input with it as the value.
-              key={item.quantity}
-              type="number"
-              inputMode="numeric"
-              min={minQuantity}
-              step={1}
-              defaultValue={item.quantity}
-              onBlur={saveQuantity}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.currentTarget.blur()
-                }
-              }}
-              disabled={updating}
-              aria-label="Quantity"
-              className="border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 w-16 text-center"
-              data-testid="product-quantity-input"
-            />
-            {updating && <Spinner />}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <LocalizedClientLink href={`/products/${item.product_handle}`}>
+                <h3
+                  className="font-bold text-[#0f172a] text-sm leading-snug hover:text-[#006B4F]"
+                  data-testid="product-title"
+                >
+                  {item.product_title}
+                </h3>
+              </LocalizedClientLink>
+              {brand && (
+                <p className="text-xs text-[#64748b] mt-0.5">{brand}</p>
+              )}
+              {item.variant_sku && (
+                <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] rounded-full">
+                  {item.variant_sku}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={remove}
+              disabled={removing}
+              aria-label="Remove item"
+              className="shrink-0 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              data-testid="product-delete-button"
+            >
+              {removing ? (
+                <Spinner />
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              )}
+            </button>
           </div>
-          <ErrorMessage error={error} data-testid="product-error-message" />
-        </Table.Cell>
-      )}
 
-      {type === "full" && (
-        <Table.Cell className="hidden small:table-cell">
-          <LineItemUnitPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
-        </Table.Cell>
-      )}
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2.5">
+            <div
+              className="flex items-center gap-1.5 text-[#4b5563]"
+              data-testid="cart-item-moq"
+            >
+              <svg className="w-3 h-3 text-[#006B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <span className="text-[11px] font-medium">
+                Min. order qty: {minQuantity}
+              </span>
+            </div>
+          </div>
 
-      <Table.Cell className="!pr-0">
-        <span
-          className={clx("!pr-0", {
-            "flex flex-col items-end h-full justify-center": type === "preview",
-          })}
-        >
-          {type === "preview" && (
-            <span className="flex gap-x-1 ">
-              <Text className="text-ui-fg-muted">{item.quantity}x </Text>
-              <LineItemUnitPrice
-                item={item}
-                style="tight"
-                currencyCode={currencyCode}
+          <div className="flex flex-wrap items-center justify-between mt-3 gap-3">
+            <div className="flex items-center">
+              <button
+                type="button"
+                onClick={() => step(-1)}
+                disabled={updating || item.quantity <= minQuantity}
+                className="w-8 h-8 bg-[#f0fdf4] hover:bg-[#dcfce7] border border-[#dcfce7] rounded-l-lg flex items-center justify-center text-[#006B4F] font-bold disabled:opacity-40"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+              <input
+                // A new saved quantity remounts the input with it as the value.
+                key={item.quantity}
+                type="number"
+                inputMode="numeric"
+                min={minQuantity}
+                step={1}
+                defaultValue={item.quantity}
+                onBlur={saveQuantity}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur()
+                  }
+                }}
+                disabled={updating}
+                aria-label="Quantity"
+                className="w-14 h-8 bg-white border-t border-b border-[#dcfce7] text-center text-sm font-bold text-[#0f172a] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                data-testid="product-quantity-input"
               />
-            </span>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                disabled={updating}
+                className="w-8 h-8 bg-[#f0fdf4] hover:bg-[#dcfce7] border border-[#dcfce7] rounded-r-lg flex items-center justify-center text-[#006B4F] font-bold disabled:opacity-40"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+              {updating && (
+                <span className="ml-2">
+                  <Spinner />
+                </span>
+              )}
+            </div>
+
+            <div className="text-right">
+              <div className="text-xs text-[#9ca3af]" data-testid="product-unit-price">
+                {fmt(item.unit_price)} / {unit}
+              </div>
+              <div
+                className="text-base font-extrabold text-[#006B4F]"
+                data-testid="product-price"
+              >
+                {fmt(item.subtotal ?? item.unit_price * item.quantity)}
+              </div>
+            </div>
+          </div>
+
+          {nudge && (
+            <p
+              className="mt-2 text-[11px] font-medium text-[#0757a8]"
+              data-testid="cart-slab-nudge"
+            >
+              {`Add ${nudge.addQuantity} more to pay ${fmt(
+                nudge.unitSaving
+              )} less per ${unit} (save ${fmt(nudge.totalSaving)} on this item).`}
+            </p>
           )}
-          <LineItemPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
-        </span>
-      </Table.Cell>
-    </Table.Row>
+          <ErrorMessage error={error} data-testid="product-error-message" />
+        </div>
+      </div>
+    </div>
   )
 }
 

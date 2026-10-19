@@ -1,13 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
-body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 @layer utilities {
   /* Chrome, Safari and Opera */
@@ -119,46 +113,24 @@ body {
 
   /* imported product descriptions are raw html */
   .product-description p {
-    @apply mb-3 text-[#374151] leading-relaxed;
+    @apply mb-2;
   }
 
-  .product-description a {
-    @apply text-[#1C94D2] font-semibold hover:underline;
-  }
-
-  .product-description .su-table,
   .product-description table {
-    @apply w-full border-collapse my-4 text-xs rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white;
+    @apply w-full border-collapse my-4 text-small-regular;
   }
 
   .product-description table td,
   .product-description table th {
-    @apply border-b border-gray-100 px-4 py-2.5 text-left align-middle text-[#374151];
-  }
-
-  .product-description table tr:last-child td {
-    @apply border-b-0;
+    @apply border border-ui-border-base px-3 py-2 text-left align-top;
   }
 
   .product-description table tr:nth-child(even) {
-    @apply bg-[#f8fffe]/60;
-  }
-
-  .product-description table td:first-child {
-    @apply font-semibold text-[#0f172a] bg-[#f8fafc]/50 w-[38%];
+    @apply bg-ui-bg-subtle;
   }
 
   .product-description ul,
   .product-description ol {
-    @apply pl-2 mb-4 space-y-2 list-none;
-  }
-
-  .product-description ul li,
-  .product-description ol li {
-    @apply flex items-start gap-2 text-xs text-[#374151] leading-relaxed;
-  }
-
-  .product-description .sui-check-circle-o {
-    @apply inline-block text-[#166534] font-bold mt-0.5 flex-shrink-0;
+    @apply pl-5 mb-2 list-disc;
   }
 }

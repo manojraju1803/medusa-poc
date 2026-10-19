@@ -1,15 +1,21 @@
 import React, { Suspense } from "react"
 
+import { retrieveCustomer } from "@lib/data/customer"
+import { listProducts } from "@lib/data/products"
+import { wishlistOf } from "@lib/data/wishlist"
+import { minQuantityOf } from "@lib/util/min-quantity"
+import { HttpTypes } from "@medusajs/types"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import QuoteSampleForm from "@modules/inquiry/components/quote-sample-form"
+import CompareProductsModal, { CompareItem } from "@modules/products/components/compare-products-modal"
+import { convertToLocale } from "@lib/util/money"
+import { CARD_FIELDS } from "@modules/products/lib/fields"
 import ImageGallery from "@modules/products/components/image-gallery"
 import ProductActions from "@modules/products/components/product-actions"
-import ProductTabs from "@modules/products/components/product-tabs"
 import RelatedProducts from "@modules/products/components/related-products"
-import ProductInfo from "@modules/products/templates/product-info"
-import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Divider from "@modules/common/components/divider"
+import WishlistButton from "@modules/products/components/wishlist-button"
+import { UNIT, forViewer, hsnOf, viewerFor } from "@modules/products/lib/access"
 import { notFound } from "next/navigation"
-import { HttpTypes } from "@medusajs/types"
 
 import ProductActionsWrapper from "./product-actions-wrapper"
 
@@ -20,89 +26,200 @@ type ProductTemplateProps = {
   images: HttpTypes.StoreProductImage[]
 }
 
-const ProductTemplate: React.FC<ProductTemplateProps> = ({
-  product,
+const ProductTemplate = async ({
+  product: rawProduct,
   region,
   countryCode,
   images,
-}) => {
-  if (!product || !product.id) {
+}: ProductTemplateProps) => {
+  if (!rawProduct || !rawProduct.id) {
     return notFound()
   }
 
-  return (
-    <div className="bg-[#fcfdfd] min-h-screen">
-      {/* Breadcrumb Navigation */}
-      <div className="border-b border-gray-100 bg-[#f8fffe]">
-        <div className="content-container py-3 text-xs text-[#6b7280] flex items-center gap-1.5 flex-wrap">
-          <LocalizedClientLink href="/" className="hover:text-[#1C94D2]">
-            Home
-          </LocalizedClientLink>
-          <span>/</span>
-          <LocalizedClientLink href="/store" className="hover:text-[#1C94D2]">
-            Product Catalog
-          </LocalizedClientLink>
-          {product.collection && (
-            <>
-              <span>/</span>
-              <LocalizedClientLink
-                href={`/collections/${product.collection.handle}`}
-                className="hover:text-[#1C94D2]"
-              >
-                {product.collection.title}
-              </LocalizedClientLink>
-            </>
-          )}
-          <span>/</span>
-          <span className="text-[#0f172a] font-semibold truncate max-w-[200px] sm:max-w-sm">
-            {product.title}
-          </span>
-        </div>
-      </div>
+  const [customer, extras] = await Promise.all([
+    retrieveCustomer(),
+    listProducts({
+      regionId: region.id,
+      queryParams: {
+        id: [rawProduct.id],
+        fields:
+          "id,collection.id,collection.title,collection.handle,collection.metadata,categories.id,categories.name,categories.handle,categories.parent_category_id",
+      },
+    }).then(({ response }) => response.products[0]),
+  ])
 
-      {/* Main 2-Column Product Grid */}
-      <div
-        className="content-container grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 py-8 relative"
-        data-testid="product-container"
-      >
-        {/* Left Column: Gallery, Detailed Description, and Technical Specifications (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col gap-y-6">
-          {/* Image Gallery */}
-          <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs overflow-hidden">
-            <ImageGallery images={images} thumbnail={product.thumbnail} />
+  const viewer = viewerFor(customer, [rawProduct])
+  const product = forViewer(rawProduct, viewer)
+  const wishlist = await wishlistOf(customer)
+
+  const brand = extras?.collection ?? rawProduct.collection
+  const brandCountry =
+    typeof brand?.metadata?.country === "string" ? brand.metadata.country : null
+  const categories = extras?.categories ?? []
+  // Most specific first: categories that have a parent.
+  const primaryCategory =
+    categories.find((c) => c.parent_category_id) ?? categories[0]
+  const firstVariant = product.variants?.[0]
+  const moq = minQuantityOf(firstVariant)
+  const hsn = hsnOf(product)
+  const stock =
+    viewer === "approved" &&
+    product.variants?.length === 1 &&
+    firstVariant?.manage_inventory &&
+    typeof firstVariant.inventory_quantity === "number"
+      ? firstVariant.inventory_quantity
+      : undefined
+
+  const chips: [string, string][] = [
+    ["MOQ", `${moq} ${UNIT}`],
+    ...(hsn ? [["HSN", hsn] as [string, string]] : []),
+    ...(primaryCategory ? [["Category", primaryCategory.name] as [string, string]] : []),
+    ...(stock !== undefined
+      ? [["Stock", stock > 0 ? `${stock.toLocaleString("en-IN")} ${UNIT}` : "Out of stock"] as [string, string]]
+      : []),
+  ]
+
+  // Compare: this product plus up to 3 others from its most specific category.
+  const peers = primaryCategory
+    ? await listProducts({
+        regionId: region.id,
+        queryParams: { category_id: [primaryCategory.id], limit: 8, fields: CARD_FIELDS },
+      })
+        .then(({ response }) => response.products.filter((p) => p.id !== product.id).slice(0, 3))
+        .catch(() => [])
+    : []
+  const priceOf = (p: HttpTypes.StoreProduct) =>
+    viewer === "approved" ? p.variants?.[0]?.calculated_price ?? undefined : undefined
+  const comparePool = [product, ...peers]
+  const knownPrices = comparePool
+    .map((p) => priceOf(p)?.calculated_amount)
+    .filter((a): a is number => typeof a === "number")
+  const bestPrice = knownPrices.length > 1 ? Math.min(...knownPrices) : undefined
+  const compareItems: CompareItem[] = comparePool.map((p) => {
+    const cp = priceOf(p)
+    const amount = cp?.calculated_amount
+    return {
+      id: p.id,
+      handle: p.handle ?? "",
+      title: p.title ?? "",
+      thumbnail: p.thumbnail,
+      brand: (p.id === product.id ? brand?.title : p.collection?.title) ?? undefined,
+      price:
+        typeof amount === "number" && cp?.currency_code
+          ? `${convertToLocale({ amount, currency_code: cp.currency_code })}/${UNIT}`
+          : undefined,
+      best: bestPrice !== undefined && amount === bestPrice,
+      moq: `${minQuantityOf(p.variants?.[0])} ${UNIT}`,
+      hsn: hsnOf(p),
+    }
+  })
+
+  const currentPrice = priceOf(product)
+  const origin = product.origin_country || firstVariant?.origin_country || brandCountry
+  const material = product.material || firstVariant?.material
+  const specs = (
+    [
+      ["Brand", brand?.title],
+      ["Category", primaryCategory?.name],
+      ["Origin", origin],
+      ["MOQ", `${moq} ${UNIT}`],
+      ["Material", material],
+      ["HSN Code", hsn],
+      ["SKU", firstVariant?.sku],
+    ] as [string, string | null | undefined][]
+  ).filter((r): r is [string, string] => !!r[1])
+
+  // Documents only when the product carries them: metadata.documents = [{ name, url, type? }].
+  const rawDocs = product.metadata?.documents
+  const documents = Array.isArray(rawDocs)
+    ? (rawDocs as Record<string, unknown>[]).filter(
+        (d) => d && typeof d.name === "string" && typeof d.url === "string"
+      ) as { name: string; url: string; type?: string }[]
+    : []
+
+  const customerName = [customer?.first_name, customer?.last_name]
+    .filter(Boolean)
+    .join(" ")
+
+  return (
+    <div className="bg-[#f7faf9] min-h-screen" data-testid="product-container">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
+        <nav className="flex items-center gap-2 text-xs text-[#64748b] mb-5">
+          <LocalizedClientLink href="/" className="hover:text-[#006B4F]">Home</LocalizedClientLink>
+          <span>›</span>
+          <LocalizedClientLink href="/store" className="hover:text-[#006B4F]">Ingredients</LocalizedClientLink>
+          <span>›</span>
+          <span className="text-[#0f172a] font-medium truncate">{product.title}</span>
+        </nav>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] gap-6">
+          <div className="self-start bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <ImageGallery images={images} title={product.title} />
+            {product.description && (
+              <div className="mt-5 pt-5 border-t border-gray-100">
+                <h2 className="text-base font-extrabold text-[#0f172a]">Product Description</h2>
+                <div
+                  className="product-description text-sm text-[#475569] leading-relaxed mt-2"
+                  data-testid="product-description"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              </div>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4" data-testid="spec-chips">
+              {chips.map(([label, value]) => (
+                <div key={label} className="bg-[#f8fffe] border border-[#e2f3eb] rounded-lg p-3">
+                  <div className="text-[9px] uppercase tracking-wider text-[#64748b]">{label}</div>
+                  <div className="text-xs font-bold text-[#0f172a] mt-1 break-words">{value}</div>
+                </div>
+              ))}
+            </div>
+            {currentPrice?.calculated_amount != null && currentPrice.currency_code && (
+              <div className="mt-4 p-4 bg-[#f8fffe] border border-[#e2f3eb] rounded-xl">
+                <h2 className="text-base font-extrabold text-[#0f172a]">Price Decrease & Expected Savings</h2>
+                <p className="text-[10px] text-[#64748b] mt-0.5">Expected values are forecasts, not guaranteed prices.</p>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  {[
+                    ["Current Price", `${convertToLocale({ amount: currentPrice.calculated_amount, currency_code: currentPrice.currency_code })}/${UNIT}`],
+                    ["Expected Price", "Not available"],
+                    ["Expected Decrease", "Not available"],
+                    ["Expected Savings", "Not available"],
+                  ].map(([label, value]) => (
+                    <div key={label} className="bg-white border border-gray-100 rounded-lg p-2.5">
+                      <div className="text-[9px] text-[#64748b]">{label}</div>
+                      <div className="text-xs font-extrabold text-[#0f172a] mt-1">{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Product Overview & Structured Content from Description */}
-          {product.description && (
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs">
-              <h2 className="text-lg font-bold text-[#0f172a] mb-4 flex items-center gap-2">
-                <span>📋</span>
-                <span>Product Overview & Application Details</span>
-              </h2>
-              <div
-                className="product-description text-sm text-[#374151] leading-relaxed"
-                data-testid="product-description"
-                dangerouslySetInnerHTML={{ __html: product.description }}
+          <div className="self-start bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col gap-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1
+                  className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] leading-tight"
+                  data-testid="product-title"
+                >
+                  {product.title}
+                </h1>
+                {brand && (
+                  <LocalizedClientLink
+                    href={`/collections/${brand.handle}`}
+                    className="inline-block text-sm font-semibold text-[#0757a8] mt-2 hover:text-[#006B4F]"
+                  >
+                    {brand.title}
+                    {brandCountry ? ` · ${brandCountry}` : ""}
+                  </LocalizedClientLink>
+                )}
+              </div>
+              <WishlistButton
+                productId={product.id}
+                initialSaved={wishlist.includes(product.id)}
+                isLoggedIn={!!customer}
+                size="lg"
               />
             </div>
-          )}
-
-          {/* Technical Specifications & Compliance Accordion */}
-          <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs">
-            <h3 className="text-base font-bold text-[#0f172a] mb-4 flex items-center gap-2">
-              <span>🔬</span>
-              <span>Technical Specifications & Compliance</span>
-            </h3>
-            <ProductTabs product={product} />
-          </div>
-        </div>
-
-        {/* Right Column: Sticky Commercial Buy Box (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col gap-y-6 lg:sticky lg:top-24 h-fit">
-          <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-7 shadow-sm flex flex-col gap-y-5">
-            <ProductInfo product={product} />
-
-            <Divider />
 
             <Suspense
               fallback={
@@ -110,51 +227,101 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                   disabled={true}
                   product={product}
                   region={region}
+                  viewer={viewer}
                 />
               }
             >
-              <ProductActionsWrapper id={product.id} region={region} />
+              <ProductActionsWrapper id={product.id} region={region} viewer={viewer} />
             </Suspense>
 
-            {/* B2B Assurance Checklist */}
-            <div className="pt-4 border-t border-gray-100 flex flex-col gap-2.5 text-xs text-[#374151]">
-              <div className="flex items-center gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  ✓
-                </span>
-                <span>
-                  <strong>Batch Tested CoA:</strong> Full assay & micro report with shipment
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  ✓
-                </span>
-                <span>
-                  <strong>Direct Manufacturer Sourcing:</strong> 100% industrial traceability
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  ✓
-                </span>
-                <span>
-                  <strong>Live WhatsApp Updates:</strong> Order packing, dispatch & tracking
-                </span>
+            <div className="grid grid-cols-2 gap-2">
+              <a
+                href="#inquiry"
+                className="py-3 text-center bg-[#0757a8] hover:bg-[#064985] text-white text-sm font-bold rounded-xl"
+              >
+                Request Quote
+              </a>
+              <a
+                href="#inquiry"
+                className="py-3 text-center border border-[#006B4F]/40 text-[#006B4F] text-sm font-semibold rounded-xl hover:bg-[#f0fdf4]"
+              >
+                Request Sample
+              </a>
+              <div className="col-span-2 grid">
+                <CompareProductsModal
+                  items={compareItems}
+                  currentId={product.id}
+                  categoryName={primaryCategory?.name}
+                />
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Related Products Section */}
-      <div
-        className="content-container my-16"
-        data-testid="related-products-container"
-      >
-        <Suspense fallback={<SkeletonRelatedProducts />}>
-          <RelatedProducts product={product} countryCode={countryCode} />
+        <Suspense fallback={null}>
+          <RelatedProducts
+            product={product}
+            categoryIds={categories.map((c) => c.id)}
+            countryCode={countryCode}
+            viewer={viewer}
+          />
         </Suspense>
+
+        <div
+          className={`grid grid-cols-1 gap-5 mt-6 ${documents.length ? "lg:grid-cols-[1fr_320px]" : ""}`}
+        >
+          <section className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm" data-testid="tech-specs">
+            <h2 className="text-lg font-extrabold text-[#0f172a] mb-4">Technical Specifications</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2">
+              {specs.map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-4 py-3 border-b border-gray-100 sm:odd:pr-5 sm:even:pl-5">
+                  <span className="text-xs text-[#64748b]">{label}</span>
+                  <span className="text-xs font-semibold text-[#0f172a] text-right">{value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          {documents.length > 0 && (
+            <section className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+              <h2 className="text-lg font-extrabold text-[#0f172a] mb-4">Documents</h2>
+              {documents.map((doc) => (
+                <a
+                  key={doc.url}
+                  href={doc.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-left border border-gray-100 rounded-xl p-3 mb-2 hover:border-[#006B4F]/30"
+                >
+                  <div className="text-xs font-bold text-[#0f172a]">{doc.name}</div>
+                  {doc.type && <div className="text-[10px] text-[#64748b] mt-1">{doc.type}</div>}
+                </a>
+              ))}
+            </section>
+          )}
+        </div>
+
+        <section
+          id="inquiry"
+          className="scroll-mt-24 bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm mt-6"
+        >
+          <h2 className="text-lg font-extrabold text-[#0f172a]">Request a quote or sample</h2>
+          <p className="text-xs text-[#64748b] mt-0.5 mb-4">
+            For {product.title}. Our sourcing team replies within 24–48 hours.
+          </p>
+          <QuoteSampleForm
+            productId={product.id}
+            variantId={firstVariant?.id}
+            productTitle={product.title ?? "this product"}
+            minQuantity={moq}
+            defaults={{
+              name: customerName || undefined,
+              email: customer?.email,
+              phone: customer?.phone ?? undefined,
+              company: customer?.company_name ?? undefined,
+            }}
+          />
+        </section>
+
       </div>
     </div>
   )

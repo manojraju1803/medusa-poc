@@ -31,26 +31,9 @@ sdk.client.fetch = async <T>(
     ...localeHeader,
     ...headers,
   }
-
-  // Generous timeout to avoid aborting valid Medusa workflows on local dev
-  const timeoutMs = process.env.NODE_ENV === "development" ? 60000 : 30000
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
-  const signal = init?.signal || controller.signal
-
-  const updatedInit: FetchArgs = {
+  init = {
     ...init,
     headers: newHeaders,
-    signal,
   }
-
-  try {
-    const res = await originalFetch(input, updatedInit)
-    clearTimeout(timeoutId)
-    return res as T
-  } catch (err) {
-    clearTimeout(timeoutId)
-    throw err
-  }
+  return originalFetch(input, init)
 }
-
