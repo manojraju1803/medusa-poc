@@ -1,7 +1,8 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text } from "@medusajs/ui"
-import { useEffect, useState } from "react"
+import { Button, Container, Heading, Text } from "@medusajs/ui"
+import { useCallback, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { CUSTOMERS_CHANGED_EVENT } from "../lib/refresh-customers"
 
 type Group = { id: string; name: string; metadata?: Record<string, unknown> | null }
 
@@ -33,9 +34,12 @@ const CustomerTypeSummary = () => {
   >(TILES.map((tile) => ({ tile, count: null })))
   const [total, setTotal] = useState<number | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
+  const [loading, setLoading] = useState(false)
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
       const [{ customer_groups }, all] = await Promise.all([
         fetch("/admin/customer-groups?limit=100&fields=id,name,metadata", {
           credentials: "include",
@@ -49,15 +53,30 @@ const CustomerTypeSummary = () => {
           return { tile, group, count: group ? await countIn(group.id) : 0 }
         })
       )
-      if (!cancelled) {
-        setTiles(rows)
-        setTotal(all.count)
-      }
-    })().catch(() => undefined)
-    return () => {
-      cancelled = true
+      setTiles(rows)
+      setTotal(all.count)
+      setUpdatedAt(new Date())
+    } catch {
+      // Keep the last counts on a failed refresh.
+    } finally {
+      setLoading(false)
     }
   }, [])
+
+  // Recount on open, after approve / revoke or a type change anywhere in the
+  // admin, and when the tab regains focus.
+  useEffect(() => {
+    load()
+    const onVisible = () => document.visibilityState === "visible" && load()
+    window.addEventListener(CUSTOMERS_CHANGED_EVENT, load)
+    window.addEventListener("focus", load)
+    document.addEventListener("visibilitychange", onVisible)
+    return () => {
+      window.removeEventListener(CUSTOMERS_CHANGED_EVENT, load)
+      window.removeEventListener("focus", load)
+      document.removeEventListener("visibilitychange", onVisible)
+    }
+  }, [load])
 
   const approved = tiles.find((t) => t.tile.key === "approved")?.count
   const pending =
@@ -70,16 +89,26 @@ const CustomerTypeSummary = () => {
       <div className="flex items-center justify-between px-6 py-4">
         <div>
           <Heading level="h2">Customer types</Heading>
+          {updatedAt && (
+            <Text size="xsmall" className="text-ui-fg-muted">
+              Updated {updatedAt.toLocaleTimeString("en-IN")}
+            </Text>
+          )}
           <Text size="small" className="text-ui-fg-subtle">
             Open a type to see its customers. To filter this list instead, use
             Add filter → Groups.
           </Text>
         </div>
-        {pending !== null && (
-          <Text size="small" className="text-ui-fg-subtle">
-            {pending} awaiting approval
-          </Text>
-        )}
+        <div className="flex items-center gap-x-3">
+          {pending !== null && (
+            <Text size="small" className="text-ui-fg-subtle">
+              {pending} awaiting approval
+            </Text>
+          )}
+          <Button size="small" variant="secondary" onClick={load} isLoading={loading}>
+            Refresh
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-3 px-6 py-4 md:grid-cols-4">
         {tiles.map(({ tile, group, count }) => {

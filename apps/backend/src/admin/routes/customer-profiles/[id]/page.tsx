@@ -26,6 +26,7 @@ import {
   Values,
   valuesOf,
 } from "../../../lib/customer-profile"
+import { useRefreshCustomers } from "../../../lib/refresh-customers"
 
 type Customer = {
   id: string
@@ -221,6 +222,7 @@ const CustomerProfilePage = () => {
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
+  const refreshCustomers = useRefreshCustomers()
 
   const refresh = useCallback(() => {
     loadCustomer(id)
@@ -261,7 +263,10 @@ const CustomerProfilePage = () => {
       await saveCustomer(customer.id, {
         metadata: { ...(customer.metadata ?? {}), account_type: next },
       })
-      setTimeout(refresh, 800)
+      setTimeout(() => {
+        refresh()
+        refreshCustomers()
+      }, 800)
     } finally {
       setBusy(null)
     }
@@ -275,6 +280,7 @@ const CustomerProfilePage = () => {
         body: JSON.stringify({ approved: !approved }),
       })
       refresh()
+      refreshCustomers()
     } finally {
       setBusy(null)
     }
@@ -339,7 +345,15 @@ const CustomerProfilePage = () => {
       </Container>
 
       {sectionsFor(type).map((section) => (
-        <SectionBlock key={`${type}-${section.key}`} section={section} customer={customer} onSaved={setCustomer} />
+        <SectionBlock
+          key={`${type}-${section.key}`}
+          section={section}
+          customer={customer}
+          onSaved={(updated) => {
+            setCustomer(updated)
+            refreshCustomers()
+          }}
+        />
       ))}
 
       {(type === "supplier" || documents.length > 0) && (

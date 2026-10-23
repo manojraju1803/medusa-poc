@@ -1,8 +1,8 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { Badge, Button, Container, Heading, Text } from "@medusajs/ui"
-import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useRefreshCustomers } from "../lib/refresh-customers"
 
 type CustomerGroup = { id: string; name: string }
 
@@ -21,10 +21,20 @@ const ACCOUNT_TYPE_LABEL: Record<string, string> = {
 }
 
 const CustomerApproveWidget = ({ data }: { data: AdminCustomer }) => {
-  const queryClient = useQueryClient()
   const [approved, setApproved] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const { pathname } = useLocation()
+  const refreshCustomers = useRefreshCustomers()
+  const navigate = useNavigate()
+
+  // Medusa's "Edit" opens a side drawer at /customers/:id/edit. Send it to the
+  // full-page profile instead, which edits every registration field.
+  useEffect(() => {
+    if (pathname.endsWith(`/customers/${data.id}/edit`)) {
+      navigate(`/customer-profiles/${data.id}`, { replace: true })
+    }
+  }, [pathname, data.id, navigate])
 
   useEffect(() => {
     fetch(`/admin/customers/${data.id}?fields=*groups`)
@@ -48,10 +58,7 @@ const CustomerApproveWidget = ({ data }: { data: AdminCustomer }) => {
       })
       if (response.ok) {
         setApproved((prev) => !prev)
-        // The page's Groups section and customer lists, which now show the
-        // customer in Approved or Unapproved.
-        queryClient.invalidateQueries({ queryKey: ["customers"] })
-        queryClient.invalidateQueries({ queryKey: ["customer_groups"] })
+        refreshCustomers()
       }
     } finally {
       setSaving(false)
