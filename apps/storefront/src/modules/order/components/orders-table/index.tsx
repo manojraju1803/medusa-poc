@@ -1,6 +1,7 @@
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ReorderButton from "@modules/order/components/reorder-button"
 import StatusBadge, { orderStatus } from "@modules/order/components/status-badge"
 import Thumbnail from "@modules/products/components/thumbnail"
 
@@ -99,6 +100,7 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                       <StatusBadge status={statuses[i]} />
                     </td>
                     <td className="px-4 py-3">
+                      <div className="flex items-start gap-2">
                       <LocalizedClientLink
                         href={`/account/orders/details/${order.id}`}
                         className="px-3 py-1.5 text-[11px] font-semibold border border-[#4d7c0f]/40 text-[#4d7c0f] rounded-lg hover:bg-[#f6fbee] transition-colors whitespace-nowrap"
@@ -106,6 +108,8 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                       >
                         View details
                       </LocalizedClientLink>
+                      <ReorderButton orderId={order.id} />
+                      </div>
                     </td>
                   </tr>
                 )
