@@ -227,14 +227,12 @@ const Payment = ({
                   className="flex gap-2 txt-medium text-ui-fg-subtle items-center"
                   data-testid="payment-details-summary"
                 >
-                  <Container className="flex items-center h-7 w-fit p-2 bg-[#f6fbee] text-[#4d7c0f]">
+                  <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover">
                     {paymentInfoMap[selectedPaymentMethod]?.icon || (
                       <CreditCard />
                     )}
                   </Container>
-                  <Text className="text-xs font-medium text-gray-700">
-                    Instant Demo Verification · Pay on terms / Bank transfer
-                  </Text>
+                  <Text>Pay on terms (bank transfer / PO)</Text>
                 </div>
               </div>
             </div>

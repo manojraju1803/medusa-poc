@@ -57,38 +57,6 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
       {isManual(paymentProviderId) && isDevelopment && (
         <PaymentTest className="small:hidden text-[10px]" />
       )}
-      {selectedPaymentOptionId === paymentProviderId && isManual(paymentProviderId) && (
-        <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2.5 text-xs text-gray-600">
-          <div className="flex items-center gap-2 bg-[#f6fbee] text-[#4d7c0f] px-3 py-2 rounded-xl border border-[#d9edb8]">
-            <svg className="w-4 h-4 shrink-0 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="font-medium text-[11px]">
-              Demo Environment: Orders are created, confirmed, and dispatched with mock payment approval.
-            </span>
-          </div>
-          <div className="grid grid-cols-1 small:grid-cols-3 gap-2 mt-1">
-            <div className="p-2.5 bg-[#f8fafc] border border-gray-200 rounded-xl flex flex-col gap-0.5">
-              <span className="font-bold text-gray-900 text-[11px] flex items-center gap-1">
-                <span>⚡</span> Instant Mock Approval
-              </span>
-              <span className="text-[10px] text-gray-500">Simulated card & net banking</span>
-            </div>
-            <div className="p-2.5 bg-[#f8fafc] border border-gray-200 rounded-xl flex flex-col gap-0.5">
-              <span className="font-bold text-gray-900 text-[11px] flex items-center gap-1">
-                <span>🏦</span> Corporate NEFT / RTGS
-              </span>
-              <span className="text-[10px] text-gray-500">Virtual account transfer</span>
-            </div>
-            <div className="p-2.5 bg-[#f8fafc] border border-gray-200 rounded-xl flex flex-col gap-0.5">
-              <span className="font-bold text-gray-900 text-[11px] flex items-center gap-1">
-                <span>📑</span> Net 30 B2B Credit
-              </span>
-              <span className="text-[10px] text-gray-500">Approved buyer credit terms</span>
-            </div>
-          </div>
-        </div>
-      )}
       {children}
     </RadioGroupOption>
   )

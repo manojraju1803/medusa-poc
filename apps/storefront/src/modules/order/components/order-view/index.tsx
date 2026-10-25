@@ -16,7 +16,7 @@ import StatusBadge, {
 import Thumbnail from "@modules/products/components/thumbnail"
 
 const PAYMENT_LABEL: Record<string, string> = {
-  pp_system_default: "Mock B2B Payment (Demo Instant Approval)",
+  pp_system_default: "Pay on terms (bank transfer / PO)",
 }
 
 const Card = ({

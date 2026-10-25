@@ -30,7 +30,7 @@ export const paymentInfoMap: Record<
     icon: <PayPal />,
   },
   pp_system_default: {
-    title: "Mock B2B Payment (Demo Approval)",
+    title: "Manual Payment",
     icon: <CreditCard />,
   },
   pp_mock_default: {
