@@ -70,3 +70,6 @@ ib-dump/
 
 # Locally installed Claude Code skills
 .claude/skills/
+
+# Local one-off maintenance scripts (contain local DB connection strings)
+scripts/
