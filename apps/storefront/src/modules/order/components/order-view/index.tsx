@@ -88,7 +88,7 @@ const OrderView = ({
             </p>
           </div>
           <div className="flex gap-2 items-center">
-            <InvoiceButton />
+            <InvoiceButton orderId={order.id} />
             <LocalizedClientLink
               href="/contact"
               className="px-3 py-1.5 border border-[#4d7c0f]/40 text-[#4d7c0f] text-xs font-bold rounded-lg hover:bg-[#f6fbee] transition-colors"
