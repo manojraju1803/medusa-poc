@@ -83,7 +83,8 @@ const CartDropdown = ({
       <Popover className="relative h-full">
         <PopoverButton className="h-full">
           <LocalizedClientLink
-            className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-gray-500 hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
+            title="Cart"
+            className="flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500 hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
             href="/cart"
             data-testid="nav-cart-link"
             aria-label={`Cart (${totalItems})`}
@@ -96,7 +97,7 @@ const CartDropdown = ({
                 </span>
               )}
             </span>
-            <span className="text-[9px] leading-none">Cart</span>
+            <span className="hidden large:block text-[9px] leading-none">Cart</span>
           </LocalizedClientLink>
         </PopoverButton>
         <Transition

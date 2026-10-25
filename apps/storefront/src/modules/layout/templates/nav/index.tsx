@@ -70,10 +70,11 @@ const IconLink = ({
     href={href}
     data-testid={testId}
     aria-label={label}
-    className="hidden md:flex flex-col items-center gap-0.5 px-2 py-1.5 text-gray-500 hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
+    title={label}
+    className="hidden md:flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500 hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
   >
     {children}
-    <span className="text-[9px] leading-none">{label}</span>
+    <span className="hidden large:block text-[9px] leading-none">{label}</span>
   </LocalizedClientLink>
 )
 
@@ -100,21 +101,21 @@ export default async function Nav() {
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
       <AnnouncementBar warehouse={warehouse} />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
           <LocalizedClientLink
             href="/"
             className="flex items-center shrink-0"
             data-testid="nav-store-link"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-6 sm:h-8 xl:h-11 w-auto object-contain" />
+            <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-7 sm:h-8 w-auto object-contain" />
           </LocalizedClientLink>
 
           <MegaMenu nutra={menus.nutra} food={menus.food} agro={menus.agro} />
 
-          <HeaderSearch className="flex-1 hidden md:flex max-w-[320px] ml-auto" />
+          <HeaderSearch className="flex-1 hidden md:flex min-w-[200px] max-w-[300px] ml-auto" />
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 shrink-0">
             {customer && (
               <>
             <IconLink href="/account/wishlist" label="Wishlist" testId="nav-wishlist-link">
@@ -129,12 +130,12 @@ export default async function Nav() {
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-gray-500"
+                  className="flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500"
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
                   <BagIcon className="w-4 h-4" />
-                  <span className="text-[9px] leading-none">Cart</span>
+                  <span className="hidden large:block text-[9px] leading-none">Cart</span>
                 </LocalizedClientLink>
               }
             >
@@ -148,12 +149,13 @@ export default async function Nav() {
                 <LocalizedClientLink
                   href="/account"
                   data-testid="nav-account-link"
-                  className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#f6fbee] rounded-lg transition-all ml-1"
+                  title={displayName}
+                  className="flex items-center gap-2 h-10 px-2 hover:bg-[#f6fbee] rounded-lg transition-all ml-1"
                 >
                   <span className="w-7 h-7 bg-[#4d7c0f] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
                     {initials}
                   </span>
-                  <span className="hidden lg:flex flex-col items-start max-w-[140px]">
+                  <span className="hidden large:flex flex-col items-start max-w-[110px]">
                     <span className="text-xs font-semibold text-[#0f172a] leading-none truncate max-w-full">
                       {displayName}
                     </span>

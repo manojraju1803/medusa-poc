@@ -37,7 +37,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     <>
       <button
         type="button"
-        className="lg:hidden p-2 text-gray-500 ml-1"
+        className="xl:hidden p-2 text-gray-500 ml-1"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
@@ -49,7 +49,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       {open && (
         <div
           data-testid="nav-menu-popup"
-          className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-100 bg-white px-4 pb-4 shadow-lg max-h-[calc(100vh-7rem)] overflow-y-auto z-50"
+          className="xl:hidden absolute top-full left-0 right-0 border-t border-gray-100 bg-white px-4 pb-4 shadow-lg max-h-[calc(100vh-7rem)] overflow-y-auto z-50"
         >
           <HeaderSearch className="mt-3 mb-3" onSubmitted={close} />
           <ul>

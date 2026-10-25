@@ -22,7 +22,7 @@ const Chevron = () => (
 type MenuKey = "nutra" | "food" | "agro"
 
 const linkClass =
-  "px-3 py-2 text-sm font-medium text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
+  "px-2 large:px-2.5 py-2 text-sm font-medium whitespace-nowrap text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
 
 // Desktop nav: Home, Nutra, Food, Agro, Supplier, Deal of Month, Contact Us.
 const MegaMenu = ({
@@ -63,7 +63,7 @@ const MegaMenu = ({
         aria-expanded={open === key}
         aria-haspopup="menu"
         data-testid={`nav-${key}-button`}
-        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-all ${
+        className={`flex items-center gap-1 px-2 large:px-2.5 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-all ${
           open === key
             ? "text-[#4d7c0f] bg-[#f6fbee]"
             : "text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee]"
@@ -82,7 +82,7 @@ const MegaMenu = ({
   const { label, groups } = menus[open ?? "nutra"]
 
   return (
-    <nav ref={ref} className="hidden lg:flex items-center">
+    <nav ref={ref} className="hidden xl:flex items-center shrink-0">
       <LocalizedClientLink href="/" className={linkClass}>
         Home
       </LocalizedClientLink>
@@ -94,7 +94,7 @@ const MegaMenu = ({
           <LocalizedClientLink
             key={link.label}
             href={link.href}
-            className="flex items-center gap-1 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-lg transition-all"
+            className="flex items-center gap-1.5 px-2 large:px-2.5 py-2 text-sm font-bold whitespace-nowrap text-red-600 hover:bg-red-50 rounded-lg transition-all"
           >
             <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
             {link.label}
