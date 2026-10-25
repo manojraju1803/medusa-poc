@@ -10,6 +10,7 @@ import InvoiceButton from "@modules/order/components/invoice-button"
 import StatusBadge, {
   TIMELINE,
   orderStatus,
+  statusColor,
   timelineIndex,
 } from "@modules/order/components/status-badge"
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -103,12 +104,14 @@ const OrderView = ({
               <div key={label} className="flex flex-col gap-1.5">
                 <div
                   className={`h-1.5 rounded-full ${
-                    i <= step ? "bg-[#4d7c0f]" : "bg-gray-200"
+                    i <= step ? statusColor(status).bar : "bg-gray-200"
                   }`}
                 />
                 <span
                   className={`text-[10px] small:text-[11px] ${
-                    i <= step ? "text-[#4d7c0f] font-semibold" : "text-[#9ca3af]"
+                    i <= step
+                      ? `${statusColor(status).text} font-semibold`
+                      : "text-[#9ca3af]"
                   }`}
                 >
                   {label}
