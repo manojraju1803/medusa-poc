@@ -27,7 +27,7 @@ export default async function Orders() {
   const statuses = orders.map(orderStatus)
   const count = (st: string) => statuses.filter((x) => x === st).length
   const summary = [
-    { label: "Total Orders", val: orders.length, color: "bg-slate-50 text-slate-700" },
+    { label: "Total Orders", val: orders.length, color: "bg-blue-50 text-blue-700" },
     ...["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"].map(
       (st) => ({ label: st, val: count(st), color: statusColor(st).soft })
     ),
