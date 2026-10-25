@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 
-import { listCollections } from "@lib/data/collections"
 import { retrieveCustomer } from "@lib/data/customer"
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
@@ -10,19 +9,20 @@ import {
   Applications,
   CategoryCard,
   StatStrip,
-  TrustedBrands,
 } from "@modules/home/components/catalogue-sections"
 import CategoryStrip from "@modules/home/components/category-carousel"
+import GlobalPartners from "@modules/home/components/global-partners"
 import { PriceAccess } from "@modules/home/components/home-product-card"
 import Hero from "@modules/home/components/hero"
+import InstructionVideos from "@modules/home/components/instruction-videos"
 import {
   CtaBanner,
-  InstructionVideos,
   MarketplaceComparison,
   OrderProcess,
   WhyChooseUs,
 } from "@modules/home/components/marketing-sections"
 import ProductRow from "@modules/home/components/product-row"
+import Testimonials from "@modules/home/components/testimonials"
 import { getMenuCategories } from "@modules/layout/lib/menu-categories"
 
 export const metadata: Metadata = {
@@ -53,24 +53,21 @@ export default async function Home(props: {
       .then(({ response }) => response.products)
       .catch(() => [] as HttpTypes.StoreProduct[])
 
-  const [customer, menuCategories, catalogue, collections, byNew, byTitle, byUpdated] =
+  const [customer, menuCategories, catalogue, byNew, byTitle, byUpdated] =
     await Promise.all([
       retrieveCustomer().catch(() => null),
       getMenuCategories(),
       // Light-weight pass over the whole (channel-scoped) catalogue for
-      // category images/counts and brand product counts.
+      // category images and counts.
       listProducts({
         regionId: region.id,
         queryParams: {
           limit: 500,
-          fields: "id,thumbnail,collection_id,categories.id,categories.parent_category_id",
+          fields: "id,thumbnail,categories.id,categories.parent_category_id",
         },
       })
         .then(({ response }) => response)
         .catch(() => ({ products: [] as HttpTypes.StoreProduct[], count: 0 })),
-      listCollections({ fields: "id,title,handle,metadata" })
-        .then(({ collections }) => collections)
-        .catch(() => [] as HttpTypes.StoreCollection[]),
       fetchRow("-created_at"),
       fetchRow("title"),
       fetchRow("-updated_at"),
@@ -103,7 +100,6 @@ export default async function Home(props: {
 
   // Category cards: product count + first product image per top-level category.
   const stats = new Map<string, { count: number; image: string | null }>()
-  const brandCounts: Record<string, number> = {}
   for (const p of catalogue.products) {
     const topIds = new Set(
       (p.categories ?? []).map((c) => c.parent_category_id || c.id)
@@ -114,9 +110,6 @@ export default async function Home(props: {
       s.image = s.image || p.thumbnail || null
       stats.set(id, s)
     })
-    const cid = (p as HttpTypes.StoreProduct & { collection_id?: string })
-      .collection_id
-    if (cid) brandCounts[cid] = (brandCounts[cid] ?? 0) + 1
   }
 
   const cards: CategoryCard[] = menuCategories.map((c) => ({
@@ -137,21 +130,10 @@ export default async function Home(props: {
     .filter((c) => !APPLICATION_HANDLES.includes(c.handle) && visible(c))
     .sort((a, b) => b.productCount - a.productCount)
 
-  const brands = collections.filter(
-    (b) => !hasCounts || (brandCounts[b.id] ?? 0) > 0
-  )
-
   return (
     <div className="font-sans bg-white">
       <Hero />
-      <StatStrip
-        stats={[
-          { value: catalogue.count, label: "Products Available" },
-          { value: brands.length, label: "Trusted Brands" },
-          { value: ingredientCards.length, label: "Ingredient Categories" },
-          { value: appCards.length, label: "Applications Served" },
-        ]}
-      />
+      <StatStrip />
       <CategoryStrip categories={ingredientCards} />
       <Applications apps={appCards} />
       <ProductRow
@@ -180,8 +162,9 @@ export default async function Home(props: {
       <OrderProcess />
       <InstructionVideos />
       <MarketplaceComparison />
-      <TrustedBrands brands={brands} productCounts={brandCounts} />
+      <GlobalPartners />
       <WhyChooseUs />
+      <Testimonials />
       <CtaBanner />
     </div>
   )

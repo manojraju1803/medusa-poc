@@ -95,7 +95,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
 
   return (
     <div
-      className="px-5 py-4 hover:bg-[#f8fffe] transition-colors group"
+      className="px-5 py-4 hover:bg-[#fafdf5] transition-colors group"
       data-testid="product-row"
     >
       <div className="flex items-start gap-4">
@@ -115,7 +115,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
             <div className="min-w-0">
               <LocalizedClientLink href={`/products/${item.product_handle}`}>
                 <h3
-                  className="font-bold text-[#0f172a] text-sm leading-snug hover:text-[#006B4F]"
+                  className="font-bold text-[#0f172a] text-sm leading-snug hover:text-[#4d7c0f]"
                   data-testid="product-title"
                 >
                   {item.product_title}
@@ -125,7 +125,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
                 <p className="text-xs text-[#64748b] mt-0.5">{brand}</p>
               )}
               {item.variant_sku && (
-                <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] rounded-full">
+                <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-[#f6fbee] border border-[#ecf6dc] text-[#4d7c0f] rounded-full">
                   {item.variant_sku}
                 </span>
               )}
@@ -152,7 +152,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
               className="flex items-center gap-1.5 text-[#4b5563]"
               data-testid="cart-item-moq"
             >
-              <svg className="w-3 h-3 text-[#006B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
               <span className="text-[11px] font-medium">
@@ -167,7 +167,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
                 type="button"
                 onClick={() => step(-1)}
                 disabled={updating || item.quantity <= minQuantity}
-                className="w-8 h-8 bg-[#f0fdf4] hover:bg-[#dcfce7] border border-[#dcfce7] rounded-l-lg flex items-center justify-center text-[#006B4F] font-bold disabled:opacity-40"
+                className="w-8 h-8 bg-[#f6fbee] hover:bg-[#ecf6dc] border border-[#ecf6dc] rounded-l-lg flex items-center justify-center text-[#4d7c0f] font-bold disabled:opacity-40"
                 aria-label="Decrease quantity"
               >
                 −
@@ -188,14 +188,14 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
                 }}
                 disabled={updating}
                 aria-label="Quantity"
-                className="w-14 h-8 bg-white border-t border-b border-[#dcfce7] text-center text-sm font-bold text-[#0f172a] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                className="w-14 h-8 bg-white border-t border-b border-[#ecf6dc] text-center text-sm font-bold text-[#0f172a] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 data-testid="product-quantity-input"
               />
               <button
                 type="button"
                 onClick={() => step(1)}
                 disabled={updating}
-                className="w-8 h-8 bg-[#f0fdf4] hover:bg-[#dcfce7] border border-[#dcfce7] rounded-r-lg flex items-center justify-center text-[#006B4F] font-bold disabled:opacity-40"
+                className="w-8 h-8 bg-[#f6fbee] hover:bg-[#ecf6dc] border border-[#ecf6dc] rounded-r-lg flex items-center justify-center text-[#4d7c0f] font-bold disabled:opacity-40"
                 aria-label="Increase quantity"
               >
                 +
@@ -212,7 +212,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
                 {fmt(item.unit_price)} / {unit}
               </div>
               <div
-                className="text-base font-extrabold text-[#006B4F]"
+                className="text-base font-extrabold text-[#4d7c0f]"
                 data-testid="product-price"
               >
                 {fmt(item.subtotal ?? item.unit_price * item.quantity)}
@@ -222,7 +222,7 @@ const Item = ({ item, currencyCode, priceTiers }: ItemProps) => {
 
           {nudge && (
             <p
-              className="mt-2 text-[11px] font-medium text-[#0757a8]"
+              className="mt-2 text-[11px] font-medium text-[#0077cf]"
               data-testid="cart-slab-nudge"
             >
               {`Add ${nudge.addQuantity} more to pay ${fmt(

@@ -14,7 +14,7 @@ const BackButton = () => {
       <button
         type="button"
         onClick={() => router.back()}
-        className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-[#334155] hover:border-[#006B4F]/40 hover:text-[#006B4F] text-xs font-semibold rounded-lg shadow-sm transition-colors"
+        className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-[#334155] hover:border-[#4d7c0f]/40 hover:text-[#4d7c0f] text-xs font-semibold rounded-lg shadow-sm transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

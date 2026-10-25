@@ -25,7 +25,7 @@ const Login = ({ setCurrentView }: Props) => {
         </div>
         {message?.state === "verification_required" && (
           <div
-            className="mb-5 text-sm text-[#0f172a] bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-3"
+            className="mb-5 text-sm text-[#0f172a] bg-[#f6fbee] border border-[#d9edb8] rounded-lg p-3"
             data-testid="login-verification-message"
           >
             We sent a verification link to <strong>{message.email}</strong>.
@@ -68,7 +68,7 @@ const Login = ({ setCurrentView }: Props) => {
         <button
           type="button"
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
-          className="text-[#006B4F] font-semibold hover:underline"
+          className="text-[#4d7c0f] font-semibold hover:underline"
           data-testid="register-button"
         >
           Create an account

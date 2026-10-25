@@ -33,8 +33,8 @@ export default async function CollectionTemplate({
   )
 
   return (
-    <div className="min-h-screen bg-[#f8fffe]" data-testid="supplier-profile">
-      <div className="relative bg-[#0d3320] h-36 overflow-hidden">
+    <div className="min-h-screen bg-[#fafdf5]" data-testid="supplier-profile">
+      <div className="relative bg-[#00356e] h-36 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/home-hero.jpg"
@@ -51,7 +51,7 @@ export default async function CollectionTemplate({
                 <h1 className="text-xl font-extrabold text-[#0f172a]">
                   {supplier.title}
                 </h1>
-                <span className="text-[10px] font-bold text-[#006B4F] bg-[#f0fdf4] border border-[#bbf7d0] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-[#4d7c0f] bg-[#f6fbee] border border-[#d9edb8] px-2 py-0.5 rounded-full">
                   Brand on Ingredients Bazar
                 </span>
               </div>
@@ -65,7 +65,7 @@ export default async function CollectionTemplate({
               )}
               <div className="flex flex-wrap gap-6 mt-3">
                 <div>
-                  <div className="text-base font-extrabold text-[#006B4F]">
+                  <div className="text-base font-extrabold text-[#4d7c0f]">
                     {supplier.productCount}
                   </div>
                   <div className="text-[10px] text-[#64748b]">
@@ -77,13 +77,13 @@ export default async function CollectionTemplate({
             <div className="flex flex-wrap gap-2">
               <LocalizedClientLink
                 href={`/contact?subject=${encodeURIComponent(`Quote request: ${supplier.title}`)}`}
-                className="px-4 py-2 bg-[#006B4F] text-white text-xs font-bold rounded-xl hover:bg-[#005a42] transition-colors"
+                className="px-4 py-2 bg-[#4d7c0f] text-white text-xs font-bold rounded-xl hover:bg-[#3f6212] transition-colors"
               >
                 Request Quote
               </LocalizedClientLink>
               <LocalizedClientLink
                 href={`/contact?subject=${encodeURIComponent(`Sample request: ${supplier.title}`)}`}
-                className="px-4 py-2 border border-[#006B4F]/40 text-[#006B4F] text-xs font-bold rounded-xl hover:bg-[#f0fdf4] transition-colors"
+                className="px-4 py-2 border border-[#4d7c0f]/40 text-[#4d7c0f] text-xs font-bold rounded-xl hover:bg-[#f6fbee] transition-colors"
               >
                 Request Sample
               </LocalizedClientLink>

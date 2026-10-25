@@ -43,7 +43,7 @@ const ItemsPreviewTemplate = ({ cart }: ItemsTemplateProps) => {
               </span>
             </p>
           </div>
-          <span className="text-sm font-bold text-[#006B4F]">
+          <span className="text-sm font-bold text-[#4d7c0f]">
             {fmt(item.subtotal ?? item.unit_price * item.quantity)}
           </span>
         </div>

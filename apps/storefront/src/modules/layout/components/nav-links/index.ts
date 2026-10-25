@@ -1,4 +1,4 @@
-// Header links around the Nutra/Food mega-menus (original design order).
+// Header links around the Nutra/Food/Agro mega-menus (original design order).
 export const NAV_LINKS = [
   { label: "Supplier", href: "/suppliers" },
   { label: "Deal of Month", href: "/deals" },
@@ -20,3 +20,6 @@ export const FOOD_MENU = [
   { title: "Dairy", items: ["Dry Fruits", "Sweetener & Polyol", "Dietary Fibers", "Dairy Ingredient", "Cocoa Powder", "Acidulant", "Gums", "Emulsifier", "Stabilizer"] },
   { title: "Ice Cream", items: ["Dry Fruits", "Sweetener & Polyol", "Dietary Fibers", "Dairy Ingredient", "Cocoa Powder", "Gums", "Acidulant", "Stabilizer"] },
 ]
+
+// Placeholder until the Agro catalogue is defined: same groups as Food.
+export const AGRO_MENU = FOOD_MENU

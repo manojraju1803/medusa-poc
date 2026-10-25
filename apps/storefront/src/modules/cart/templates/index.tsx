@@ -35,8 +35,8 @@ const CartTemplate = ({
   const pending = !!customer && !approved
 
   return (
-    <div className="min-h-screen bg-[#f8fffe]" data-testid="cart-container">
-      <section className="relative overflow-hidden bg-[#0d3320]">
+    <div className="min-h-screen bg-[#fafdf5]" data-testid="cart-container">
+      <section className="relative overflow-hidden bg-[#00356e]">
         <div className="absolute inset-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -44,34 +44,34 @@ const CartTemplate = ({
             alt=""
             className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320]/95 via-[#0d3320]/85 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00356e]/95 via-[#00356e]/85 to-transparent" />
         </div>
         <div className="relative max-w-[1440px] mx-auto px-4 small:px-6 py-8">
           <div className="flex flex-col small:flex-row items-start small:items-center justify-between gap-6">
             <div>
-              <div className="flex items-center gap-1.5 mb-3 text-[11px] text-[#86efac]/70">
-                <LocalizedClientLink href="/" className="hover:text-[#4ade80]">
+              <div className="flex items-center gap-1.5 mb-3 text-[11px] text-[#c5e39a]/70">
+                <LocalizedClientLink href="/" className="hover:text-[#7aba0c]">
                   Home
                 </LocalizedClientLink>
                 <span>/</span>
-                <span className="text-[#86efac]">My Cart</span>
+                <span className="text-[#c5e39a]">My Cart</span>
               </div>
               <h1 className="text-3xl small:text-4xl font-extrabold text-white mb-1.5">
                 My Cart
               </h1>
-              <p className="text-sm text-[#86efac]/80 max-w-sm">
+              <p className="text-sm text-[#c5e39a]/80 max-w-sm">
                 Review your selected ingredients and proceed to checkout
               </p>
             </div>
             <div className="flex flex-wrap gap-4 small:gap-6">
               {TRUST.map((t) => (
                 <div key={t.label} className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#006B4F]/40 border border-[#4ade80]/20 flex items-center justify-center text-[#4ade80]">
+                  <div className="w-8 h-8 rounded-full bg-[#4d7c0f]/40 border border-[#7aba0c]/20 flex items-center justify-center text-[#7aba0c]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d={t.d} />
                     </svg>
                   </div>
-                  <span className="text-xs text-[#86efac] font-medium">{t.label}</span>
+                  <span className="text-xs text-[#c5e39a] font-medium">{t.label}</span>
                 </div>
               ))}
             </div>
@@ -82,10 +82,10 @@ const CartTemplate = ({
       <div className="max-w-[1440px] mx-auto px-4 small:px-6 py-7">
         {pending ? (
           <div className="py-24 text-center">
-            <h2 className="text-xl font-semibold text-[#0d3320] mb-2">
+            <h2 className="text-xl font-semibold text-[#00356e] mb-2">
               Your account is awaiting approval
             </h2>
-            <p className="text-sm text-[#0d3320]/70">
+            <p className="text-sm text-[#00356e]/70">
               Cart unlocks once approved.
             </p>
           </div>

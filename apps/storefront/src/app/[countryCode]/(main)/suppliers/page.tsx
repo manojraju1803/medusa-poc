@@ -21,7 +21,7 @@ export default async function SuppliersPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#f8fffe]" data-testid="suppliers-page">
+    <div className="min-h-screen bg-[#fafdf5]" data-testid="suppliers-page">
       <PageBanner
         title="Find Trusted Suppliers"
         subtitle="Every brand on Ingredients Bazar, with its full product range"
@@ -31,7 +31,7 @@ export default async function SuppliersPage() {
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-around gap-4">
             {stats.map((s) => (
               <div key={s.l} className="text-center">
-                <div className="text-xl font-extrabold text-[#006B4F]">
+                <div className="text-xl font-extrabold text-[#4d7c0f]">
                   {s.v}
                 </div>
                 <div className="text-xs text-[#64748b]">{s.l}</div>

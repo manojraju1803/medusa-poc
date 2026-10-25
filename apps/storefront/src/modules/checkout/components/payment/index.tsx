@@ -129,7 +129,7 @@ const Payment = ({
           <Text>
             <button
               onClick={handleEdit}
-              className="text-[#0757a8] hover:underline font-semibold"
+              className="text-[#0077cf] hover:underline font-semibold"
               data-testid="edit-payment-button"
             >
               Edit
@@ -189,7 +189,7 @@ const Payment = ({
 
           <Button
             size="large"
-            className="mt-6 !bg-[#006B4F] hover:!bg-[#005a42] !rounded-xl font-bold"
+            className="mt-6 !bg-[#4d7c0f] hover:!bg-[#3f6212] !rounded-xl font-bold"
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={

@@ -55,8 +55,8 @@ const Register = ({ setCurrentView }: Props) => {
   if (message?.state === "success") {
     return (
       <div className="bg-white border border-gray-100 rounded-2xl shadow-xl p-10 text-center">
-        <div className="w-16 h-16 bg-[#dcfce7] rounded-full flex items-center justify-center mx-auto mb-5">
-          <svg className="w-8 h-8 text-[#006B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 bg-[#ecf6dc] rounded-full flex items-center justify-center mx-auto mb-5">
+          <svg className="w-8 h-8 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -84,7 +84,7 @@ const Register = ({ setCurrentView }: Props) => {
 
         {message?.state === "verification_required" && (
           <div
-            className="mb-5 text-sm text-[#0f172a] bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-3"
+            className="mb-5 text-sm text-[#0f172a] bg-[#f6fbee] border border-[#d9edb8] rounded-lg p-3"
             data-testid="register-verification-message"
           >
             We sent a verification link to <strong>{message.email}</strong>.
@@ -107,13 +107,13 @@ const Register = ({ setCurrentView }: Props) => {
                   onClick={() => setAccountType(opt.key)}
                   className={`relative flex flex-col items-start p-4 border-2 rounded-xl text-left transition-all ${
                     active
-                      ? "border-[#006B4F] bg-[#f0fdf4]"
+                      ? "border-[#4d7c0f] bg-[#f6fbee]"
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                   data-testid={`account-type-${opt.key}`}
                 >
                   {active && (
-                    <div className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#006B4F] rounded-full flex items-center justify-center">
+                    <div className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#4d7c0f] rounded-full flex items-center justify-center">
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
@@ -124,7 +124,7 @@ const Register = ({ setCurrentView }: Props) => {
                   </span>
                   <span
                     className={`text-sm font-bold ${
-                      active ? "text-[#006B4F]" : "text-[#0f172a]"
+                      active ? "text-[#4d7c0f]" : "text-[#0f172a]"
                     }`}
                   >
                     {opt.label}
@@ -198,7 +198,7 @@ const Register = ({ setCurrentView }: Props) => {
                     onClick={() => setBuyerType(t.key)}
                     className={`py-2 text-xs font-semibold rounded-lg border transition-colors ${
                       buyerType === t.key
-                        ? "border-[#006B4F] bg-[#f0fdf4] text-[#006B4F]"
+                        ? "border-[#4d7c0f] bg-[#f6fbee] text-[#4d7c0f]"
                         : "border-gray-200 text-[#374151] hover:border-gray-300"
                     }`}
                     data-testid={`buyer-type-${t.key}`}
@@ -273,16 +273,16 @@ const Register = ({ setCurrentView }: Props) => {
               type="checkbox"
               name="terms"
               required
-              className="mt-0.5 w-4 h-4 accent-[#006B4F]"
+              className="mt-0.5 w-4 h-4 accent-[#4d7c0f]"
               data-testid="terms-checkbox"
             />
             <span className="text-xs text-[#64748b] leading-relaxed">
               I agree to Ingredients Bazar&apos;s{" "}
-              <a href="#" className="text-[#006B4F] underline">
+              <a href="#" className="text-[#4d7c0f] underline">
                 Terms of Service
               </a>{" "}
               and{" "}
-              <a href="#" className="text-[#006B4F] underline">
+              <a href="#" className="text-[#4d7c0f] underline">
                 Privacy Policy
               </a>
               .
@@ -308,7 +308,7 @@ const Register = ({ setCurrentView }: Props) => {
         <button
           type="button"
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
-          className="text-[#006B4F] font-semibold hover:underline"
+          className="text-[#4d7c0f] font-semibold hover:underline"
           data-testid="sign-in-link"
         >
           Log In

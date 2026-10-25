@@ -38,8 +38,8 @@ export function Pagination({
       className={clx(
         "w-9 h-9 text-xs font-semibold rounded-lg border transition-all",
         isCurrent
-          ? "bg-[#006B4F] border-[#006B4F] text-white"
-          : "bg-white border-gray-200 text-[#374151] hover:border-[#006B4F]/40"
+          ? "bg-[#4d7c0f] border-[#4d7c0f] text-white"
+          : "bg-white border-gray-200 text-[#374151] hover:border-[#4d7c0f]/40"
       )}
       disabled={isCurrent}
       onClick={() => handlePageChange(p)}

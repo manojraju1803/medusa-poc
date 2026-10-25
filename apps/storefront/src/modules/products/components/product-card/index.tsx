@@ -62,7 +62,7 @@ export const CardPrice = ({
     const { cheapestPrice } = getProductPrice({ product })
     if (!cheapestPrice) return null
     return (
-      <span className="text-sm font-extrabold text-[#006B4F]" data-testid="price">
+      <span className="text-sm font-extrabold text-[#4d7c0f]" data-testid="price">
         {(product.variants?.length ?? 0) > 1 && "From "}
         {cheapestPrice.calculated_price}
         <span className="text-[10px] font-medium text-[#64748b]"> / {UNIT}</span>
@@ -75,7 +75,7 @@ export const CardPrice = ({
   return (
     <LocalizedClientLink
       href="/account"
-      className="text-[11px] font-semibold text-[#0757a8] hover:underline"
+      className="text-[11px] font-semibold text-[#0077cf] hover:underline"
     >
       Login to view price
     </LocalizedClientLink>
@@ -108,7 +108,7 @@ export default function ProductCard({
   const brandLine = brand ? (
     <LocalizedClientLink
       href={`/collections/${brand.handle}`}
-      className="text-[11px] text-[#0757a8] hover:text-[#006B4F] truncate"
+      className="text-[11px] text-[#0077cf] hover:text-[#4d7c0f] truncate"
     >
       {brand.title}
     </LocalizedClientLink>
@@ -129,7 +129,7 @@ export default function ProductCard({
   const title = (
     <LocalizedClientLink
       href={`/products/${product.handle}`}
-      className="font-bold text-[#0f172a] text-[13px] leading-snug hover:text-[#006B4F] line-clamp-2"
+      className="font-bold text-[#0f172a] text-[13px] leading-snug hover:text-[#4d7c0f] line-clamp-2"
       data-testid="product-title"
     >
       {product.title}
@@ -139,7 +139,7 @@ export default function ProductCard({
   if (viewMode === "list") {
     return (
       <div
-        className="bg-white border border-gray-100 rounded-xl p-4 flex gap-4 hover:border-[#006B4F]/25 hover:shadow-md transition-all"
+        className="bg-white border border-gray-100 rounded-xl p-4 flex gap-4 hover:border-[#4d7c0f]/25 hover:shadow-md transition-all"
         data-testid="product-wrapper"
       >
         <CardImage product={product} className="w-28 h-28 rounded-lg shrink-0 border border-gray-100" />
@@ -168,13 +168,13 @@ export default function ProductCard({
               <CompareToggle productId={product.id} />
               <LocalizedClientLink
                 href={`/products/${product.handle}#inquiry`}
-                className="px-3 py-1.5 text-[11px] font-bold bg-[#006B4F] hover:bg-[#005a42] text-white rounded-lg"
+                className="px-3 py-1.5 text-[11px] font-bold bg-[#4d7c0f] hover:bg-[#3f6212] text-white rounded-lg"
               >
                 Request Quote
               </LocalizedClientLink>
               <LocalizedClientLink
                 href={`/products/${product.handle}`}
-                className="px-3 py-1.5 text-[11px] font-semibold border border-[#006B4F]/40 text-[#006B4F] hover:bg-[#f0fdf4] rounded-lg"
+                className="px-3 py-1.5 text-[11px] font-semibold border border-[#4d7c0f]/40 text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg"
               >
                 View Details
               </LocalizedClientLink>
@@ -187,7 +187,7 @@ export default function ProductCard({
 
   return (
     <div
-      className="h-full bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-[#006B4F]/30 hover:shadow-[0_4px_20px_rgba(0,107,79,0.08)] transition-all flex flex-col"
+      className="h-full bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-[#4d7c0f]/30 hover:shadow-[0_4px_20px_rgba(0,107,79,0.08)] transition-all flex flex-col"
       data-testid="product-wrapper"
     >
       <div className="relative">
@@ -198,15 +198,15 @@ export default function ProductCard({
         {title}
         {brand ? (
           <div className="flex items-center gap-1.5 mt-0.5">
-            <div className="w-5 h-5 bg-[#006B4F]/10 rounded flex items-center justify-center shrink-0">
-              <span className="text-[8px] font-bold text-[#006B4F]">
+            <div className="w-5 h-5 bg-[#4d7c0f]/10 rounded flex items-center justify-center shrink-0">
+              <span className="text-[8px] font-bold text-[#4d7c0f]">
                 {brand.title.slice(0, 2).toUpperCase()}
               </span>
             </div>
             <div className="min-w-0 flex">{brandLine}</div>
           </div>
         ) : null}
-        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 my-2 bg-[#fafffe] border border-[#f0fdf4] rounded-lg p-2.5">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 my-2 bg-[#fafffe] border border-[#f6fbee] rounded-lg p-2.5">
           {specs.map(([l, v]) => (
             <div key={l}>
               <span className="text-[9px] text-[#9ca3af] block uppercase tracking-wide">{l}</span>
@@ -223,7 +223,7 @@ export default function ProductCard({
           <span className="text-gray-100">|</span>
           <LocalizedClientLink
             href={`/products/${product.handle}#inquiry`}
-            className="text-[10px] text-[#006B4F] hover:text-[#005a42] font-medium"
+            className="text-[10px] text-[#4d7c0f] hover:text-[#3f6212] font-medium"
           >
             Request Sample
           </LocalizedClientLink>
@@ -231,13 +231,13 @@ export default function ProductCard({
         <div className="flex gap-1.5 mt-auto">
           <LocalizedClientLink
             href={`/products/${product.handle}#inquiry`}
-            className="flex-1 py-2 text-center text-[11px] font-bold bg-[#006B4F] hover:bg-[#005a42] text-white rounded-lg"
+            className="flex-1 py-2 text-center text-[11px] font-bold bg-[#4d7c0f] hover:bg-[#3f6212] text-white rounded-lg"
           >
             Request Quote
           </LocalizedClientLink>
           <LocalizedClientLink
             href={`/products/${product.handle}`}
-            className="px-3 py-2 text-[11px] font-semibold border border-gray-200 text-[#374151] hover:border-[#006B4F]/40 hover:text-[#006B4F] rounded-lg"
+            className="px-3 py-2 text-[11px] font-semibold border border-gray-200 text-[#374151] hover:border-[#4d7c0f]/40 hover:text-[#4d7c0f] rounded-lg"
           >
             View
           </LocalizedClientLink>

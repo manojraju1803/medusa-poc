@@ -1,30 +1,10 @@
-"use client"
-
-import { useRef } from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { ChevronRightIcon } from "@modules/layout/components/ib-icons"
-import type { CategoryCard } from "../catalogue-sections"
+import { CardImage, type CategoryCard } from "../catalogue-sections"
 
-const Thumb = ({ src, alt }: { src?: string | null; alt: string }) =>
-  src ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      className="w-full h-full object-contain p-2 bg-white group-hover:scale-105 transition-transform duration-300"
-    />
-  ) : (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7] text-2xl font-extrabold text-[#006B4F]/60">
-      {alt.slice(0, 2).toUpperCase()}
-    </div>
-  )
+const SHOWN = 5
 
 const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const scroll = (dir: 1 | -1) =>
-    ref.current?.scrollBy({ left: dir * 280, behavior: "smooth" })
-
   if (!categories.length) return null
 
   return (
@@ -36,57 +16,42 @@ const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
             Explore our curated ingredient categories from verified suppliers
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <LocalizedClientLink
-            href="/store"
-            className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#006B4F] hover:text-[#005a42] transition-colors mr-2"
-          >
-            View All <ChevronRightIcon className="w-4 h-4" />
-          </LocalizedClientLink>
-          <button
-            type="button"
-            aria-label="Previous categories"
-            onClick={() => scroll(-1)}
-            className="hidden md:flex w-8 h-8 items-center justify-center border border-gray-200 rounded-lg hover:border-[#006B4F] hover:text-[#006B4F] transition-colors text-gray-400"
-          >
-            <ChevronRightIcon className="w-4 h-4 rotate-180" />
-          </button>
-          <button
-            type="button"
-            aria-label="Next categories"
-            onClick={() => scroll(1)}
-            className="hidden md:flex w-8 h-8 items-center justify-center border border-gray-200 rounded-lg hover:border-[#006B4F] hover:text-[#006B4F] transition-colors text-gray-400"
-          >
-            <ChevronRightIcon className="w-4 h-4" />
-          </button>
-        </div>
+        <LocalizedClientLink
+          href="/store"
+          className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#4d7c0f] hover:text-[#3f6212] transition-colors"
+        >
+          View All <ChevronRightIcon className="w-4 h-4" />
+        </LocalizedClientLink>
       </div>
-      <div ref={ref} className="flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1 snap-x">
-        {categories.map((cat) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+        {categories.slice(0, SHOWN).map((cat) => (
           <LocalizedClientLink
             key={cat.id}
             href={`/categories/${cat.handle}`}
-            className="group snap-start shrink-0 w-[170px] md:w-[200px] bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-[#006B4F]/30 hover:shadow-md transition-all"
+            className="group flex flex-col bg-white border-2 border-[#dcebc6] rounded-2xl overflow-hidden shadow-[0_4px_14px_rgba(12,59,94,0.08)] hover:shadow-[0_16px_34px_rgba(77,124,15,0.18)] hover:-translate-y-1 hover:border-[#7aba0c] transition-all duration-300"
           >
-            <div className="h-[120px] bg-green-50 overflow-hidden">
-              <Thumb src={cat.image} alt={cat.name} />
-            </div>
-            <div className="p-3">
-              <div className="text-sm font-semibold text-[#0f172a] mb-1 group-hover:text-[#006B4F] transition-colors leading-snug line-clamp-1">
+            <span className="h-1.5 shrink-0 bg-gradient-to-r from-[#7aba0c] via-[#3d996e] to-[#0077cf]" />
+            <CardImage src={cat.image} alt={cat.name} />
+            <div className="p-4 flex flex-col flex-1">
+              <div className="text-base font-bold text-[#0f172a] group-hover:text-[#4d7c0f] transition-colors leading-snug line-clamp-1">
                 {cat.name}
               </div>
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-[#64748b]">
+              <div className="mt-auto pt-3 flex items-end justify-between gap-2">
+                <div className="flex flex-wrap gap-1.5 text-[11px] font-semibold">
                   {cat.productCount > 0 && (
-                    <div>
-                      {cat.productCount} product{cat.productCount === 1 ? "" : "s"}
-                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-[#f6fbee] border border-[#dcebc6] text-[#4d7c0f]">
+                      {cat.productCount} ingredient{cat.productCount === 1 ? "" : "s"}
+                    </span>
                   )}
-                  {cat.subCount > 0 && <div>{cat.subCount} sub-categories</div>}
+                  {cat.subCount > 0 && (
+                    <span className="px-2 py-0.5 rounded-md bg-[#eaf5fc] border border-[#cfe5f4] text-[#0077cf]">
+                      {cat.subCount} sub-categories
+                    </span>
+                  )}
                 </div>
-                <div className="w-6 h-6 bg-[#f0fdf4] border border-[#dcfce7] group-hover:bg-[#006B4F] group-hover:border-[#006B4F] rounded-md flex items-center justify-center transition-colors">
-                  <ChevronRightIcon className="w-3.5 h-3.5 text-[#006B4F] group-hover:text-white transition-colors" />
-                </div>
+                <span className="w-8 h-8 shrink-0 rounded-full bg-[#4d7c0f] group-hover:bg-[#0077cf] flex items-center justify-center shadow-sm transition-colors">
+                  <ChevronRightIcon className="w-4 h-4 text-white" />
+                </span>
               </div>
             </div>
           </LocalizedClientLink>

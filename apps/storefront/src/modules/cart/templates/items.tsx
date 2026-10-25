@@ -16,7 +16,7 @@ const ItemsTemplate = ({ cart, priceTiers }: ItemsTemplateProps) => {
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-[#f8fffe]">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-[#fafdf5]">
         <h2 className="text-base font-bold text-[#0f172a]">
           Cart Items{" "}
           <span className="text-[#64748b] font-normal text-sm">
@@ -36,10 +36,10 @@ const ItemsTemplate = ({ cart, priceTiers }: ItemsTemplateProps) => {
           />
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-3 px-5 py-4 bg-[#f8fffe] border-t border-gray-100">
+      <div className="flex flex-wrap items-center gap-3 px-5 py-4 bg-[#fafdf5] border-t border-gray-100">
         <LocalizedClientLink
           href="/store"
-          className="flex items-center gap-1.5 px-4 py-2 border border-[#006B4F]/40 text-[#006B4F] text-sm font-semibold rounded-xl hover:bg-[#f0fdf4] transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 border border-[#4d7c0f]/40 text-[#4d7c0f] text-sm font-semibold rounded-xl hover:bg-[#f6fbee] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

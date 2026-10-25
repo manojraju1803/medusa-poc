@@ -49,7 +49,7 @@ export default function CompareProductsModal({ items, currentId, categoryName }:
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="py-2.5 border border-[#0757a8]/40 text-[#0757a8] text-sm font-semibold rounded-xl hover:bg-blue-50"
+        className="py-2.5 border border-[#0077cf]/40 text-[#0077cf] text-sm font-semibold rounded-xl hover:bg-blue-50"
         data-testid="compare-products-open"
       >
         Compare Products
@@ -96,7 +96,7 @@ export default function CompareProductsModal({ items, currentId, categoryName }:
                     <div
                       key={item.id}
                       className={`relative overflow-hidden rounded-xl border bg-white ${
-                        isCurrent ? "border-[#0098d8] ring-2 ring-[#0098d8]/10" : "border-gray-200"
+                        isCurrent ? "border-[#0077cf] ring-2 ring-[#0077cf]/10" : "border-gray-200"
                       }`}
                     >
                       <div className="relative aspect-[4/3] bg-white border-b border-gray-100">
@@ -105,10 +105,10 @@ export default function CompareProductsModal({ items, currentId, categoryName }:
                         )}
                         <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
                           {isCurrent && (
-                            <span className="px-2 py-1 bg-[#0098d8] text-white text-[9px] font-bold rounded">Current Product</span>
+                            <span className="px-2 py-1 bg-[#0077cf] text-white text-[9px] font-bold rounded">Current Product</span>
                           )}
                           {item.best && (
-                            <span className="px-2 py-1 bg-[#006B4F] text-white text-[9px] font-bold rounded">Best Price</span>
+                            <span className="px-2 py-1 bg-[#4d7c0f] text-white text-[9px] font-bold rounded">Best Price</span>
                           )}
                         </div>
                       </div>
@@ -131,7 +131,7 @@ export default function CompareProductsModal({ items, currentId, categoryName }:
                         </div>
                         <LocalizedClientLink
                           href={`/products/${item.handle}`}
-                          className="block w-full mt-3 py-2 text-center border border-[#006B4F]/30 text-[#006B4F] text-xs font-bold rounded-lg hover:bg-[#f0fdf4]"
+                          className="block w-full mt-3 py-2 text-center border border-[#4d7c0f]/30 text-[#4d7c0f] text-xs font-bold rounded-lg hover:bg-[#f6fbee]"
                         >
                           {isCurrent ? "View Current Product" : "View Product"}
                         </LocalizedClientLink>
@@ -144,7 +144,7 @@ export default function CompareProductsModal({ items, currentId, categoryName }:
                 })}
               </div>
               <div className="mt-4 text-center">
-                <LocalizedClientLink href="/compare" className="text-xs font-semibold text-[#0757a8] hover:underline">
+                <LocalizedClientLink href="/compare" className="text-xs font-semibold text-[#0077cf] hover:underline">
                   Open full comparison page
                 </LocalizedClientLink>
               </div>
