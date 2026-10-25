@@ -13,6 +13,12 @@ const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
  */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      // Supplier registration carries up to 8 quality documents of 2 MB each.
+      bodySizeLimit: "18mb",
+    },
+  },
   logging: {
     fetches: {
       fullUrl: true,

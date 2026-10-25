@@ -2,6 +2,7 @@ import { Suspense } from "react"
 
 import { getActiveWarehouse } from "@lib/data/active-warehouse"
 import { retrieveCustomer } from "@lib/data/customer"
+import { ROLE_LABEL, roleOfCustomer } from "@lib/util/registration"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import HeaderSearch from "@modules/layout/components/header-search"
@@ -87,8 +88,7 @@ export default async function Nav() {
     [customer?.first_name, customer?.last_name].filter(Boolean).join(" ") ||
     customer?.company_name ||
     customer?.email
-  const accountType =
-    customer?.metadata?.account_type === "supplier" ? "Supplier" : "Buyer"
+  const accountType = ROLE_LABEL[roleOfCustomer(customer?.metadata)]
   const initials = (displayName || "?")
     .split(/[\s@.]+/)
     .filter(Boolean)

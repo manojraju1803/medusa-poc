@@ -18,9 +18,9 @@ const ORDER_INSTRUCTIONS = [
 
 const SIGNUP_INSTRUCTIONS = [
   "Open Sign Up / Login from the top-right of the menu bar.",
-  "Choose Register to open the registration page.",
-  "Pick the account type that describes you: buyer or supplier.",
-  "Complete your company details and contact information.",
+  "Choose Create an account under the sign-in form.",
+  "Pick Buyer, R&D or Supplier at the top of the registration page.",
+  "Complete your company and contact details and set a password.",
   "Submit your application for review.",
   "Account verification and approval usually take 24–48 hours.",
 ]

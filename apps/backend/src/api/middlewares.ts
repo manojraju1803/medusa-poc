@@ -14,6 +14,9 @@ import { priceTierMiddlewares } from './store/price-tiers/middlewares';
 import { locationMiddlewares } from './store/location/middlewares';
 import { warehouseAvailabilityMiddlewares } from './store/warehouse-availability/middlewares';
 import { filterProductsByWarehouse } from '../lib/warehouse-product-filter';
+import { registrationDocumentMiddlewares } from './store/registration-documents/middlewares';
+import { protectMetadataMiddlewares } from './store/customers/me/protect-metadata';
+import { myDocumentsMiddlewares } from './store/customers/me/documents/middlewares';
 import { isApproved } from './utils/is-approved';
 
 async function requireApproved(
@@ -79,6 +82,9 @@ export default defineMiddlewares({
     ...priceListSlabMiddlewares,
     ...priceTierMiddlewares,
     ...inquiryMiddlewares,
+    ...registrationDocumentMiddlewares,
+    ...protectMetadataMiddlewares,
+    ...myDocumentsMiddlewares,
     ...stockLevelMiddlewares,
     ...locationMiddlewares,
     ...warehouseAvailabilityMiddlewares,

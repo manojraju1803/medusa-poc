@@ -38,6 +38,25 @@ module.exports = defineConfig({
         : { ssl: false, sslmode: 'disable' },
   },
   modules: [
+    // Stock notification module with the local provider on the e-mail channel
+    // too, so password-reset links are written to the server log in dev.
+    // Swap in a real e-mail provider (e.g. @medusajs/medusa/notification-sendgrid)
+    // for the `email` channel before going live.
+    {
+      resolve: '@medusajs/medusa/notification',
+      options: {
+        providers: [
+          {
+            resolve: '@medusajs/medusa/notification-local',
+            id: 'local',
+            options: {
+              name: 'Local Notification Provider',
+              channels: ['feed', 'email'],
+            },
+          },
+        ],
+      },
+    },
     { resolve: './src/modules/inquiry' },
     {
       resolve: '@medusajs/medusa/tax',
