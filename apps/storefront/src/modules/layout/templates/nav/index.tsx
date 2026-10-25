@@ -89,7 +89,7 @@ export default async function Nav() {
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
       <AnnouncementBar warehouse={warehouse} />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
+        <div className="max-w-[1728px] mx-auto px-4 sm:px-6 py-[10.65px] flex items-center gap-3">
           <LocalizedClientLink
             href="/"
             className="flex items-center shrink-0"
