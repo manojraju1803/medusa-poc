@@ -1,49 +1,56 @@
 import { Suspense } from "react"
 
-
+import { getActiveWarehouse } from "@lib/data/active-warehouse"
 import { retrieveCustomer } from "@lib/data/customer"
+import { ROLE_LABEL, roleOfCustomer } from "@lib/util/registration"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import HeaderSearch from "@modules/layout/components/header-search"
 import {
   BagIcon,
   CompareIcon,
-  GlobeIcon,
   HeartIcon,
 } from "@modules/layout/components/ib-icons"
 import MegaMenu from "@modules/layout/components/mega-menu"
 import LogoutButton from "@modules/layout/components/logout-button"
 import MobileMenu from "@modules/layout/components/mobile-menu"
-import { FOOD_MENU, NUTRA_MENU } from "@modules/layout/components/nav-links"
+import WarehouseSelect from "@modules/layout/components/warehouse-select"
+import { AGRO_MENU, FOOD_MENU, NUTRA_MENU } from "@modules/layout/components/nav-links"
 import { getNavMenus } from "@modules/layout/lib/menu-categories"
+import { ActiveWarehouse } from "types/warehouse"
 
-const UtilityBar = () => (
-  <div className="bg-[#0d3320] text-white text-xs py-2 shrink-0">
-    <div className="max-w-[1440px] mx-auto px-6 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <span className="flex items-center gap-1.5 opacity-80">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 004 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" /></svg>
-          Global Ingredient Sourcing
-        </span>
-        <span className="opacity-30">|</span>
-        <span className="hidden md:inline opacity-75"><span className="text-[#4ade80]">✓</span> Verified Suppliers</span>
-        <span className="hidden md:inline opacity-30">|</span>
-        <span className="hidden md:inline opacity-75"><span className="text-[#4ade80]">✓</span> Technical Documentation</span>
-        <span className="hidden lg:inline opacity-30">|</span>
-        <span className="hidden lg:inline opacity-75"><span className="text-[#4ade80]">✓</span> COA & Lab Reports Available</span>
-      </div>
-      <div className="flex items-center gap-4">
-        <a href="mailto:sales@ingredientsbazar.com" className="hidden md:inline opacity-75 hover:opacity-100 transition-opacity">sales@ingredientsbazar.com</a>
-        <span className="hidden md:inline opacity-30">|</span>
-        <a href="tel:+919035022477" className="hidden md:inline opacity-75 hover:opacity-100">+91 90350 22477</a>
-        <span className="opacity-30">|</span>
-        <LocalizedClientLink href="/account" className="opacity-80 hover:opacity-100 transition-opacity font-medium">Become a Supplier</LocalizedClientLink>
-        <span className="opacity-30">|</span>
-        <div className="flex items-center gap-1 opacity-75">
-          <GlobeIcon className="w-3.5 h-3.5" />
-          EN ▾
+const ANNOUNCEMENTS = [
+  "Verified ingredients from trusted brands, with COA & lab reports available",
+  "Approved buyers get live inventory and slab pricing",
+  "Same-day dispatch on orders paid before 2:00 PM",
+  "Account verification and approval usually take 24–48 hours",
+  "Bulk enquiries: +91 90350 22477 · sales@ingredientsbazar.com",
+]
+
+const AnnouncementBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) => (
+  <div className="bg-[#00356e] text-white border-b border-white/10 shrink-0 flex items-center">
+    <div className="flex-1 min-w-0 overflow-hidden">
+    {/* Messages are rendered twice so the -50% scroll loops seamlessly. */}
+    <div className="announcement-track flex w-max items-center py-2">
+      {[...ANNOUNCEMENTS, ...ANNOUNCEMENTS].map((msg, i) => (
+        <div
+          key={i}
+          aria-hidden={i >= ANNOUNCEMENTS.length || undefined}
+          className="flex items-center gap-3 px-8 text-[11px] font-medium whitespace-nowrap"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[#7aba0c]" />
+          {msg}
         </div>
-      </div>
+      ))}
+    </div>
+    </div>
+    {/* The same warehouse the listing is narrowed to. */}
+    <div className="shrink-0 px-4 sm:px-6 text-[11px] font-medium opacity-90">
+      <WarehouseSelect
+        warehouses={warehouse?.warehouses ?? []}
+        selectedId={warehouse?.warehouse.id}
+        hasChosen={warehouse?.chosen ?? false}
+      />
     </div>
   </div>
 )
@@ -63,7 +70,7 @@ const IconLink = ({
     href={href}
     data-testid={testId}
     aria-label={label}
-    className="hidden md:flex flex-col items-center gap-0.5 px-2 py-1.5 text-gray-500 hover:text-[#006B4F] hover:bg-[#f0fdf4] rounded-lg transition-all"
+    className="hidden md:flex flex-col items-center gap-0.5 px-2 py-1.5 text-gray-500 hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
   >
     {children}
     <span className="text-[9px] leading-none">{label}</span>
@@ -71,17 +78,17 @@ const IconLink = ({
 )
 
 export default async function Nav() {
-  const [menus, customer] = await Promise.all([
-    getNavMenus(NUTRA_MENU, FOOD_MENU),
+  const [menus, customer, warehouse] = await Promise.all([
+    getNavMenus(NUTRA_MENU, FOOD_MENU, AGRO_MENU),
     retrieveCustomer().catch(() => null),
+    getActiveWarehouse(),
   ])
 
   const displayName =
     [customer?.first_name, customer?.last_name].filter(Boolean).join(" ") ||
     customer?.company_name ||
     customer?.email
-  const accountType =
-    customer?.metadata?.account_type === "supplier" ? "Supplier" : "Buyer"
+  const accountType = ROLE_LABEL[roleOfCustomer(customer?.metadata)]
   const initials = (displayName || "?")
     .split(/[\s@.]+/)
     .filter(Boolean)
@@ -91,7 +98,7 @@ export default async function Nav() {
 
   return (
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
-      <UtilityBar />
+      <AnnouncementBar warehouse={warehouse} />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
           <LocalizedClientLink
@@ -100,10 +107,10 @@ export default async function Nav() {
             data-testid="nav-store-link"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Ingredients Bazar" className="h-10 w-auto object-contain" />
+            <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-6 sm:h-8 xl:h-11 w-auto object-contain" />
           </LocalizedClientLink>
 
-          <MegaMenu nutra={menus.nutra} food={menus.food} />
+          <MegaMenu nutra={menus.nutra} food={menus.food} agro={menus.agro} />
 
           <HeaderSearch className="flex-1 hidden md:flex max-w-[320px] ml-auto" />
 
@@ -141,27 +148,27 @@ export default async function Nav() {
                 <LocalizedClientLink
                   href="/account"
                   data-testid="nav-account-link"
-                  className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#f0fdf4] rounded-lg transition-all ml-1"
+                  className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#f6fbee] rounded-lg transition-all ml-1"
                 >
-                  <span className="w-7 h-7 bg-[#006B4F] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                  <span className="w-7 h-7 bg-[#4d7c0f] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
                     {initials}
                   </span>
                   <span className="hidden lg:flex flex-col items-start max-w-[140px]">
                     <span className="text-xs font-semibold text-[#0f172a] leading-none truncate max-w-full">
                       {displayName}
                     </span>
-                    <span className="text-[9px] text-[#006B4F] leading-none mt-0.5">
+                    <span className="text-[9px] text-[#4d7c0f] leading-none mt-0.5">
                       {accountType}
                     </span>
                   </span>
                   <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </LocalizedClientLink>
                 <div className="absolute top-full right-0 w-52 bg-white border border-gray-100 rounded-xl shadow-lg py-1.5 z-50 hidden group-hover:block">
-                  <LocalizedClientLink href="/account/profile" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">My Profile</LocalizedClientLink>
-                  <LocalizedClientLink href="/account/orders" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">My Orders</LocalizedClientLink>
-                  <LocalizedClientLink href="/compare" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Compare Ingredients</LocalizedClientLink>
-                  <LocalizedClientLink href="/account/wishlist" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Wishlist</LocalizedClientLink>
-                  <LocalizedClientLink href="/contact" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Request Quote</LocalizedClientLink>
+                  <LocalizedClientLink href="/account/profile" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">My Profile</LocalizedClientLink>
+                  <LocalizedClientLink href="/account/orders" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">My Orders</LocalizedClientLink>
+                  <LocalizedClientLink href="/compare" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">Compare Ingredients</LocalizedClientLink>
+                  <LocalizedClientLink href="/account/wishlist" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">Wishlist</LocalizedClientLink>
+                  <LocalizedClientLink href="/contact" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">Request Quote</LocalizedClientLink>
                   <div className="border-t border-gray-100 mt-1 pt-1">
                     <LogoutButton />
                   </div>
@@ -171,7 +178,7 @@ export default async function Nav() {
               <LocalizedClientLink
                 href="/account"
                 data-testid="nav-account-link"
-                className="inline-flex px-4 py-2 text-sm font-semibold bg-[#006B4F] text-white rounded-lg hover:bg-[#005a42] transition-colors whitespace-nowrap ml-1"
+                className="inline-flex px-4 py-2 text-sm font-semibold bg-[#4d7c0f] text-white rounded-lg hover:bg-[#3f6212] transition-colors whitespace-nowrap ml-1"
               >
                 Sign Up / Login
               </LocalizedClientLink>

@@ -2,7 +2,6 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import {
   ArrowRightIcon,
   CheckIcon,
-  PlayIcon,
   WarnIcon,
 } from "@modules/layout/components/ib-icons"
 import { TRUST_FEATURES } from "../hero"
@@ -15,7 +14,7 @@ const ORDER_PROCESS = [
 ]
 
 export const OrderProcess = () => (
-  <section className="bg-[#f8fffe] border-y border-[#e2f3eb] py-12">
+  <section className="bg-[#fafdf5] border-y border-[#e6f2d6] py-12">
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-[#0f172a] mb-1">Simple Process</h2>
@@ -24,159 +23,18 @@ export const OrderProcess = () => (
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
-        <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-[#dcfce7]" />
+        <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-[#ecf6dc]" />
         {ORDER_PROCESS.map((step) => (
           <div
             key={step.step}
-            className="relative z-[1] bg-white border border-gray-100 rounded-xl p-5 text-center hover:border-[#006B4F]/20 hover:shadow-md transition-all"
+            className="relative z-[1] bg-white border border-gray-100 rounded-xl p-5 text-center hover:border-[#4d7c0f]/20 hover:shadow-md transition-all"
           >
-            <div className="w-10 h-10 bg-[#006B4F] text-white rounded-full flex items-center justify-center text-sm font-extrabold mx-auto mb-3">
+            <div className="w-10 h-10 bg-[#4d7c0f] text-white rounded-full flex items-center justify-center text-sm font-extrabold mx-auto mb-3">
               {step.step}
             </div>
             <div className="font-bold text-[#0f172a] text-sm mb-1.5">{step.title}</div>
             <p className="text-[11px] text-[#64748b] leading-relaxed">{step.desc}</p>
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
-)
-
-const ORDER_INSTRUCTIONS = [
-  "Log in to the Ingredients Bazar website.",
-  "Select the product you want to order.",
-  "Add your desired quantity to the cart.",
-  "Enter the delivery location on the cart page.",
-  "Enter the required details on the checkout page.",
-  "Place the order. An itemised proforma invoice with bank details is sent to your registered email.",
-  "Pay the order amount by bank transfer. Once payment is received, a final invoice is sent.",
-  "For same-day dispatch, place your order and complete payment before 2:00 PM.",
-]
-
-const SIGNUP_INSTRUCTIONS = [
-  "Open Sign Up / Login from the top-right of the menu bar.",
-  "Choose Register to open the registration page.",
-  "Pick the account type that describes you: buyer or supplier.",
-  "Complete your company details and contact information.",
-  "Submit your application for review.",
-  "Account verification and approval usually take 24–48 hours.",
-]
-
-const GUIDES = [
-  {
-    eyebrow: "Ordering Guide",
-    title: "How to Place an Order",
-    description: "The complete process from product selection through payment and invoicing.",
-    steps: ORDER_INSTRUCTIONS,
-    action: "Browse Products",
-    href: "/store",
-    accent: "bg-[#006B4F]",
-    highlightFrom: 6,
-    soft: "bg-[#f0fdf4] border-[#bbf7d0]",
-  },
-  {
-    eyebrow: "Account Guide",
-    title: "How to Sign Up",
-    description: "Create the right account for your business and submit it for verification.",
-    steps: SIGNUP_INSTRUCTIONS,
-    action: "Create an Account",
-    href: "/account",
-    accent: "bg-[#0757a8]",
-    highlightFrom: 99,
-    soft: "bg-blue-50 border-blue-100",
-  },
-]
-
-export const InstructionVideos = () => (
-  <section className="bg-white py-14">
-    <div className="max-w-[1440px] mx-auto px-6">
-      <div className="max-w-2xl mx-auto text-center mb-9">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] text-xs font-bold uppercase tracking-wider rounded-full mb-3">
-          <PlayIcon className="w-3.5 h-3.5" />
-          Instruction Videos
-        </div>
-        <h2 className="text-3xl font-bold text-[#0f172a]">
-          Get Started with Ingredients Bazar
-        </h2>
-        <p className="text-sm text-[#64748b] leading-relaxed mt-2">
-          Step-by-step instructions to register your business account and place
-          your first order with confidence.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        {GUIDES.map((guide) => (
-          <article
-            key={guide.title}
-            className="overflow-hidden bg-white border border-gray-100 rounded-2xl shadow-sm"
-          >
-            <div className={`${guide.accent} relative overflow-hidden px-6 py-6`}>
-              <div className="absolute -top-12 -right-10 w-40 h-40 rounded-full border-[24px] border-white/5" />
-              <div className="relative flex items-start gap-4">
-                <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-xl bg-white/[.15] border border-white/20 text-white">
-                  <PlayIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
-                    {guide.eyebrow}
-                  </div>
-                  <h3 className="text-xl font-extrabold text-white mt-1">{guide.title}</h3>
-                  <p className="text-xs leading-relaxed text-white/75 mt-2 max-w-lg">
-                    {guide.description}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 sm:p-6">
-              <div className="relative aspect-video rounded-xl bg-gradient-to-br from-[#0d3320] to-[#075e54] flex flex-col items-center justify-center text-white/80 mb-5">
-                <span className="w-14 h-14 rounded-full bg-white/15 border border-white/25 flex items-center justify-center">
-                  <PlayIcon className="w-7 h-7 text-white" />
-                </span>
-                <span className="mt-3 text-xs font-semibold">Video coming soon</span>
-              </div>
-              <div className="rounded-xl bg-[#f8fafc] border border-gray-100 p-4 sm:p-5">
-                <div className="pb-3 mb-4 border-b border-gray-200 text-xs font-bold text-[#334155] uppercase tracking-wider">
-                  Written Instructions
-                </div>
-                <ol className="space-y-3">
-                  {guide.steps.map((step, index) => {
-                    const important = index >= guide.highlightFrom
-                    return (
-                      <li
-                        key={step}
-                        className={`flex gap-3 rounded-xl ${important ? `${guide.soft} border p-3` : ""}`}
-                      >
-                        <span
-                          className={`w-7 h-7 shrink-0 flex items-center justify-center rounded-full text-[10px] font-extrabold ${
-                            important
-                              ? `${guide.accent} text-white`
-                              : "bg-white border border-gray-200 text-[#475569]"
-                          }`}
-                        >
-                          {index + 1}
-                        </span>
-                        <p
-                          className={`text-xs leading-relaxed pt-1 ${
-                            important ? "font-semibold text-[#334155]" : "text-[#475569]"
-                          }`}
-                        >
-                          {step}
-                        </p>
-                      </li>
-                    )
-                  })}
-                </ol>
-              </div>
-              <LocalizedClientLink
-                href={guide.href}
-                className={`w-full mt-6 py-3 ${guide.accent} text-white text-sm font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
-              >
-                {guide.action}
-                <ArrowRightIcon className="w-4 h-4" />
-              </LocalizedClientLink>
-            </div>
-          </article>
         ))}
       </div>
     </div>
@@ -192,10 +50,10 @@ const COMPARISON = [
 ]
 
 export const MarketplaceComparison = () => (
-  <section className="bg-[#f8fffe] border-y border-[#e2f3eb] py-14">
+  <section className="bg-[#fafdf5] border-y border-[#e6f2d6] py-14">
     <div className="max-w-[1120px] mx-auto px-6">
       <div className="max-w-2xl mx-auto text-center mb-9">
-        <div className="text-xs font-bold text-[#006B4F] uppercase tracking-wider mb-2">
+        <div className="text-xs font-bold text-[#4d7c0f] uppercase tracking-wider mb-2">
           The Ingredients Bazar Difference
         </div>
         <h2 className="text-3xl font-bold text-[#0f172a]">
@@ -208,12 +66,12 @@ export const MarketplaceComparison = () => (
       </div>
 
       <div className="overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
-        <div className="hidden sm:grid grid-cols-[1.1fr_1fr_1fr] bg-[#0d3320] text-white">
+        <div className="hidden sm:grid grid-cols-[1.1fr_1fr_1fr] bg-[#00356e] text-white">
           <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider">What Matters</div>
           <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider border-l border-white/10">
             Other Companies
           </div>
-          <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider bg-[#006B4F] border-l border-white/10">
+          <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider bg-[#4d7c0f] border-l border-white/10">
             Ingredients Bazar
           </div>
         </div>
@@ -236,8 +94,8 @@ export const MarketplaceComparison = () => (
                 {item.others}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-5 py-3 sm:py-4 bg-[#f0fdf4] text-xs font-semibold text-[#14532d] sm:border-l border-[#dcfce7]">
-              <span className="w-5 h-5 shrink-0 flex items-center justify-center rounded-full bg-[#006B4F] text-white">
+            <div className="flex items-center gap-2 px-5 py-3 sm:py-4 bg-[#f6fbee] text-xs font-semibold text-[#3f6212] sm:border-l border-[#ecf6dc]">
+              <span className="w-5 h-5 shrink-0 flex items-center justify-center rounded-full bg-[#4d7c0f] text-white">
                 <CheckIcon className="w-3 h-3" />
               </span>
               <span>
@@ -253,11 +111,11 @@ export const MarketplaceComparison = () => (
 )
 
 export const WhyChooseUs = () => (
-  <section className="bg-[#0d3320] py-14">
+  <section className="bg-[#00356e] py-14">
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold text-white mb-2">Why Ingredients Bazar?</h2>
-        <p className="text-[#86efac] text-sm max-w-xl mx-auto">
+        <p className="text-[#c5e39a] text-sm max-w-xl mx-auto">
           Enabling food and nutraceutical companies to source and order bulk
           ingredients with live inventory, pricing and quality certifications.
         </p>
@@ -268,11 +126,11 @@ export const WhyChooseUs = () => (
             key={title}
             className="bg-white/[.08] border border-white/10 rounded-xl p-5 hover:bg-white/[.12] transition-colors"
           >
-            <span className="w-11 h-11 mb-3 rounded-xl bg-white/10 flex items-center justify-center text-[#86efac]">
+            <span className="w-11 h-11 mb-3 rounded-xl bg-white/10 flex items-center justify-center text-[#c5e39a]">
               <Icon className="w-6 h-6" />
             </span>
             <div className="font-bold text-white text-sm mb-2">{title}</div>
-            <p className="text-[#86efac]/80 text-xs leading-relaxed">{desc}</p>
+            <p className="text-[#c5e39a]/80 text-xs leading-relaxed">{desc}</p>
           </div>
         ))}
       </div>
@@ -280,32 +138,113 @@ export const WhyChooseUs = () => (
   </section>
 )
 
+// Contact details as published on the original www.ingredientsbazar.com.
+const CONTACT_CARDS = [
+  {
+    label: "Call us",
+    value: "+91 90350 22477",
+    href: "tel:+919035022477",
+    icon: "M3 5a2 2 0 012-2h3.3a1 1 0 01.95.68l1.5 4.5a1 1 0 01-.5 1.2l-2.25 1.13a11 11 0 005.5 5.5l1.13-2.26a1 1 0 011.2-.49l4.49 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.7 21 3 14.3 3 6V5z",
+  },
+  {
+    label: "Email us",
+    value: "sales@ingredientsbazar.com",
+    href: "mailto:sales@ingredientsbazar.com",
+    icon: "M3 8l7.9 5.3a2 2 0 002.2 0L21 8m-2-3H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2z",
+  },
+  {
+    label: "Visit our office",
+    value: "Gottigere, Bannerughatta Road, Bengaluru 560083",
+    href: "/contact",
+    icon: "M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z",
+  },
+  {
+    label: "Business hours",
+    value: "Mon–Sat, 10:00 AM – 6:30 PM",
+    icon: "M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z",
+  },
+]
+
+const ContactCard = ({ card }: { card: (typeof CONTACT_CARDS)[number] }) => {
+  const body = (
+    <>
+      <span className="w-10 h-10 shrink-0 rounded-xl bg-[#7aba0c] text-[#00254d] flex items-center justify-center">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={card.icon} />
+        </svg>
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[10px] font-bold uppercase tracking-widest text-white/60">
+          {card.label}
+        </span>
+        <span className="block text-sm font-semibold text-white break-words">{card.value}</span>
+      </span>
+    </>
+  )
+  const cls =
+    "flex items-center gap-3 rounded-2xl bg-white/[.08] border border-white/15 p-4 backdrop-blur-sm"
+  if (!card.href) return <div className={cls}>{body}</div>
+  return card.href.startsWith("/") ? (
+    <LocalizedClientLink href={card.href} className={`${cls} hover:bg-white/[.14] transition-colors`}>
+      {body}
+    </LocalizedClientLink>
+  ) : (
+    <a href={card.href} className={`${cls} hover:bg-white/[.14] transition-colors`}>
+      {body}
+    </a>
+  )
+}
+
 export const CtaBanner = () => (
-  <section className="max-w-[1440px] mx-auto px-6 py-12">
-    <div className="bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7] border border-[#bbf7d0] rounded-2xl p-8 lg:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
-      <div>
-        <h2 className="text-2xl lg:text-3xl font-bold text-[#0f172a] mb-2">
-          Ready to streamline your
-          <br className="hidden lg:block" /> ingredient sourcing?
-        </h2>
-        <p className="text-[#64748b] text-sm max-w-lg">
-          Register your business to unlock slab pricing, live stock and
-          quality-assured ingredient sourcing.
-        </p>
-      </div>
-      <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-        <LocalizedClientLink
-          href="/contact"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#006B4F] hover:bg-[#005a42] text-white font-semibold text-sm rounded-lg transition-colors"
-        >
-          Post a Requirement <ArrowRightIcon className="w-4 h-4" />
-        </LocalizedClientLink>
-        <LocalizedClientLink
-          href="/suppliers"
-          className="inline-flex items-center justify-center px-6 py-3 bg-white border border-[#006B4F]/30 text-[#006B4F] hover:border-[#006B4F] font-semibold text-sm rounded-lg transition-colors"
-        >
-          Browse Suppliers
-        </LocalizedClientLink>
+  <section className="px-4 sm:px-6 py-14">
+    <div className="relative max-w-[1440px] mx-auto overflow-hidden rounded-3xl bg-gradient-to-br from-[#00254d] via-[#00356e] to-[#2f5d1a] shadow-[0_20px_50px_rgba(0,37,77,0.25)]">
+      <div className="absolute inset-0 opacity-[.12] [background-image:radial-gradient(#ffffff_1px,transparent_1px)] [background-size:18px_18px]" aria-hidden="true" />
+      <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#7aba0c]/25 blur-3xl" aria-hidden="true" />
+      <div className="absolute -bottom-28 -left-20 w-80 h-80 rounded-full bg-[#0077cf]/30 blur-3xl" aria-hidden="true" />
+
+      <div className="relative grid lg:grid-cols-[1.1fr_1fr] gap-10 p-8 sm:p-12 lg:p-14 items-center">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#c5e39a] text-xs font-semibold mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#7aba0c] animate-pulse" />
+            Talk to our sourcing team
+          </div>
+          <h2 className="text-3xl lg:text-4xl font-extrabold text-white leading-tight">
+            Ready to streamline your
+            <span className="block text-[#7aba0c]">ingredient sourcing?</span>
+          </h2>
+          <p className="text-white/75 text-sm sm:text-base leading-relaxed mt-4 max-w-xl">
+            Tell us what you need: ingredient, quantity, delivery location and
+            timeline. Our team replies with pricing, availability and quality
+            documents, usually within 24 hours. Registered buyers also unlock
+            slab pricing and live stock.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 mt-7">
+            <LocalizedClientLink
+              href="/contact?subject=Requirement"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#7aba0c] hover:bg-[#6aa30a] text-[#00254d] font-bold text-sm rounded-xl shadow-lg transition-colors"
+            >
+              Post a Requirement <ArrowRightIcon className="w-4 h-4" />
+            </LocalizedClientLink>
+            <LocalizedClientLink
+              href="/contact"
+              className="inline-flex items-center justify-center px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm rounded-xl transition-colors"
+            >
+              Contact Us
+            </LocalizedClientLink>
+            <LocalizedClientLink
+              href="/account"
+              className="inline-flex items-center justify-center px-6 py-3.5 text-[#c5e39a] hover:text-white font-semibold text-sm transition-colors"
+            >
+              Register your business →
+            </LocalizedClientLink>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-3">
+          {CONTACT_CARDS.map((card) => (
+            <ContactCard key={card.label} card={card} />
+          ))}
+        </div>
       </div>
     </div>
   </section>

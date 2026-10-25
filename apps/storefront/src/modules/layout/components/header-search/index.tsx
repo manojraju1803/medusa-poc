@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 import { getSearchSuggestions, SearchSuggestionProduct } from "@lib/data/search"
+import { isRealProductImageUrl } from "@lib/util/product-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { SearchIcon } from "../ib-icons"
 
@@ -98,9 +99,7 @@ export default function HeaderSearch({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSubmit()
-    } else if (e.key === "Escape") {
+    if (e.key === "Escape") {
       setIsOpen(false)
     }
   }
@@ -125,7 +124,7 @@ export default function HeaderSearch({
         onSubmit={handleSubmit}
         className="relative flex items-center w-full"
       >
-        <div className="relative w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:border-[#006B4F] focus-within:bg-white transition-all">
+        <div className="relative w-full flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:border-[#4d7c0f] focus-within:bg-white transition-all">
           {/* Search Icon */}
           <div className="pl-3 flex items-center pointer-events-none text-gray-400 shrink-0">
             <SearchIcon className="w-4 h-4 text-gray-400" />
@@ -227,7 +226,7 @@ export default function HeaderSearch({
                     >
                       {/* Product Thumbnail - No prices! */}
                       <div className="w-9 h-9 relative shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-100">
-                        {item.thumbnail ? (
+                        {isRealProductImageUrl(item.thumbnail) ? (
                           <Image
                             src={item.thumbnail}
                             alt={item.title}

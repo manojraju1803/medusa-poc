@@ -18,7 +18,7 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
         <h1 className="text-2xl font-extrabold text-[#0f172a]">Order details</h1>
         <LocalizedClientLink
           href="/account/orders"
-          className="flex gap-1.5 items-center text-sm font-semibold text-[#0757a8] hover:underline"
+          className="flex gap-1.5 items-center text-sm font-semibold text-[#0077cf] hover:underline"
           data-testid="back-to-overview-button"
         >
           ← Back to orders

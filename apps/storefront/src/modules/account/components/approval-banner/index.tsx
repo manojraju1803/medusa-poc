@@ -14,14 +14,14 @@ const ApprovalBanner = ({ approved }: { approved: boolean }) => {
     <div
       className={`mb-6 flex items-start gap-3 rounded-2xl border p-4 ${
         approved
-          ? "border-[#bbf7d0] bg-[#f0fdf4]"
+          ? "border-[#d9edb8] bg-[#f6fbee]"
           : "border-amber-200 bg-amber-50"
       }`}
       data-testid="approval-banner"
     >
       <div
         className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center ${
-          approved ? "bg-[#dcfce7] text-[#006B4F]" : "bg-amber-100 text-amber-700"
+          approved ? "bg-[#ecf6dc] text-[#4d7c0f]" : "bg-amber-100 text-amber-700"
         }`}
       >
         {approved ? (

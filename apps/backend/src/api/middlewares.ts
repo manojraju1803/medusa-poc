@@ -8,9 +8,16 @@ import { MedusaError } from '@medusajs/framework/utils';
 import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
 import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
 import { adminDemoMiddlewares } from './admin/demo-middlewares';
+import { monitoringMiddlewares } from './admin/monitoring/middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
 import { stockLevelMiddlewares } from './store/stock-levels/middlewares';
 import { priceTierMiddlewares } from './store/price-tiers/middlewares';
+import { locationMiddlewares } from './store/location/middlewares';
+import { warehouseAvailabilityMiddlewares } from './store/warehouse-availability/middlewares';
+import { filterProductsByWarehouse } from '../lib/warehouse-product-filter';
+import { registrationDocumentMiddlewares } from './store/registration-documents/middlewares';
+import { protectMetadataMiddlewares } from './store/customers/me/protect-metadata';
+import { myDocumentsMiddlewares } from './store/customers/me/documents/middlewares';
 import { isApproved } from './utils/is-approved';
 
 async function requireApproved(
@@ -76,13 +83,22 @@ export default defineMiddlewares({
     ...priceListSlabMiddlewares,
     ...priceTierMiddlewares,
     ...inquiryMiddlewares,
+    ...registrationDocumentMiddlewares,
+    ...protectMetadataMiddlewares,
+    ...myDocumentsMiddlewares,
     ...stockLevelMiddlewares,
+    ...locationMiddlewares,
+    ...warehouseAvailabilityMiddlewares,
     ...approvalMiddlewares,
     ...adminDemoMiddlewares,
+    ...monitoringMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',
-      middlewares: [hidePrices],
+      // Both run on the core matcher on purpose: a warehouse-specific product
+      // route of its own would not match `hidePrices`, and unapproved
+      // customers would then see prices.
+      middlewares: [filterProductsByWarehouse, hidePrices],
     },
     {
       method: ['GET'],

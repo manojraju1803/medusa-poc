@@ -33,7 +33,7 @@ const DealCard = ({ deal, viewer }: { deal: Deal; viewer: Viewer }) => {
     : undefined
   const showSaving = viewer === "approved" && saving
   return (
-    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-[#006B4F]/30 hover:shadow-[0_4px_20px_rgba(0,107,79,0.08)] transition-all flex flex-col group">
+    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-[#4d7c0f]/30 hover:shadow-[0_4px_20px_rgba(0,107,79,0.08)] transition-all flex flex-col group">
       <LocalizedClientLink
         href={`/products/${product.handle}`}
         className="relative block bg-gray-50 overflow-hidden aspect-square"
@@ -57,7 +57,7 @@ const DealCard = ({ deal, viewer }: { deal: Deal; viewer: Viewer }) => {
               -{saving.percent}% OFF
             </span>
           ) : (
-            <span className="px-1.5 py-0.5 text-[9px] font-bold bg-[#006B4F] text-white rounded">
+            <span className="px-1.5 py-0.5 text-[9px] font-bold bg-[#4d7c0f] text-white rounded">
               Bulk Deal
             </span>
           )}
@@ -66,7 +66,7 @@ const DealCard = ({ deal, viewer }: { deal: Deal; viewer: Viewer }) => {
       <div className="p-3 flex flex-col flex-1">
         <div className="mb-1">
           <LocalizedClientLink href={`/products/${product.handle}`}>
-            <h3 className="font-bold text-[#0f172a] text-[11px] leading-snug group-hover:text-[#006B4F] transition-colors line-clamp-2">
+            <h3 className="font-bold text-[#0f172a] text-[11px] leading-snug group-hover:text-[#4d7c0f] transition-colors line-clamp-2">
               {product.title}
             </h3>
           </LocalizedClientLink>
@@ -78,18 +78,18 @@ const DealCard = ({ deal, viewer }: { deal: Deal; viewer: Viewer }) => {
         </div>
         {category && (
           <div className="flex flex-wrap gap-1 mb-2">
-            <span className="px-1 py-0.5 text-[8px] font-medium bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] rounded">
+            <span className="px-1 py-0.5 text-[8px] font-medium bg-[#f6fbee] border border-[#ecf6dc] text-[#4d7c0f] rounded">
               {category}
             </span>
           </div>
         )}
         <div className="mb-2">
           {showSaving ? (
-            <span className="text-sm font-extrabold text-[#006B4F]">
+            <span className="text-sm font-extrabold text-[#4d7c0f]">
               Save {saving.percent}% at {saving.from}+ {UNIT}
             </span>
           ) : (
-            <span className="text-[10px] font-semibold text-[#0757a8]">
+            <span className="text-[10px] font-semibold text-[#0077cf]">
               {viewer === "guest"
                 ? "Bulk discount available, login to view"
                 : "Bulk discount available after approval"}
@@ -105,7 +105,7 @@ const DealCard = ({ deal, viewer }: { deal: Deal; viewer: Viewer }) => {
         ) : null}
         <LocalizedClientLink
           href={viewer === "guest" ? "/account" : `/products/${product.handle}`}
-          className="block text-center w-full py-2 text-[10px] font-bold rounded-lg mt-auto transition-all bg-[#006B4F] hover:bg-[#005a42] text-white"
+          className="block text-center w-full py-2 text-[10px] font-bold rounded-lg mt-auto transition-all bg-[#4d7c0f] hover:bg-[#3f6212] text-white"
         >
           {viewer === "guest" ? "Login to View Deal" : "View Deal"}
         </LocalizedClientLink>
@@ -183,9 +183,9 @@ export default async function DealsTemplate({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fffe]">
-      <section className="relative overflow-hidden bg-[#0d3320]">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320] via-[#0d3320]/90 to-[#0d3320]/60" />
+    <div className="min-h-screen bg-[#fafdf5]">
+      <section className="relative overflow-hidden bg-[#00356e]">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00356e] via-[#00356e]/90 to-[#00356e]/60" />
         <div className="relative max-w-[1440px] mx-auto px-6 py-10">
           <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-400/30 text-red-300 text-xs font-bold px-3 py-1.5 rounded-full mb-4">
             <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
@@ -194,18 +194,18 @@ export default async function DealsTemplate({
           <h1 className="text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] mb-3">
             Premium Ingredients.
             <br />
-            <span className="text-[#4ade80]">Special Prices.</span>
+            <span className="text-[#7aba0c]">Special Prices.</span>
             <br />
             Greater Possibilities.
           </h1>
-          <p className="text-[#bbf7d0]/80 text-sm leading-relaxed mb-6 max-w-lg">
+          <p className="text-[#d9edb8]/80 text-sm leading-relaxed mb-6 max-w-lg">
             Quantity-slab discounts for approved buyers. The more you order,
             the more you save.
           </p>
           <div className="flex flex-wrap gap-4 mb-7">
             {["Exclusive Pricing", "Trusted Suppliers", "Quality Assured"].map(
               (t) => (
-                <span key={t} className="text-xs text-[#86efac] font-medium">
+                <span key={t} className="text-xs text-[#c5e39a] font-medium">
                   ✓ {t}
                 </span>
               )
@@ -214,7 +214,7 @@ export default async function DealsTemplate({
           <div className="flex flex-wrap gap-3">
             <a
               href="#deals"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4ade80] hover:bg-[#22c55e] text-[#052e16] font-bold text-sm rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#7aba0c] hover:bg-[#6aa30a] text-[#00254d] font-bold text-sm rounded-lg transition-colors"
             >
               Explore All Deals →
             </a>
@@ -239,7 +239,7 @@ export default async function DealsTemplate({
                 {category && (
                   <LocalizedClientLink
                     href={link({ category: "" })}
-                    className="text-[10px] font-semibold text-[#0757a8]"
+                    className="text-[10px] font-semibold text-[#0077cf]"
                   >
                     Clear All
                   </LocalizedClientLink>
@@ -257,14 +257,14 @@ export default async function DealsTemplate({
                         href={link({ category: category === id ? "" : id })}
                         className={`flex items-center gap-2 text-xs ${
                           category === id
-                            ? "text-[#006B4F] font-semibold"
-                            : "text-[#374151] hover:text-[#006B4F]"
+                            ? "text-[#4d7c0f] font-semibold"
+                            : "text-[#374151] hover:text-[#4d7c0f]"
                         }`}
                       >
                         <span
                           className={`w-3.5 h-3.5 text-[9px] rounded border flex items-center justify-center ${
                             category === id
-                              ? "bg-[#006B4F] border-[#006B4F] text-white"
+                              ? "bg-[#4d7c0f] border-[#4d7c0f] text-white"
                               : "border-gray-300"
                           }`}
                         >
@@ -290,7 +290,7 @@ export default async function DealsTemplate({
                   href={link({ sort: "" })}
                   className={
                     sort === "featured"
-                      ? "font-bold text-[#006B4F]"
+                      ? "font-bold text-[#4d7c0f]"
                       : "text-[#374151]"
                   }
                 >
@@ -301,7 +301,7 @@ export default async function DealsTemplate({
                     href={link({ sort: "discount" })}
                     className={
                       sort === "discount"
-                        ? "font-bold text-[#006B4F]"
+                        ? "font-bold text-[#4d7c0f]"
                         : "text-[#374151]"
                     }
                   >

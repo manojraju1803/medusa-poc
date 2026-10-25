@@ -18,7 +18,7 @@ const SectionHeader = ({
     {viewAllHref && (
       <LocalizedClientLink
         href={viewAllHref}
-        className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#006B4F] hover:text-[#005a42] transition-colors mt-1"
+        className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#4d7c0f] hover:text-[#3f6212] transition-colors mt-1"
       >
         View All <ChevronRightIcon className="w-4 h-4" />
       </LocalizedClientLink>

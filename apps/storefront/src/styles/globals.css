@@ -4,6 +4,50 @@
 @import "tailwindcss/utilities";
 
 @layer utilities {
+  .announcement-track {
+    animation: announcement-scroll 32s linear infinite;
+  }
+
+  .announcement-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes announcement-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .announcement-track {
+      animation: none;
+    }
+  }
+
+  /* Partner logo rows on the home page. */
+  .marquee-left {
+    animation: announcement-scroll 70s linear infinite;
+  }
+
+  .marquee-right {
+    animation: announcement-scroll 70s linear infinite reverse;
+  }
+
+  .marquee-left:hover,
+  .marquee-right:hover {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-left,
+    .marquee-right {
+      animation: none;
+    }
+  }
+
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;

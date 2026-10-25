@@ -151,7 +151,7 @@ const StripePaymentButton = ({
         disabled={disabled || notReady}
         onClick={handlePayment}
         size="large"
-        className="!bg-[#006B4F] hover:!bg-[#005a42] !rounded-xl font-bold w-full"
+        className="!bg-[#4d7c0f] hover:!bg-[#3f6212] !rounded-xl font-bold w-full"
         isLoading={submitting}
         data-testid={dataTestId}
       >
@@ -267,7 +267,7 @@ const ManualTestPaymentButton = ({
           isLoading={submitting && authStep === "authorizing"}
           onClick={handlePaySuccess}
           size="large"
-          className="!bg-[#006B4F] hover:!bg-[#005a42] !rounded-xl font-bold w-full transition-all flex items-center justify-center gap-2"
+          className="!bg-[#4d7c0f] hover:!bg-[#3f6212] !rounded-xl font-bold w-full transition-all flex items-center justify-center gap-2"
           data-testid="submit-order-button"
         >
           <span>✓</span> {getButtonText()}
@@ -287,7 +287,7 @@ const ManualTestPaymentButton = ({
 
       <div className="flex items-center justify-center gap-1.5 text-[11px] text-gray-500 mt-0.5">
         <svg
-          className="w-3.5 h-3.5 text-[#006B4F]"
+          className="w-3.5 h-3.5 text-[#4d7c0f]"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

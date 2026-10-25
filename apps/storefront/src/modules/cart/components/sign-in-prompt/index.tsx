@@ -13,7 +13,7 @@ const SignInPrompt = () => {
       </div>
       <LocalizedClientLink
         href="/account"
-        className="px-4 py-2 border border-[#006B4F]/40 text-[#006B4F] text-sm font-semibold rounded-xl hover:bg-[#f0fdf4] transition-colors"
+        className="px-4 py-2 border border-[#4d7c0f]/40 text-[#4d7c0f] text-sm font-semibold rounded-xl hover:bg-[#f6fbee] transition-colors"
         data-testid="sign-in-button"
       >
         Sign in

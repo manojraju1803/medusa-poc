@@ -6,6 +6,10 @@ import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 
 export const APPROVED_GROUP = 'Approved';
 
+// Where sign-ups wait for approval, so the admin can find them. Only a label:
+// prices and carts depend on the Approved group alone.
+export const UNAPPROVED_GROUP = 'Unapproved';
+
 /**
  * Whether the requesting customer may see prices: logged in, and a member of
  * the `Approved` customer group.

@@ -94,7 +94,7 @@ const GstTotals = ({
       {!!source.discount_subtotal && (
         <div className="flex items-center justify-between">
           <span className="text-[#4b5563]">Discount</span>
-          <span className="font-semibold text-[#006B4F]">
+          <span className="font-semibold text-[#4d7c0f]">
             - {fmt(source.discount_subtotal)}
           </span>
         </div>
@@ -130,7 +130,7 @@ const GstTotals = ({
         <div className="flex items-center justify-between">
           <span className="text-base font-bold text-[#0f172a]">Total</span>
           <span
-            className="text-xl font-extrabold text-[#006B4F]"
+            className="text-xl font-extrabold text-[#4d7c0f]"
             data-testid="cart-total"
           >
             {fmt(source.total ?? 0)}
@@ -152,7 +152,7 @@ const GstTotals = ({
 
 export const PaymentTermChip = ({ label }: { label: string }) => (
   <span
-    className="inline-flex items-center px-2.5 py-0.5 text-[11px] font-semibold bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] rounded-full"
+    className="inline-flex items-center px-2.5 py-0.5 text-[11px] font-semibold bg-[#f6fbee] border border-[#ecf6dc] text-[#4d7c0f] rounded-full"
     data-testid="payment-term-chip"
   >
     {label}

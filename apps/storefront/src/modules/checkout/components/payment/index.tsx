@@ -129,7 +129,7 @@ const Payment = ({
           <Text>
             <button
               onClick={handleEdit}
-              className="text-[#0757a8] hover:underline font-semibold"
+              className="text-[#0077cf] hover:underline font-semibold"
               data-testid="edit-payment-button"
             >
               Edit
@@ -189,7 +189,7 @@ const Payment = ({
 
           <Button
             size="large"
-            className="mt-6 !bg-[#006B4F] hover:!bg-[#005a42] !rounded-xl font-bold"
+            className="mt-6 !bg-[#4d7c0f] hover:!bg-[#3f6212] !rounded-xl font-bold"
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={
@@ -227,7 +227,7 @@ const Payment = ({
                   className="flex gap-2 txt-medium text-ui-fg-subtle items-center"
                   data-testid="payment-details-summary"
                 >
-                  <Container className="flex items-center h-7 w-fit p-2 bg-[#f0fdf4] text-[#006B4F]">
+                  <Container className="flex items-center h-7 w-fit p-2 bg-[#f6fbee] text-[#4d7c0f]">
                     {paymentInfoMap[selectedPaymentMethod]?.icon || (
                       <CreditCard />
                     )}

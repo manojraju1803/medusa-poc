@@ -1,7 +1,9 @@
+import { getActiveWarehouse } from "@lib/data/active-warehouse"
 import { retrieveCustomer } from "@lib/data/customer"
 import { getRegion } from "@lib/data/regions"
 import { wishlistOf } from "@lib/data/wishlist"
 import { OptionValueIds } from "@lib/util/product-option-filters"
+import { isCustomerApproved } from "@modules/account/lib/approval"
 import ProductCard from "@modules/products/components/product-card"
 import { viewerFor } from "@modules/products/lib/access"
 import { Pagination } from "@modules/store/components/pagination"
@@ -33,7 +35,12 @@ export default async function PaginatedProducts({
   optionValueIds?: OptionValueIds
   viewMode?: "grid" | "list"
 }) {
-  const region = await getRegion(countryCode)
+  const [region, activeWarehouse, approved] = await Promise.all([
+    getRegion(countryCode),
+    // The same warehouse as the header and the note above the listing.
+    getActiveWarehouse(),
+    isCustomerApproved(),
+  ])
 
   if (!region) {
     return null
@@ -48,7 +55,7 @@ export default async function PaginatedProducts({
     ...(categoryIds ?? []),
   ]
 
-  const [{ products, count }, customer] = await Promise.all([
+  const [{ products, count, availability }, customer] = await Promise.all([
     listCardProducts({
       page,
       limit: PRODUCT_LIMIT,
@@ -60,6 +67,9 @@ export default async function PaginatedProducts({
         id: productsIds,
         option_value_id: optionValueIds,
       },
+      warehouseId: activeWarehouse?.warehouse.id,
+      // Stock is gated like prices.
+      withAvailability: approved,
     }),
     retrieveCustomer(),
   ])
@@ -97,6 +107,7 @@ export default async function PaginatedProducts({
               viewer={viewer}
               wishlisted={wishlist.includes(p.id)}
               viewMode={viewMode}
+              availability={availability[p.id]}
             />
           </li>
         ))}

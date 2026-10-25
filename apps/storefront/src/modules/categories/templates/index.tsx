@@ -5,6 +5,7 @@ import InteractiveLink from "@modules/common/components/interactive-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import WarehouseFilter from "@modules/store/components/warehouse-filter"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
@@ -66,6 +67,9 @@ export default function CategoryTemplate({
             ))}
           <h1 data-testid="category-page-title">{category.name}</h1>
         </div>
+        <Suspense fallback={null}>
+          <WarehouseFilter />
+        </Suspense>
         {category.description && (
           <div className="mb-8 text-base-regular">
             <p>{category.description}</p>

@@ -59,8 +59,8 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
       )}
       {selectedPaymentOptionId === paymentProviderId && isManual(paymentProviderId) && (
         <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2.5 text-xs text-gray-600">
-          <div className="flex items-center gap-2 bg-[#f0fdf4] text-[#006B4F] px-3 py-2 rounded-xl border border-[#bbf7d0]">
-            <svg className="w-4 h-4 shrink-0 text-[#006B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-2 bg-[#f6fbee] text-[#4d7c0f] px-3 py-2 rounded-xl border border-[#d9edb8]">
+            <svg className="w-4 h-4 shrink-0 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="font-medium text-[11px]">

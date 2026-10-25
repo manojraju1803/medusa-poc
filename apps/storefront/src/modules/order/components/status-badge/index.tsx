@@ -14,10 +14,10 @@ export const orderStatus = (order: HttpTypes.StoreOrder) => {
 }
 
 const STYLE: Record<string, string> = {
-  Delivered: "bg-[#f0fdf4] text-[#006B4F] border-[#bbf7d0]",
+  Delivered: "bg-[#f6fbee] text-[#4d7c0f] border-[#d9edb8]",
   Shipped: "bg-blue-50 text-blue-700 border-blue-100",
   Packed: "bg-purple-50 text-purple-700 border-purple-100",
-  Confirmed: "bg-[#f0fdf4] text-[#006B4F] border-[#bbf7d0]",
+  Confirmed: "bg-[#f6fbee] text-[#4d7c0f] border-[#d9edb8]",
   Pending: "bg-amber-50 text-amber-700 border-amber-100",
   Cancelled: "bg-red-50 text-red-600 border-red-100",
 }

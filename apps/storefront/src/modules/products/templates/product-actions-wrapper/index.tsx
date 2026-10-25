@@ -1,3 +1,4 @@
+import { getActiveWarehouse } from "@lib/data/active-warehouse"
 import { listProducts } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
 import ProductActions from "@modules/products/components/product-actions"
@@ -20,7 +21,7 @@ export default async function ProductActionsWrapper({
   viewer: Viewer
 }) {
   const approved = viewer === "approved"
-  const [product, priceTiers, cart] = await Promise.all([
+  const [product, priceTiers, cart, activeWarehouse] = await Promise.all([
     listProducts({ queryParams: { id: [id] }, regionId: region.id }).then(
       ({ response }) => response.products[0],
     ),
@@ -28,6 +29,7 @@ export default async function ProductActionsWrapper({
       ? listPriceTiers({ productIds: [id], regionId: region.id })
       : Promise.resolve([]),
     approved ? retrieveCart(undefined, "id,metadata") : Promise.resolve(null),
+    approved ? getActiveWarehouse() : Promise.resolve(null),
   ])
   if (!product) {
     return null
@@ -41,6 +43,14 @@ export default async function ProductActionsWrapper({
     ids.forEach((vid, i) => (stockLevels[vid] = levels[i]))
   }
 
+  // Open on the buyer's warehouse when this product has a chip for it.
+  const buyerCity = activeWarehouse?.warehouse.city
+  const initialCity = Object.values(stockLevels).some((levels) =>
+    levels.some((l) => l.city === buyerCity)
+  )
+    ? buyerCity
+    : undefined
+
   return (
     <ProductActions
       product={forViewer(product, viewer)}
@@ -48,6 +58,7 @@ export default async function ProductActionsWrapper({
       viewer={viewer}
       priceTiers={approved ? priceTiers : []}
       stockLevels={approved ? stockLevels : {}}
+      initialCity={initialCity}
       cart={cart ? { id: cart.id, metadata: cart.metadata } : null}
     />
   )

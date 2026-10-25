@@ -67,7 +67,7 @@ export default async function ComparePage(props: Props) {
         p.collection ? (
           <LocalizedClientLink
             href={`/collections/${p.collection.handle}`}
-            className="text-[#0757a8] hover:text-[#006B4F]"
+            className="text-[#0077cf] hover:text-[#4d7c0f]"
           >
             {p.collection.title}
           </LocalizedClientLink>
@@ -95,9 +95,9 @@ export default async function ComparePage(props: Props) {
       <CompareSync urlIds={ids} />
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <nav className="flex items-center gap-2 text-xs text-[#64748b] mb-5">
-          <LocalizedClientLink href="/" className="hover:text-[#006B4F]">Home</LocalizedClientLink>
+          <LocalizedClientLink href="/" className="hover:text-[#4d7c0f]">Home</LocalizedClientLink>
           <span>›</span>
-          <LocalizedClientLink href="/store" className="hover:text-[#006B4F]">Ingredients</LocalizedClientLink>
+          <LocalizedClientLink href="/store" className="hover:text-[#4d7c0f]">Ingredients</LocalizedClientLink>
           <span>›</span>
           <span className="text-[#0f172a] font-medium">Compare</span>
         </nav>
@@ -119,7 +119,7 @@ export default async function ComparePage(props: Props) {
             </p>
             <LocalizedClientLink
               href="/store"
-              className="inline-block px-4 py-2 bg-[#006B4F] hover:bg-[#005a42] text-white text-sm font-semibold rounded-lg"
+              className="inline-block px-4 py-2 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-semibold rounded-lg"
             >
               Browse ingredients
             </LocalizedClientLink>
@@ -129,7 +129,7 @@ export default async function ComparePage(props: Props) {
             <table className="w-full min-w-[640px] text-sm" data-testid="compare-table">
               <thead>
                 <tr>
-                  <th className="w-[160px] bg-[#f8fffe] border-b border-gray-100 px-4 py-4 text-left text-[10px] font-bold uppercase text-[#6b7280] align-top">Feature</th>
+                  <th className="w-[160px] bg-[#fafdf5] border-b border-gray-100 px-4 py-4 text-left text-[10px] font-bold uppercase text-[#6b7280] align-top">Feature</th>
                   {ordered.map((p) => {
                     const src = [p.thumbnail, ...(p.images?.map((i) => i.url) ?? [])].find(
                       isRealProductImageUrl
@@ -143,7 +143,7 @@ export default async function ComparePage(props: Props) {
                         </div>
                         <LocalizedClientLink
                           href={`/products/${p.handle}`}
-                          className="block text-sm font-bold text-[#0f172a] hover:text-[#006B4F] line-clamp-2"
+                          className="block text-sm font-bold text-[#0f172a] hover:text-[#4d7c0f] line-clamp-2"
                         >
                           {p.title}
                         </LocalizedClientLink>
@@ -157,7 +157,7 @@ export default async function ComparePage(props: Props) {
               </thead>
               <tbody>
                 {rows.map(([label, render], ri) => (
-                  <tr key={label} className={ri % 2 === 0 ? "bg-white" : "bg-[#f8fffe]"}>
+                  <tr key={label} className={ri % 2 === 0 ? "bg-white" : "bg-[#fafdf5]"}>
                     <th className="px-4 py-3 text-left text-[10px] font-bold text-[#6b7280] uppercase tracking-wide whitespace-nowrap align-top">
                       {label}
                     </th>
@@ -168,20 +168,20 @@ export default async function ComparePage(props: Props) {
                     ))}
                   </tr>
                 ))}
-                <tr className="bg-[#f8fffe]">
+                <tr className="bg-[#fafdf5]">
                   <th className="px-4 py-3 text-left text-[10px] font-bold text-[#6b7280] uppercase">Actions</th>
                   {ordered.map((p) => (
                     <td key={p.id} className="px-4 py-3">
                       <div className="flex flex-col gap-1.5">
                         <LocalizedClientLink
                           href={`/products/${p.handle}#inquiry`}
-                          className="w-full py-1.5 text-center bg-[#006B4F] text-white text-[10px] font-bold rounded-lg hover:bg-[#005a42] transition-colors"
+                          className="w-full py-1.5 text-center bg-[#4d7c0f] text-white text-[10px] font-bold rounded-lg hover:bg-[#3f6212] transition-colors"
                         >
                           Request Quote
                         </LocalizedClientLink>
                         <LocalizedClientLink
                           href={`/products/${p.handle}#inquiry`}
-                          className="w-full py-1.5 text-center border border-[#006B4F]/40 text-[#006B4F] text-[10px] font-bold rounded-lg hover:bg-[#f0fdf4] transition-colors"
+                          className="w-full py-1.5 text-center border border-[#4d7c0f]/40 text-[#4d7c0f] text-[10px] font-bold rounded-lg hover:bg-[#f6fbee] transition-colors"
                         >
                           Request Sample
                         </LocalizedClientLink>

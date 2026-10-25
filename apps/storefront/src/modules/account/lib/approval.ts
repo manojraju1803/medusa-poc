@@ -22,6 +22,7 @@ export async function isCustomerApproved(): Promise<boolean> {
 export const accountTypeLabel = (customer: HttpTypes.StoreCustomer | null) => {
   const meta = (customer?.metadata || {}) as Record<string, unknown>
   if (meta.account_type === "supplier") return "Supplier"
+  if (meta.account_type === "rnd") return "R&D"
   const buyerType = typeof meta.buyer_type === "string" ? meta.buyer_type : ""
   return buyerType
     ? `Buyer · ${buyerType.charAt(0).toUpperCase()}${buyerType.slice(1)}`

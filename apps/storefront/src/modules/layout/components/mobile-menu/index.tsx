@@ -18,6 +18,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     { label: "Home", href: "/" },
     { label: "Nutraceuticals", href: "/store" },
     { label: "Food Ingredients", href: "/store" },
+    { label: "Agro Ingredients", href: "/store" },
     { label: "Supplier Directory", href: "/suppliers" },
     { label: "Deal of Month", href: "/deals" },
     { label: "Contact Us", href: "/contact" },
@@ -57,7 +58,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 <LocalizedClientLink
                   href={l.href}
                   onClick={close}
-                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#006B4F]"
+                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#4d7c0f]"
                 >
                   {l.label}
                 </LocalizedClientLink>

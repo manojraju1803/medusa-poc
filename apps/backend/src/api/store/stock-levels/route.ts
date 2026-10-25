@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
+import { availableQuantity } from '../../../lib/warehouses';
 import { isApproved } from '../../utils/is-approved';
 import { StoreGetStockLevelsParams } from './middlewares';
 
@@ -45,7 +46,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           location_id: l.location_id,
           name: loc?.name ?? '',
           city: loc?.address?.city ?? '',
-          stocked_quantity: Number(l.stocked_quantity) - Number(l.reserved_quantity ?? 0),
+          stocked_quantity: availableQuantity(l),
         };
       })
       .filter((l) => l.city),

@@ -6,7 +6,7 @@ const InvoiceButton = () => (
       type="button"
       disabled
       aria-disabled
-      className="px-3 py-1.5 bg-[#006B4F] text-white text-xs font-bold rounded-lg opacity-50 cursor-not-allowed"
+      className="px-3 py-1.5 bg-[#4d7c0f] text-white text-xs font-bold rounded-lg opacity-50 cursor-not-allowed"
       data-testid="download-invoice-button"
     >
       Download invoice

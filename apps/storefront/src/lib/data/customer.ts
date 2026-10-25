@@ -6,6 +6,18 @@ import { HttpTypes } from "@medusajs/types"
 import { FetchError } from "@medusajs/js-sdk"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
+import {
+  documentField,
+  DOCUMENT_MIME_TYPES,
+  FieldErrors,
+  fieldsForRole,
+  FormValues,
+  normalizeValues,
+  parseRole,
+  QUALITY_DOCUMENTS,
+  validateDocument,
+  validateRegistration,
+} from "@lib/util/registration"
 import { submitInquiry } from "./inquiries"
 import {
   getAuthHeaders,
@@ -89,52 +101,131 @@ type PendingSignup = PendingCustomer & {
   metadata?: Record<string, unknown>
 }
 
-const formText = (formData: FormData, key: string) =>
-  ((formData.get(key) as string | null) || "").trim()
+export type RegisterState =
+  | { state: "error"; error: string; fieldErrors?: FieldErrors }
+  | { state: "verification_required"; email: string }
+  | { state: "success" }
+  | null
 
-export async function signup(
+type UploadedDocument = { label: string; filename: string; url: string }
+
+// Fields copied verbatim into `customer.metadata`, per role.
+const METADATA_FIELDS: Record<"buyer" | "supplier", string[]> = {
+  buyer: [
+    "company_nature",
+    "registered_address",
+    "city",
+    "state",
+    "postcode",
+    "gst_number",
+    "fssai_number",
+    "contact_address",
+    "designation",
+    "telephone",
+  ],
+  supplier: [
+    "company_nature",
+    "registered_address",
+    "warehouse_address",
+    "gst_number",
+    "fssai_number",
+    "telephone",
+    "business_nature",
+    "brand_name",
+    "ingredient_name",
+  ],
+}
+
+const readDocuments = (formData: FormData) =>
+  QUALITY_DOCUMENTS.map((label, index) => {
+    const file = formData.get(documentField(index))
+    return { label, index, file: file instanceof File && file.size ? file : null }
+  }).filter((d): d is { label: string; index: number; file: File } => !!d.file)
+
+async function uploadDocuments(
+  docs: { label: string; file: File }[],
+  token: string,
+): Promise<UploadedDocument[]> {
+  const files = await Promise.all(
+    docs.map(async ({ label, file }) => {
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? ""
+      return {
+        label,
+        filename: file.name,
+        mimeType: DOCUMENT_MIME_TYPES[ext],
+        content: Buffer.from(await file.arrayBuffer()).toString("base64"),
+      }
+    }),
+  )
+  const res = await sdk.client.fetch<{ files: UploadedDocument[] }>(
+    "/store/registration-documents",
+    {
+      method: "POST",
+      body: { files },
+      headers: { authorization: `Bearer ${token}` },
+    },
+  )
+  return res.files.map(({ label, filename, url }) => ({ label, filename, url }))
+}
+
+const errorText = (error: unknown) => String(error).replace(/^Error:\s*/, "")
+
+const EXISTING_ACCOUNT =
+  "An account with this e-mail already exists. Please sign in instead."
+
+export async function registerAccount(
   _currentState: unknown,
   formData: FormData,
-): Promise<CustomerAuthState> {
-  const password = formData.get("password") as string
-  const accountType =
-    formText(formData, "account_type") === "supplier" ? "supplier" : "buyer"
-  const buyerType = formText(formData, "buyer_type")
+): Promise<RegisterState> {
+  const role = parseRole(formData.get("account_type"))
+  const kind = role === "supplier" ? "supplier" : "buyer"
 
-  if (!password || password.length < 8) {
-    return { state: "error", error: "Password must be at least 8 characters." }
+  const raw: FormValues = {}
+  for (const field of fieldsForRole(role)) {
+    raw[field] = String(formData.get(field) ?? "")
   }
-  if (password !== formData.get("confirm_password")) {
-    return { state: "error", error: "Passwords do not match." }
-  }
-  if (!formData.get("terms")) {
-    return { state: "error", error: "Please accept the Terms of Service." }
+  const values = normalizeValues(raw)
+  const fieldErrors = validateRegistration(role, values)
+
+  const documents = role === "supplier" ? readDocuments(formData) : []
+  for (const doc of documents) {
+    const error = validateDocument(doc.file)
+    if (error) fieldErrors[documentField(doc.index)] = error
   }
 
-  const metadata: Record<string, unknown> = { account_type: accountType }
-  if (accountType === "buyer" && buyerType) {
-    metadata.buyer_type = buyerType
-  }
-  if (accountType === "supplier") {
-    for (const key of ["brand_name", "country", "product_categories"]) {
-      const value = formText(formData, key)
-      if (value) metadata[key] = value
+  if (Object.keys(fieldErrors).length) {
+    return {
+      state: "error",
+      error: "Please review the highlighted fields.",
+      fieldErrors,
     }
   }
 
+  const metadata: Record<string, unknown> = {
+    account_type: role,
+    terms_accepted_at: new Date().toISOString(),
+  }
+  for (const field of METADATA_FIELDS[kind]) {
+    if (values[field]) metadata[field] = values[field]
+  }
+
+  const [firstName, ...rest] =
+    kind === "buyer" ? values.contact_person.split(/\s+/) : [""]
   const customerForm: PendingSignup = {
-    email: formText(formData, "email"),
-    first_name: formText(formData, "first_name"),
-    last_name: formText(formData, "last_name"),
-    phone: formText(formData, "phone"),
-    company_name: formText(formData, "company_name"),
+    email: values.email,
+    first_name: firstName || undefined,
+    last_name: rest.join(" ") || undefined,
+    phone: values.mobile || undefined,
+    company_name: values.company_name || undefined,
     metadata,
   }
 
+  let token: string | null = null
+  let identityExisted = false
   try {
-    await sdk.auth.register("customer", "emailpass", {
-      email: customerForm.email,
-      password,
+    token = await sdk.auth.register("customer", "emailpass", {
+      email: values.email,
+      password: values.password,
     })
   } catch (error) {
     const fetchError = error as FetchError
@@ -145,8 +236,46 @@ export async function signup(
       fetchError.statusText !== "Unauthorized" ||
       fetchError.message !== "Identity with email already exists"
     ) {
-      return { state: "error", error: String(error) }
+      return { state: "error", error: errorText(error) }
     }
+    identityExisted = true
+  }
+
+  // Supplier documents are uploaded with the new identity's token; the upload
+  // route accepts tokens that have no customer record yet.
+  let uploaded: UploadedDocument[] = []
+  if (documents.length) {
+    if (!token) {
+      const result = await sdk.auth
+        .login("customer", "emailpass", {
+          email: values.email,
+          password: values.password,
+        })
+        .catch(() => null)
+      token =
+        typeof result === "string"
+          ? result
+          : result && "token" in result
+          ? result.token
+          : null
+    }
+    if (!token) {
+      return { state: "error", error: EXISTING_ACCOUNT }
+    }
+    try {
+      uploaded = await uploadDocuments(documents, token)
+    } catch (error) {
+      return {
+        state: "error",
+        error: `Your documents could not be uploaded: ${errorText(error)}`,
+      }
+    }
+  }
+
+  // Kept on the customer too, so the supplier's profile can show them.
+  if (uploaded.length) {
+    const uploadedAt = new Date().toISOString()
+    metadata.documents = uploaded.map((d) => ({ ...d, uploaded_at: uploadedAt }))
   }
 
   // Persist the extra signup fields. The customer record is created during
@@ -156,30 +285,111 @@ export async function signup(
 
   // Suppliers are onboarded by the team, so they also leave an inquiry. A
   // failed inquiry must not block the account itself.
-  if (accountType === "supplier") {
+  if (role === "supplier") {
     await submitInquiry({
       type: "supplier_registration",
-      name: `${customerForm.first_name} ${customerForm.last_name}`.trim(),
-      email: customerForm.email,
-      phone: customerForm.phone || undefined,
-      company: customerForm.company_name || undefined,
-      metadata,
+      name: values.company_name,
+      email: values.email,
+      phone: values.mobile || undefined,
+      company: values.company_name,
+      metadata: { ...metadata, documents: uploaded },
     }).catch(() => null)
   }
 
   // Continue by logging in. The login response tells us whether the backend
   // requires email verification — we don't need a storefront-side flag.
-  return completeLogin(customerForm.email, password)
+  const result = await completeLogin(values.email, values.password)
+  if (result?.state === "error" && identityExisted) {
+    return { state: "error", error: EXISTING_ACCOUNT }
+  }
+  return result
 }
 
 export async function login(
   _currentState: unknown,
   formData: FormData,
 ): Promise<CustomerAuthState> {
-  const email = formData.get("email") as string
-  const password = formData.get("password") as string
+  const email = String(formData.get("email") ?? "").trim()
+  const password = String(formData.get("password") ?? "")
+
+  if (!email || !password) {
+    return {
+      state: "error",
+      error: "Enter your e-mail and password to continue.",
+    }
+  }
 
   return completeLogin(email, password)
+}
+
+export type PasswordResetState =
+  | { state: "error"; error: string }
+  | { state: "sent"; email: string }
+  | { state: "done" }
+  | null
+
+// Asks the backend to e-mail a reset link. The backend answers the same way
+// whether or not the account exists, so this never reveals who is registered.
+export async function requestPasswordReset(
+  _currentState: unknown,
+  formData: FormData,
+): Promise<PasswordResetState> {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { state: "error", error: "Enter a valid e-mail address." }
+  }
+
+  try {
+    await sdk.auth.resetPassword("customer", "emailpass", { identifier: email })
+  } catch {
+    return {
+      state: "error",
+      error: "We couldn't send the reset link. Please try again.",
+    }
+  }
+  return { state: "sent", email }
+}
+
+// Sets a new password with the token from the reset e-mail.
+export async function resetPassword(
+  _currentState: unknown,
+  formData: FormData,
+): Promise<PasswordResetState> {
+  const token = String(formData.get("token") ?? "")
+  const email = String(formData.get("email") ?? "").trim()
+  const password = String(formData.get("password") ?? "")
+
+  if (!token || !email) {
+    return {
+      state: "error",
+      error: "This reset link is incomplete. Request a new one.",
+    }
+  }
+  if (password.length < 8 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+    return {
+      state: "error",
+      error: "Use at least 8 characters with a mix of letters and numbers.",
+    }
+  }
+  if (password !== formData.get("confirm_password")) {
+    return { state: "error", error: "Passwords do not match." }
+  }
+
+  try {
+    await sdk.auth.updateProvider(
+      "customer",
+      "emailpass",
+      { email, password },
+      token,
+    )
+  } catch {
+    return {
+      state: "error",
+      error:
+        "This reset link has expired or was already used. Request a new one.",
+    }
+  }
+  return { state: "done" }
 }
 
 // Logs the customer in and reconciles the customer record. The behavior is

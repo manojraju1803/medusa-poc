@@ -42,7 +42,8 @@ const normalise = (s: string) =>
 // Maps each mega-menu item to a real category, else to a search.
 export const getNavMenus = async (
   nutra: { title: string; items: string[] }[],
-  food: { title: string; items: string[] }[]
+  food: { title: string; items: string[] }[],
+  agro: { title: string; items: string[] }[]
 ) => {
   const all = await listCategories({ limit: 500 }).catch(() => [])
   const byName = new Map(all.map((c) => [normalise(c.name), c.handle]))
@@ -63,5 +64,5 @@ export const getNavMenus = async (
       }),
     }))
 
-  return { nutra: resolve(nutra), food: resolve(food) }
+  return { nutra: resolve(nutra), food: resolve(food), agro: resolve(agro) }
 }

@@ -19,18 +19,22 @@ const Chevron = () => (
   </svg>
 )
 
-const linkClass =
-  "px-3 py-2 text-sm font-medium text-[#374151] hover:text-[#006B4F] hover:bg-[#f0fdf4] rounded-lg transition-all"
+type MenuKey = "nutra" | "food" | "agro"
 
-// Desktop nav: Home, Nutra, Food, Supplier, Deal of Month, Contact Us.
+const linkClass =
+  "px-3 py-2 text-sm font-medium text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
+
+// Desktop nav: Home, Nutra, Food, Agro, Supplier, Deal of Month, Contact Us.
 const MegaMenu = ({
   nutra,
   food,
+  agro,
 }: {
   nutra: NavMenuGroup[]
   food: NavMenuGroup[]
+  agro: NavMenuGroup[]
 }) => {
-  const [open, setOpen] = useState<"nutra" | "food" | null>(null)
+  const [open, setOpen] = useState<MenuKey | null>(null)
   const ref = useRef<HTMLElement>(null)
   const pathname = usePathname()
 
@@ -51,7 +55,7 @@ const MegaMenu = ({
     }
   }, [open])
 
-  const toggleBtn = (key: "nutra" | "food", label: string) => (
+  const toggleBtn = (key: MenuKey, label: string) => (
     <div className="relative">
       <button
         type="button"
@@ -61,8 +65,8 @@ const MegaMenu = ({
         data-testid={`nav-${key}-button`}
         className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-all ${
           open === key
-            ? "text-[#006B4F] bg-[#f0fdf4]"
-            : "text-[#374151] hover:text-[#006B4F] hover:bg-[#f0fdf4]"
+            ? "text-[#4d7c0f] bg-[#f6fbee]"
+            : "text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee]"
         }`}
       >
         {label} <Chevron />
@@ -70,8 +74,12 @@ const MegaMenu = ({
     </div>
   )
 
-  const groups = open === "nutra" ? nutra : food
-  const label = open === "nutra" ? "Nutra" : "Food"
+  const menus: Record<MenuKey, { label: string; groups: NavMenuGroup[] }> = {
+    nutra: { label: "Nutra", groups: nutra },
+    food: { label: "Food", groups: food },
+    agro: { label: "Agro", groups: agro },
+  }
+  const { label, groups } = menus[open ?? "nutra"]
 
   return (
     <nav ref={ref} className="hidden lg:flex items-center">
@@ -80,6 +88,7 @@ const MegaMenu = ({
       </LocalizedClientLink>
       {toggleBtn("nutra", "Nutra")}
       {toggleBtn("food", "Food")}
+      {toggleBtn("agro", "Agro")}
       {NAV_LINKS.map((link) =>
         link.label === "Deal of Month" ? (
           <LocalizedClientLink
@@ -108,7 +117,7 @@ const MegaMenu = ({
               type="button"
               onClick={() => setOpen(null)}
               aria-label={`Close ${label} menu`}
-              className="absolute top-3 right-5 w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#006B4F] hover:bg-[#f0fdf4]"
+              className="absolute top-3 right-5 w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#4d7c0f] hover:bg-[#f6fbee]"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -117,7 +126,7 @@ const MegaMenu = ({
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-10 pr-8">
               {groups.map((group) => (
                 <div key={group.title}>
-                  <div className="w-full text-left text-sm font-bold uppercase tracking-wider text-[#0757a8] pb-2 mb-1 border-b border-gray-200 relative after:absolute after:left-0 after:-bottom-px after:w-6 after:h-0.5 after:bg-lime-500">
+                  <div className="w-full text-left text-sm font-bold uppercase tracking-wider text-[#0077cf] pb-2 mb-1 border-b border-gray-200 relative after:absolute after:left-0 after:-bottom-px after:w-6 after:h-0.5 after:bg-lime-500">
                     {group.title}
                   </div>
                   <div className="pt-1">
@@ -126,14 +135,14 @@ const MegaMenu = ({
                         <LocalizedClientLink
                           href={item.href}
                           onClick={() => setOpen(null)}
-                          className="block w-full text-left text-xs font-semibold text-[#0098d8] hover:text-[#006B4F]"
+                          className="block w-full text-left text-xs font-semibold text-[#0077cf] hover:text-[#4d7c0f]"
                         >
                           {item.label}
                         </LocalizedClientLink>
                         <LocalizedClientLink
                           href={item.href}
                           onClick={() => setOpen(null)}
-                          className="w-full flex items-center justify-between pl-2 pt-0.5 text-[11px] font-semibold text-[#173b96] hover:text-[#006B4F]"
+                          className="w-full flex items-center justify-between pl-2 pt-0.5 text-[11px] font-semibold text-[#0077cf] hover:text-[#4d7c0f]"
                         >
                           <span className="before:content-['-'] before:mr-1 before:text-gray-300">
                             Product List

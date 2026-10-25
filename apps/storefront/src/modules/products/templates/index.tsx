@@ -145,9 +145,9 @@ const ProductTemplate = async ({
     <div className="bg-[#f7faf9] min-h-screen" data-testid="product-container">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <nav className="flex items-center gap-2 text-xs text-[#64748b] mb-5">
-          <LocalizedClientLink href="/" className="hover:text-[#006B4F]">Home</LocalizedClientLink>
+          <LocalizedClientLink href="/" className="hover:text-[#4d7c0f]">Home</LocalizedClientLink>
           <span>›</span>
-          <LocalizedClientLink href="/store" className="hover:text-[#006B4F]">Ingredients</LocalizedClientLink>
+          <LocalizedClientLink href="/store" className="hover:text-[#4d7c0f]">Ingredients</LocalizedClientLink>
           <span>›</span>
           <span className="text-[#0f172a] font-medium truncate">{product.title}</span>
         </nav>
@@ -167,14 +167,14 @@ const ProductTemplate = async ({
             )}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4" data-testid="spec-chips">
               {chips.map(([label, value]) => (
-                <div key={label} className="bg-[#f8fffe] border border-[#e2f3eb] rounded-lg p-3">
+                <div key={label} className="bg-[#fafdf5] border border-[#e6f2d6] rounded-lg p-3">
                   <div className="text-[9px] uppercase tracking-wider text-[#64748b]">{label}</div>
                   <div className="text-xs font-bold text-[#0f172a] mt-1 break-words">{value}</div>
                 </div>
               ))}
             </div>
             {currentPrice?.calculated_amount != null && currentPrice.currency_code && (
-              <div className="mt-4 p-4 bg-[#f8fffe] border border-[#e2f3eb] rounded-xl">
+              <div className="mt-4 p-4 bg-[#fafdf5] border border-[#e6f2d6] rounded-xl">
                 <h2 className="text-base font-extrabold text-[#0f172a]">Price Decrease & Expected Savings</h2>
                 <p className="text-[10px] text-[#64748b] mt-0.5">Expected values are forecasts, not guaranteed prices.</p>
                 <div className="grid grid-cols-2 gap-2 mt-3">
@@ -206,7 +206,7 @@ const ProductTemplate = async ({
                 {brand && (
                   <LocalizedClientLink
                     href={`/collections/${brand.handle}`}
-                    className="inline-block text-sm font-semibold text-[#0757a8] mt-2 hover:text-[#006B4F]"
+                    className="inline-block text-sm font-semibold text-[#0077cf] mt-2 hover:text-[#4d7c0f]"
                   >
                     {brand.title}
                     {brandCountry ? ` · ${brandCountry}` : ""}
@@ -237,13 +237,13 @@ const ProductTemplate = async ({
             <div className="grid grid-cols-2 gap-2">
               <a
                 href="#inquiry"
-                className="py-3 text-center bg-[#0757a8] hover:bg-[#064985] text-white text-sm font-bold rounded-xl"
+                className="py-3 text-center bg-[#0077cf] hover:bg-[#0062ab] text-white text-sm font-bold rounded-xl"
               >
                 Request Quote
               </a>
               <a
                 href="#inquiry"
-                className="py-3 text-center border border-[#006B4F]/40 text-[#006B4F] text-sm font-semibold rounded-xl hover:bg-[#f0fdf4]"
+                className="py-3 text-center border border-[#4d7c0f]/40 text-[#4d7c0f] text-sm font-semibold rounded-xl hover:bg-[#f6fbee]"
               >
                 Request Sample
               </a>
@@ -290,7 +290,7 @@ const ProductTemplate = async ({
                   href={doc.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full text-left border border-gray-100 rounded-xl p-3 mb-2 hover:border-[#006B4F]/30"
+                  className="block w-full text-left border border-gray-100 rounded-xl p-3 mb-2 hover:border-[#4d7c0f]/30"
                 >
                   <div className="text-xs font-bold text-[#0f172a]">{doc.name}</div>
                   {doc.type && <div className="text-[10px] text-[#64748b] mt-1">{doc.type}</div>}

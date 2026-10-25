@@ -67,13 +67,13 @@ const FilterGroup = ({
           {visible.map((o) => (
             <label
               key={o.handle}
-              className="flex items-center gap-2 text-xs text-[#374151] cursor-pointer hover:text-[#006B4F]"
+              className="flex items-center gap-2 text-xs text-[#374151] cursor-pointer hover:text-[#4d7c0f]"
             >
               <input
                 type="checkbox"
                 checked={selected.includes(o.handle)}
                 onChange={() => toggle(o.handle)}
-                className="accent-[#006B4F] w-3.5 h-3.5"
+                className="accent-[#4d7c0f] w-3.5 h-3.5"
               />
               <span className="truncate">{o.title}</span>
             </label>
@@ -82,7 +82,7 @@ const FilterGroup = ({
             <button
               type="button"
               onClick={() => setShowAll((s) => !s)}
-              className="text-[11px] text-[#006B4F] font-medium text-left mt-1"
+              className="text-[11px] text-[#4d7c0f] font-medium text-left mt-1"
             >
               {showAll ? "− Show less" : `+ ${options.length - initialVisible} more`}
             </button>
@@ -118,10 +118,10 @@ export const ListingFilters = ({
                 p.delete("brand")
               })
             }
-            className="text-xs text-[#006B4F] font-medium flex items-center gap-1"
+            className="text-xs text-[#4d7c0f] font-medium flex items-center gap-1"
           >
             Clear All
-            <span className="bg-[#006B4F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+            <span className="bg-[#4d7c0f] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
               {active}
             </span>
           </button>
@@ -143,7 +143,7 @@ export const ListingFilters = ({
       >
         Filters
         {active > 0 && (
-          <span className="bg-[#006B4F] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+          <span className="bg-[#4d7c0f] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
             {active}
           </span>
         )}
@@ -178,7 +178,7 @@ export const ListingToolbar = ({
         {chips.map((c) => (
           <span
             key={`${c.param}-${c.handle}`}
-            className="flex items-center gap-1 px-2 py-0.5 bg-[#f0fdf4] border border-[#bbf7d0] text-[#006B4F] text-[11px] font-medium rounded-full"
+            className="flex items-center gap-1 px-2 py-0.5 bg-[#f6fbee] border border-[#d9edb8] text-[#4d7c0f] text-[11px] font-medium rounded-full"
           >
             {c.title}
             <button
@@ -191,7 +191,7 @@ export const ListingToolbar = ({
                   rest.forEach((h) => p.append(c.param, h))
                 })
               }
-              className="hover:text-[#005a42]"
+              className="hover:text-[#3f6212]"
             >
               ×
             </button>
@@ -206,7 +206,7 @@ export const ListingToolbar = ({
           id="sort-by"
           value={sortBy}
           onChange={(e) => update((p) => p.set("sortBy", e.target.value))}
-          className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-[#006B4F] bg-white text-[#374151]"
+          className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-[#4d7c0f] bg-white text-[#374151]"
           data-testid="sort-by"
         >
           {options.map((o) => (
@@ -229,8 +229,8 @@ export const ListingToolbar = ({
                 "p-1.5 transition-colors",
                 mode === "list" && "border-l border-gray-200",
                 viewMode === mode
-                  ? "bg-[#006B4F] text-white"
-                  : "bg-white text-gray-400 hover:text-[#006B4F]"
+                  ? "bg-[#4d7c0f] text-white"
+                  : "bg-white text-gray-400 hover:text-[#4d7c0f]"
               )}
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

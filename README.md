@@ -219,6 +219,21 @@ container starts.
   machine stay empty. Run `pnpm install` on your machine as well if you want
   editor support.
 
+### Warehouse coordinates
+
+The location-based product listing needs coordinates on the stock locations.
+To add them to the existing Bangalore, Mumbai and Delhi warehouses, run from
+`apps/backend`:
+
+```bash
+pnpm medusa exec ./src/scripts/seed-warehouses.ts
+```
+
+It only sets `lat`, `lng` and `is_default` metadata (Bangalore is the default),
+matched by address city. It creates no locations and changes no stock, and is
+safe to run again. Only locations linked to the storefront's sales channel are
+offered to buyers.
+
 ## Configuration
 
 The storefront is configured via environment variables in `apps/storefront/.env.local`:
