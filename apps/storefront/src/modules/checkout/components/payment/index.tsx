@@ -33,7 +33,7 @@ const Payment = ({
   const [error, setError] = useState<string | null>(null)
   const [paymentComplete, setPaymentComplete] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    activeSession?.provider_id ?? ""
+    activeSession?.provider_id ?? availablePaymentMethods?.[0]?.id ?? ""
   )
 
   const searchParams = useSearchParams()
@@ -227,12 +227,14 @@ const Payment = ({
                   className="flex gap-2 txt-medium text-ui-fg-subtle items-center"
                   data-testid="payment-details-summary"
                 >
-                  <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover">
+                  <Container className="flex items-center h-7 w-fit p-2 bg-[#f0fdf4] text-[#006B4F]">
                     {paymentInfoMap[selectedPaymentMethod]?.icon || (
                       <CreditCard />
                     )}
                   </Container>
-                  <Text>Pay on terms (bank transfer / PO)</Text>
+                  <Text className="text-xs font-medium text-gray-700">
+                    Instant Demo Verification · Pay on terms / Bank transfer
+                  </Text>
                 </div>
               </div>
             </div>

@@ -34,6 +34,8 @@ const ShippingAddress = ({
     "shipping_address.province": cart?.shipping_address?.province || "",
     "shipping_address.phone": cart?.shipping_address?.phone || "",
     email: cart?.email || "",
+    gst_number: (cart?.metadata?.gst_number as string) || "",
+    po_number: (cart?.metadata?.po_number as string) || "",
   })
 
   const countriesInRegion = useMemo(
@@ -217,6 +219,29 @@ const ShippingAddress = ({
           onChange={handleChange}
           data-testid="shipping-phone-input"
         />
+      </div>
+      <div className="pt-4 mt-2 border-t border-gray-100">
+        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
+          B2B Order Details (Optional)
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="GSTIN / Tax ID"
+            name="gst_number"
+            autoComplete="off"
+            value={formData.gst_number || ""}
+            onChange={handleChange}
+            data-testid="shipping-gst-input"
+          />
+          <Input
+            label="Purchase Order (PO) #"
+            name="po_number"
+            autoComplete="off"
+            value={formData.po_number || ""}
+            onChange={handleChange}
+            data-testid="shipping-po-input"
+          />
+        </div>
       </div>
     </>
   )

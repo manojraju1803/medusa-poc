@@ -137,6 +137,16 @@ const Addresses = ({
                     <Text className="txt-medium text-ui-fg-subtle">
                       {cart.email}
                     </Text>
+                    {Boolean(cart.metadata?.gst_number) && (
+                      <Text className="txt-medium text-ui-fg-subtle">
+                        GST: {String(cart.metadata?.gst_number)}
+                      </Text>
+                    )}
+                    {Boolean(cart.metadata?.po_number) && (
+                      <Text className="txt-medium text-ui-fg-subtle">
+                        PO: {String(cart.metadata?.po_number)}
+                      </Text>
+                    )}
                   </div>
 
                   <div

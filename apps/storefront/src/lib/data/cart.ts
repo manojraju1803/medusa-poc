@@ -376,6 +376,16 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
+
+    const gstNumber = formData.get("gst_number") as string | null
+    const poNumber = formData.get("po_number") as string | null
+    const meta: Record<string, string> = {}
+    if (gstNumber?.trim()) meta.gst_number = gstNumber.trim()
+    if (poNumber?.trim()) meta.po_number = poNumber.trim()
+    if (Object.keys(meta).length > 0) {
+      data.metadata = meta
+    }
+
     await updateCart(data)
   } catch (e: any) {
     return e.message
@@ -420,6 +430,12 @@ export async function placeOrder(cartId?: string) {
 
     removeCartId()
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
+  }
+
+  // Payment authorization failures come back as HTTP 200 with the cart and an
+  // `error`, not as a thrown request error - surface them to the caller.
+  if (cartRes?.type === "cart" && cartRes.error) {
+    throw new Error(cartRes.error.message)
   }
 
   return cartRes.cart
