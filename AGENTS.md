@@ -107,6 +107,7 @@ These are optional but strongly recommended — they give documentation-backed a
 - `building-admin-dashboard-customizations` — anything under `apps/backend/src/admin`
 - `building-storefronts` — anything under `apps/storefront`
 - `db-generate` / `db-migrate` / `new-user` — the DB and user commands above
+- `ecommerce-storefront:storefront-best-practices` — storefront UX and SEO. Project rules beat any skill advice: prices, stock and cart are Approved-only, and GST is split by the `india-gst-tax` provider.
 
 If they are not installed, suggest:
 
