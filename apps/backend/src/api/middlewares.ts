@@ -8,6 +8,7 @@ import { MedusaError } from '@medusajs/framework/utils';
 import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
 import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
 import { adminDemoMiddlewares } from './admin/demo-middlewares';
+import { uploadWatermarkMiddlewares } from './admin/uploads/middlewares';
 import { monitoringMiddlewares } from './admin/monitoring/middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
 import { stockLevelMiddlewares } from './store/stock-levels/middlewares';
@@ -91,6 +92,7 @@ export default defineMiddlewares({
     ...warehouseAvailabilityMiddlewares,
     ...approvalMiddlewares,
     ...adminDemoMiddlewares,
+    ...uploadWatermarkMiddlewares,
     ...monitoringMiddlewares,
     {
       method: ['GET'],
