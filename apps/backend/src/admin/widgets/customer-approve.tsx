@@ -1,5 +1,6 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { Badge, Button, Container, Heading, Text } from "@medusajs/ui"
+import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 
 type CustomerGroup = { id: string; name: string }
@@ -12,6 +13,7 @@ type AdminCustomer = {
 }
 
 const CustomerApproveWidget = ({ data }: { data: AdminCustomer }) => {
+  const queryClient = useQueryClient()
   const [approved, setApproved] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -31,12 +33,18 @@ const CustomerApproveWidget = ({ data }: { data: AdminCustomer }) => {
   const toggle = async () => {
     setSaving(true)
     try {
-      await fetch(`/admin/customers/${data.id}/approve`, {
+      const response = await fetch(`/admin/customers/${data.id}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ approved: !approved }),
       })
-      setApproved((prev) => !prev)
+      if (response.ok) {
+        setApproved((prev) => !prev)
+        // The page's Groups section and customer lists, which now show the
+        // customer in Approved or Unapproved.
+        queryClient.invalidateQueries({ queryKey: ["customers"] })
+        queryClient.invalidateQueries({ queryKey: ["customer_groups"] })
+      }
     } finally {
       setSaving(false)
     }
