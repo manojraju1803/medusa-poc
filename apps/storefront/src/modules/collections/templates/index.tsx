@@ -3,6 +3,7 @@ import { Suspense } from "react"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import WarehouseFilter from "@modules/store/components/warehouse-filter"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import { HttpTypes } from "@medusajs/types"
 import { OptionValueIds } from "@lib/util/product-option-filters"
@@ -102,6 +103,9 @@ export default async function CollectionTemplate({
             <h2 className="text-lg font-bold text-[#0f172a] mb-4">
               Products from {supplier.title}
             </h2>
+            <Suspense fallback={null}>
+              <WarehouseFilter />
+            </Suspense>
             <Suspense
               fallback={
                 <SkeletonProductGrid

@@ -3,6 +3,10 @@ node_modules
 .pnp
 .pnp.js
 
+# This repo uses pnpm only (pnpm-lock.yaml)
+package-lock.json
+yarn.lock
+
 # Yarn 2+
 .yarn/*
 .yarn

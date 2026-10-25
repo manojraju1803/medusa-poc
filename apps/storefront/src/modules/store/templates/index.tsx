@@ -11,6 +11,7 @@ import {
   ListingToolbar,
 } from "@modules/store/components/listing-controls"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import WarehouseFilter from "@modules/store/components/warehouse-filter"
 
 import PaginatedProducts from "./paginated-products"
 
@@ -123,6 +124,9 @@ const StoreTemplate = async ({
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 flex flex-col small:flex-row gap-5">
         <ListingFilters categories={categoryOptions} brands={brandOptions} />
         <div className="flex-1 min-w-0">
+          <Suspense fallback={null}>
+            <WarehouseFilter />
+          </Suspense>
           <ListingToolbar
             sortBy={sort}
             viewMode={viewMode}

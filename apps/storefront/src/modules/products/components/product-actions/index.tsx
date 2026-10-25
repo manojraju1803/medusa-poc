@@ -38,6 +38,8 @@ type ProductActionsProps = {
   cart?: { id: string; metadata?: Record<string, unknown> | null } | null
   // Stock per warehouse, keyed by variant id (approved viewers only)
   stockLevels?: Record<string, StockLevel[]>
+  // The chip selected first, e.g. the buyer's warehouse city
+  initialCity?: string
 }
 
 // MOCK for the demo: freight uplift per warehouse city. Display only; cart and
@@ -68,6 +70,7 @@ export default function ProductActions({
   priceTiers,
   cart,
   stockLevels,
+  initialCity,
 }: ProductActionsProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -96,7 +99,7 @@ export default function ProductActions({
       : undefined
   )
   const [hasCart, setHasCart] = useState(!!cart?.id)
-  const [city, setCity] = useState(BASE_CITY)
+  const [city, setCity] = useState(initialCity ?? BASE_CITY)
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options

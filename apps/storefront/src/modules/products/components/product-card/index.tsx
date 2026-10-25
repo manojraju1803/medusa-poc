@@ -8,12 +8,15 @@ import CompareToggle from "@modules/products/components/compare-toggle"
 import WishlistButton from "@modules/products/components/wishlist-button"
 import { UNIT, Viewer, hsnOf } from "@modules/products/lib/access"
 import Image from "next/image"
+import { WarehouseAvailability } from "types/warehouse"
 
 type Props = {
   product: HttpTypes.StoreProduct
   viewer: Viewer
   wishlisted?: boolean
   viewMode?: "grid" | "list"
+  // Stock at the buyer's warehouse; approved viewers only.
+  availability?: WarehouseAvailability
 }
 
 const CardImage = ({
@@ -84,6 +87,7 @@ export default function ProductCard({
   viewer,
   wishlisted = false,
   viewMode = "grid",
+  availability,
 }: Props) {
   const moq = minQuantityOf(product.variants?.[0])
   const hsn = hsnOf(product)
@@ -109,6 +113,18 @@ export default function ProductCard({
       {brand.title}
     </LocalizedClientLink>
   ) : null
+
+  const stockNote =
+    availability && !availability.in_stock ? (
+      <span
+        className="text-[11px] font-medium text-amber-700"
+        data-testid="product-availability"
+      >
+        {availability.stocked_here
+          ? "Out of stock at your warehouse"
+          : "Not stocked at your warehouse"}
+      </span>
+    ) : null
 
   const title = (
     <LocalizedClientLink
@@ -144,7 +160,10 @@ export default function ProductCard({
             ))}
           </div>
           <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
-            <CardPrice product={product} viewer={viewer} />
+            <div className="flex flex-col">
+              <CardPrice product={product} viewer={viewer} />
+              {stockNote}
+            </div>
             <div className="flex items-center gap-3">
               <CompareToggle productId={product.id} />
               <LocalizedClientLink
@@ -195,8 +214,9 @@ export default function ProductCard({
             </div>
           ))}
         </div>
-        <div className="mb-2">
+        <div className="mb-2 flex flex-col">
           <CardPrice product={product} viewer={viewer} />
+          {stockNote}
         </div>
         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-50">
           <CompareToggle productId={product.id} />

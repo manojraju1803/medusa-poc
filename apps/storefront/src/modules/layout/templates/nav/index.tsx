@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 
-
+import { getActiveWarehouse } from "@lib/data/active-warehouse"
 import { retrieveCustomer } from "@lib/data/customer"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
@@ -14,10 +14,12 @@ import {
 import MegaMenu from "@modules/layout/components/mega-menu"
 import LogoutButton from "@modules/layout/components/logout-button"
 import MobileMenu from "@modules/layout/components/mobile-menu"
+import WarehouseSelect from "@modules/layout/components/warehouse-select"
 import { FOOD_MENU, NUTRA_MENU } from "@modules/layout/components/nav-links"
 import { getNavMenus } from "@modules/layout/lib/menu-categories"
+import { ActiveWarehouse } from "types/warehouse"
 
-const UtilityBar = () => (
+const UtilityBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) => (
   <div className="bg-[#0d3320] text-white text-xs py-2 shrink-0">
     <div className="max-w-[1440px] mx-auto px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -33,6 +35,15 @@ const UtilityBar = () => (
         <span className="hidden lg:inline opacity-75"><span className="text-[#4ade80]">✓</span> COA & Lab Reports Available</span>
       </div>
       <div className="flex items-center gap-4">
+        <div className="opacity-80">
+          {/* The same warehouse the listing is narrowed to. */}
+          <WarehouseSelect
+            warehouses={warehouse?.warehouses ?? []}
+            selectedId={warehouse?.warehouse.id}
+            hasChosen={warehouse?.chosen ?? false}
+          />
+        </div>
+        <span className="opacity-30">|</span>
         <a href="mailto:sales@ingredientsbazar.com" className="hidden md:inline opacity-75 hover:opacity-100 transition-opacity">sales@ingredientsbazar.com</a>
         <span className="hidden md:inline opacity-30">|</span>
         <a href="tel:+919035022477" className="hidden md:inline opacity-75 hover:opacity-100">+91 90350 22477</a>
@@ -71,9 +82,10 @@ const IconLink = ({
 )
 
 export default async function Nav() {
-  const [menus, customer] = await Promise.all([
+  const [menus, customer, warehouse] = await Promise.all([
     getNavMenus(NUTRA_MENU, FOOD_MENU),
     retrieveCustomer().catch(() => null),
+    getActiveWarehouse(),
   ])
 
   const displayName =
@@ -91,7 +103,7 @@ export default async function Nav() {
 
   return (
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
-      <UtilityBar />
+      <UtilityBar warehouse={warehouse} />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
           <LocalizedClientLink

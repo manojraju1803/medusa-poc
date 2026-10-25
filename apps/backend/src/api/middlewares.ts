@@ -11,6 +11,9 @@ import { adminDemoMiddlewares } from './admin/demo-middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
 import { stockLevelMiddlewares } from './store/stock-levels/middlewares';
 import { priceTierMiddlewares } from './store/price-tiers/middlewares';
+import { locationMiddlewares } from './store/location/middlewares';
+import { warehouseAvailabilityMiddlewares } from './store/warehouse-availability/middlewares';
+import { filterProductsByWarehouse } from '../lib/warehouse-product-filter';
 import { isApproved } from './utils/is-approved';
 
 async function requireApproved(
@@ -77,12 +80,17 @@ export default defineMiddlewares({
     ...priceTierMiddlewares,
     ...inquiryMiddlewares,
     ...stockLevelMiddlewares,
+    ...locationMiddlewares,
+    ...warehouseAvailabilityMiddlewares,
     ...approvalMiddlewares,
     ...adminDemoMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',
-      middlewares: [hidePrices],
+      // Both run on the core matcher on purpose: a warehouse-specific product
+      // route of its own would not match `hidePrices`, and unapproved
+      // customers would then see prices.
+      middlewares: [filterProductsByWarehouse, hidePrices],
     },
     {
       method: ['GET'],
