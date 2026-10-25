@@ -7,6 +7,7 @@ import GstTotals, {
 import { provinceName } from "@modules/checkout/components/province-select/states"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import InvoiceButton from "@modules/order/components/invoice-button"
+import ReorderButton from "@modules/order/components/reorder-button"
 import StatusBadge, {
   TIMELINE,
   orderStatus,
@@ -88,6 +89,7 @@ const OrderView = ({
             </p>
           </div>
           <div className="flex gap-2 items-center">
+            <ReorderButton orderId={order.id} />
             <InvoiceButton orderId={order.id} />
             <LocalizedClientLink
               href="/contact"
