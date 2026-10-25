@@ -23,8 +23,7 @@
       "Bash(python -c ' *)",
       "Bash(curl -s 'http://localhost:9000/store/product-categories?fields=*products.variants.calculated_price&region_id=reg_01M1RDT2Y5JW6CT4A1JYH6YDB5' -H 'x-publishable-api-key: pk_fb50fe2e241e891a0b5d70eabdde9cfb42b34ec40d0cf118b43e31e2f5cad86d')",
       "Bash(curl -s http://localhost:9000/store/product-categories?fields=*products.variants.calculated_price -H 'x-publishable-api-key: pk_fb50fe2e241e891a0b5d70eabdde9cfb42b34ec40d0cf118b43e31e2f5cad86d')",
-      "Bash(curl -s http://localhost:9000/store/carts/cart_01M1V1GJPR83A3EPHMM1P57W80 -H 'x-publishable-api-key: pk_fb50fe2e241e891a0b5d70eabdde9cfb42b34ec40d0cf118b43e31e2f5cad86d')",
-      "mcp__claude-in-chrome__tabs_context_mcp"
+      "Bash(curl -s http://localhost:9000/store/carts/cart_01M1V1GJPR83A3EPHMM1P57W80 -H 'x-publishable-api-key: pk_fb50fe2e241e891a0b5d70eabdde9cfb42b34ec40d0cf118b43e31e2f5cad86d')"
     ]
   }
 }

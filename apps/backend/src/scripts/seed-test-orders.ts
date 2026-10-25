@@ -63,6 +63,14 @@ const PLAN: PlannedOrder[] = [
 const PROVINCES = ['in-ka', 'in-mh'];
 
 export default async function seedTestOrders({ container }: ExecArgs) {
+  // Fake orders on real customers: never on a shared database.
+  if (!/@(localhost|127\.0\.0\.1)[:/]/.test(process.env.DATABASE_URL ?? '')) {
+    throw new MedusaError(
+      MedusaError.Types.NOT_ALLOWED,
+      'seed-test-orders only runs against a local database.',
+    );
+  }
+
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
   const pg = container.resolve(ContainerRegistrationKeys.PG_CONNECTION);
