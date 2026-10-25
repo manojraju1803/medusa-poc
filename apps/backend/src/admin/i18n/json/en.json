@@ -1,0 +1,7 @@
+{
+  "products": {
+    "media": {
+      "failedToUpload": "Upload failed. Images must be JPEG, PNG or WebP, and no larger than 500 KB after compression. Very detailed photos may need to be made smaller first."
+    }
+  }
+}
