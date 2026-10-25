@@ -491,38 +491,6 @@ export default function ProductActions({
         </div>
 
         <div className="flex gap-x-2">
-          <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden h-11">
-            <button
-              type="button"
-              aria-label="Decrease quantity"
-              onClick={() => setQuantity((q) => Math.max(minQuantity, q - 1))}
-              disabled={quantity <= minQuantity || isAdding}
-              className="w-9 h-full text-lg text-[#0f172a] disabled:text-gray-300 hover:bg-gray-50"
-            >
-              −
-            </button>
-            <input
-              type="number"
-              min={minQuantity}
-              value={quantity}
-              onChange={(e) =>
-                setQuantity(Math.max(1, Number(e.target.value) || 1))
-              }
-              disabled={!!disabled || isAdding}
-              className="w-16 h-full text-center text-sm font-semibold outline-none border-x border-gray-200"
-              data-testid="product-quantity-input"
-              aria-label={`Quantity (${UNIT})`}
-            />
-            <button
-              type="button"
-              aria-label="Increase quantity"
-              onClick={() => setQuantity((q) => q + 1)}
-              disabled={isAdding}
-              className="w-9 h-full text-lg text-[#0f172a] hover:bg-gray-50"
-            >
-              +
-            </button>
-          </div>
           <button
             type="button"
             onClick={handleAddToCart}
