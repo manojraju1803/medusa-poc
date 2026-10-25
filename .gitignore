@@ -67,3 +67,6 @@ scratch/
 
 # dump
 ib-dump/
+
+# Locally installed Claude Code skills
+.claude/skills/
