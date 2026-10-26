@@ -1,7 +1,7 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 const linkClass =
-  "text-left text-xs text-white/70 hover:text-[#c5e39a] transition-colors"
+  "text-left text-[13px] text-white/75 hover:text-[#c5e39a] transition-colors"
 
 // Same links and order as the original www.ingredientsbazar.com footer.
 const INFORMATION_LINKS = [
@@ -111,18 +111,36 @@ export default function Footer() {
         </svg>
       </div>
 
-      <div className="relative max-w-[1440px] mx-auto px-6 pt-14 pb-10">
+      <div className="relative max-w-[1440px] mx-auto px-6 pt-14 pb-11">
         <div className="flex items-center gap-4 pb-8 mb-9 border-b border-white/15">
           {/* Original colours on white, as in the header: the logo's green
               wouldn't read on the footer gradient. */}
           <LocalizedClientLink
             href="/"
-            className="inline-flex bg-white rounded-xl px-3 py-2 shadow-sm"
+            aria-label="Ingredients Bazar home"
+            className="inline-flex items-center gap-3"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-9 sm:h-10 w-auto object-contain" />
+            {/* Full-colour mark on a white tile, white wordmark beside it. */}
+            <span className="w-10 h-10 shrink-0 rounded-xl bg-white/95 border border-white/20 shadow-sm flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icon.png" alt="" className="w-8 h-8 object-contain" />
+            </span>
+            <span className="flex flex-col">
+              {/* logo-hd.png is mark + wordmark; the negative margin crops
+                  the mark so only the wordmark shows, recoloured white. */}
+              <span className="block h-[30px] w-[154px] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo-hd.png"
+                  alt=""
+                  className="h-full w-auto max-w-none -ml-[53px] brightness-0 invert"
+                />
+              </span>
+              <span className="text-[11px] font-medium text-[#c5e39a] mt-1.5">
+                Premium B2B ingredient sourcing
+              </span>
+            </span>
           </LocalizedClientLink>
-          <p className="hidden sm:block text-xs text-white/70">Premium B2B ingredient sourcing</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
@@ -147,9 +165,9 @@ export default function Footer() {
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">{item.label}</div>
                     {item.href ? (
-                      <a href={item.href} className="text-xs text-white/80 hover:text-[#c5e39a] transition-colors break-words">{item.value}</a>
+                      <a href={item.href} className="text-[13px] text-white/85 hover:text-[#c5e39a] transition-colors break-words">{item.value}</a>
                     ) : (
-                      <div className="text-xs leading-relaxed text-white/80">{item.value}</div>
+                      <div className="text-[13px] leading-relaxed text-white/85">{item.value}</div>
                     )}
                   </div>
                 </div>

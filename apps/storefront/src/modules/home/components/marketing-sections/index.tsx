@@ -110,27 +110,41 @@ export const MarketplaceComparison = () => (
   </section>
 )
 
+// Illustrated icons as in the design, keyed by feature title; anything not
+// listed falls back to the feature's line icon.
+const FEATURE_EMOJI: Record<string, string> = {
+  "Quality Assured": "📋",
+  "Bulk Ordering": "📦",
+  "Live Inventory": "📊",
+  "Fast Delivery": "🚚",
+}
+
 export const WhyChooseUs = () => (
   <section className="bg-[#00356e] py-14">
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold text-white mb-2">Why Ingredients Bazar?</h2>
-        <p className="text-[#c5e39a] text-sm max-w-xl mx-auto">
-          Enabling food and nutraceutical companies to source and order bulk
-          ingredients with live inventory, pricing and quality certifications.
+        <h2 className="text-3xl font-bold text-white mb-3">Why Ingredients Bazar?</h2>
+        <p className="text-[#c5e39a] text-sm sm:text-[15px] leading-relaxed max-w-[590px] mx-auto">
+          Building trust through measurable results: enabling food and
+          nutraceutical companies to source and order bulk ingredients with
+          live inventory, pricing and quality certifications.
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {TRUST_FEATURES.map(({ Icon, title, desc }) => (
           <div
             key={title}
-            className="bg-white/[.08] border border-white/10 rounded-xl p-5 hover:bg-white/[.12] transition-colors"
+            className="bg-white/[.08] border border-white/15 rounded-xl p-5 hover:bg-white/[.12] transition-colors"
           >
-            <span className="w-11 h-11 mb-3 rounded-xl bg-white/10 flex items-center justify-center text-[#c5e39a]">
-              <Icon className="w-6 h-6" />
-            </span>
+            {FEATURE_EMOJI[title] ? (
+              <span className="block text-[28px] leading-none mb-4" aria-hidden="true">
+                {FEATURE_EMOJI[title]}
+              </span>
+            ) : (
+              <Icon className="w-7 h-7 mb-4 text-[#c5e39a]" />
+            )}
             <div className="font-bold text-white text-sm mb-2">{title}</div>
-            <p className="text-[#c5e39a]/80 text-xs leading-relaxed">{desc}</p>
+            <p className="text-[#c5e39a] text-xs leading-relaxed">{desc}</p>
           </div>
         ))}
       </div>
@@ -138,112 +152,34 @@ export const WhyChooseUs = () => (
   </section>
 )
 
-// Contact details as published on the original www.ingredientsbazar.com.
-const CONTACT_CARDS = [
-  {
-    label: "Call us",
-    value: "+91 90350 22477",
-    href: "tel:+919035022477",
-    icon: "M3 5a2 2 0 012-2h3.3a1 1 0 01.95.68l1.5 4.5a1 1 0 01-.5 1.2l-2.25 1.13a11 11 0 005.5 5.5l1.13-2.26a1 1 0 011.2-.49l4.49 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.7 21 3 14.3 3 6V5z",
-  },
-  {
-    label: "Email us",
-    value: "sales@ingredientsbazar.com",
-    href: "mailto:sales@ingredientsbazar.com",
-    icon: "M3 8l7.9 5.3a2 2 0 002.2 0L21 8m-2-3H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2z",
-  },
-  {
-    label: "Visit our office",
-    value: "Gottigere, Bannerughatta Road, Bengaluru 560083",
-    href: "/contact",
-    icon: "M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z",
-  },
-  {
-    label: "Business hours",
-    value: "Mon–Sat, 10:00 AM – 6:30 PM",
-    icon: "M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z",
-  },
-]
-
-const ContactCard = ({ card }: { card: (typeof CONTACT_CARDS)[number] }) => {
-  const body = (
-    <>
-      <span className="w-10 h-10 shrink-0 rounded-xl bg-[#7aba0c] text-[#00254d] flex items-center justify-center">
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={card.icon} />
-        </svg>
-      </span>
-      <span className="min-w-0">
-        <span className="block text-[10px] font-bold uppercase tracking-widest text-white/60">
-          {card.label}
-        </span>
-        <span className="block text-sm font-semibold text-white break-words">{card.value}</span>
-      </span>
-    </>
-  )
-  const cls =
-    "flex items-center gap-3 rounded-2xl bg-white/[.08] border border-white/15 p-4 backdrop-blur-sm"
-  if (!card.href) return <div className={cls}>{body}</div>
-  return card.href.startsWith("/") ? (
-    <LocalizedClientLink href={card.href} className={`${cls} hover:bg-white/[.14] transition-colors`}>
-      {body}
-    </LocalizedClientLink>
-  ) : (
-    <a href={card.href} className={`${cls} hover:bg-white/[.14] transition-colors`}>
-      {body}
-    </a>
-  )
-}
-
 export const CtaBanner = () => (
-  <section className="px-4 sm:px-6 py-14">
-    <div className="relative max-w-[1440px] mx-auto overflow-hidden rounded-3xl bg-gradient-to-br from-[#00254d] via-[#00356e] to-[#2f5d1a] shadow-[0_20px_50px_rgba(0,37,77,0.25)]">
-      <div className="absolute inset-0 opacity-[.12] [background-image:radial-gradient(#ffffff_1px,transparent_1px)] [background-size:18px_18px]" aria-hidden="true" />
-      <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#7aba0c]/25 blur-3xl" aria-hidden="true" />
-      <div className="absolute -bottom-28 -left-20 w-80 h-80 rounded-full bg-[#0077cf]/30 blur-3xl" aria-hidden="true" />
-
-      <div className="relative grid lg:grid-cols-[1.1fr_1fr] gap-10 p-8 sm:p-12 lg:p-14 items-center">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#c5e39a] text-xs font-semibold mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#7aba0c] animate-pulse" />
-            Talk to our sourcing team
-          </div>
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-white leading-tight">
+  <section className="bg-white px-4 sm:px-6 py-12">
+    <div className="max-w-[1392px] mx-auto rounded-2xl border border-[#d9edb8] bg-gradient-to-br from-[#f6fbee] via-[#f1f9e4] to-[#e6f2d6]">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-7 sm:p-12">
+        <div className="max-w-xl">
+          <h2 className="text-[28px] sm:text-4xl font-bold text-[#0f172a] leading-tight tracking-tight">
             Ready to streamline your
-            <span className="block text-[#7aba0c]">ingredient sourcing?</span>
+            <br className="hidden sm:block" /> ingredient sourcing?
           </h2>
-          <p className="text-white/75 text-sm sm:text-base leading-relaxed mt-4 max-w-xl">
-            Tell us what you need: ingredient, quantity, delivery location and
-            timeline. Our team replies with pricing, availability and quality
-            documents, usually within 24 hours. Registered buyers also unlock
-            slab pricing and live stock.
+          <p className="text-sm sm:text-[15px] text-[#475569] leading-relaxed mt-4">
+            Tell us the ingredient, quantity and delivery location. Our team
+            replies with pricing, availability and quality documents, usually
+            within 24 hours.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 mt-7">
-            <LocalizedClientLink
-              href="/contact?subject=Requirement"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#7aba0c] hover:bg-[#6aa30a] text-[#00254d] font-bold text-sm rounded-xl shadow-lg transition-colors"
-            >
-              Post a Requirement <ArrowRightIcon className="w-4 h-4" />
-            </LocalizedClientLink>
-            <LocalizedClientLink
-              href="/contact"
-              className="inline-flex items-center justify-center px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm rounded-xl transition-colors"
-            >
-              Contact Us
-            </LocalizedClientLink>
-            <LocalizedClientLink
-              href="/account"
-              className="inline-flex items-center justify-center px-6 py-3.5 text-[#c5e39a] hover:text-white font-semibold text-sm transition-colors"
-            >
-              Register your business →
-            </LocalizedClientLink>
-          </div>
         </div>
-
-        <div className="grid sm:grid-cols-2 gap-3">
-          {CONTACT_CARDS.map((card) => (
-            <ContactCard key={card.label} card={card} />
-          ))}
+        <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+          <LocalizedClientLink
+            href="/contact?subject=Requirement"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#4d7c0f] hover:bg-[#3f6212] text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+          >
+            Post a Requirement <ArrowRightIcon className="w-4 h-4" />
+          </LocalizedClientLink>
+          <LocalizedClientLink
+            href="/suppliers"
+            className="inline-flex items-center justify-center px-6 py-3.5 bg-white hover:bg-[#f6fbee] border border-[#d9edb8] text-[#3f6212] font-bold text-sm rounded-lg transition-colors"
+          >
+            Browse Suppliers
+          </LocalizedClientLink>
         </div>
       </div>
     </div>

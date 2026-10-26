@@ -18,7 +18,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     { label: "Home", href: "/" },
     { label: "Nutraceuticals", href: "/store" },
     { label: "Food Ingredients", href: "/store" },
-    { label: "Agro Ingredients", href: "/store" },
+    { label: "Agri Ingredients", href: "/store" },
     { label: "Supplier Directory", href: "/suppliers" },
     { label: "Deal of Month", href: "/deals" },
     { label: "Contact Us", href: "/contact" },
@@ -30,7 +30,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           { label: "Wishlist", href: "/account/wishlist" },
           { label: "My Account", href: "/account" },
         ]
-      : []),
+      : [{ label: "Get Started", href: "/account" }]),
   ]
 
   return (

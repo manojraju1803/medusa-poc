@@ -28,7 +28,7 @@ const ANNOUNCEMENTS = [
 ]
 
 const AnnouncementBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) => (
-  <div className="bg-[#00356e] text-white border-b border-white/10 shrink-0 flex items-center">
+  <div className="bg-[#0d3320] text-white border-b border-white/10 shrink-0 flex items-center">
     <div className="flex-1 min-w-0 overflow-hidden">
     {/* Messages are rendered twice so the -50% scroll loops seamlessly. */}
     <div className="announcement-track flex w-max items-center py-2">
@@ -38,7 +38,7 @@ const AnnouncementBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) =
           aria-hidden={i >= ANNOUNCEMENTS.length || undefined}
           className="flex items-center gap-3 px-8 text-[11px] font-medium whitespace-nowrap"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#7aba0c]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
           {msg}
         </div>
       ))}
@@ -101,21 +101,21 @@ export default async function Nav() {
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
       <AnnouncementBar warehouse={warehouse} />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
+        <div className="max-w-[1440px] mx-auto px-4 h-[60px] flex items-center gap-3">
           <LocalizedClientLink
             href="/"
             className="flex items-center shrink-0"
             data-testid="nav-store-link"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-7 sm:h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="Ingredients Bazar" className="h-9 sm:h-10 w-auto object-contain" />
           </LocalizedClientLink>
 
           <MegaMenu nutra={menus.nutra} food={menus.food} agro={menus.agro} />
 
-          <HeaderSearch className="flex-1 hidden md:flex min-w-[200px] max-w-[300px] ml-auto" />
+          <HeaderSearch className="flex-1 hidden md:flex min-w-[200px] max-w-[320px] ml-auto" />
 
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex items-center gap-0.5 shrink-0 ml-auto md:ml-1">
             {customer && (
               <>
             <IconLink href="/account/wishlist" label="Wishlist" testId="nav-wishlist-link">
@@ -180,9 +180,9 @@ export default async function Nav() {
               <LocalizedClientLink
                 href="/account"
                 data-testid="nav-account-link"
-                className="inline-flex px-4 py-2 text-sm font-semibold bg-[#4d7c0f] text-white rounded-lg hover:bg-[#3f6212] transition-colors whitespace-nowrap ml-1"
+                className="hidden sm:inline-flex items-center shrink-0 h-9 px-4 text-sm font-semibold bg-[#006b4f] text-white rounded-lg hover:bg-[#00563f] transition-colors whitespace-nowrap"
               >
-                Sign Up / Login
+                Get Started
               </LocalizedClientLink>
             )}
 

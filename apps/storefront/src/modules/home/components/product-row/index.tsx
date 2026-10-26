@@ -24,7 +24,7 @@ const ProductRow = ({
   return (
     <section
       className={`${
-        tone === "soft" ? "bg-[#fafdf5] border-y border-[#e6f2d6]" : "bg-white"
+        tone === "soft" ? "bg-[#f8fffe]" : "bg-white"
       } py-12`}
     >
       <div className="max-w-[1440px] mx-auto px-6">

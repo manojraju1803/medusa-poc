@@ -22,9 +22,9 @@ const Chevron = () => (
 type MenuKey = "nutra" | "food" | "agro"
 
 const linkClass =
-  "px-2 large:px-2.5 py-2 text-sm font-medium whitespace-nowrap text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
+  "px-3 py-2 text-sm font-medium whitespace-nowrap text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
 
-// Desktop nav: Home, Nutra, Food, Agro, Supplier, Deal of Month, Contact Us.
+// Desktop nav: Home, Nutra, Food, Agri, Supplier, Deal of Month, Contact Us.
 const MegaMenu = ({
   nutra,
   food,
@@ -63,7 +63,7 @@ const MegaMenu = ({
         aria-expanded={open === key}
         aria-haspopup="menu"
         data-testid={`nav-${key}-button`}
-        className={`flex items-center gap-1 px-2 large:px-2.5 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-all ${
+        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-all ${
           open === key
             ? "text-[#4d7c0f] bg-[#f6fbee]"
             : "text-[#374151] hover:text-[#4d7c0f] hover:bg-[#f6fbee]"
@@ -77,7 +77,7 @@ const MegaMenu = ({
   const menus: Record<MenuKey, { label: string; groups: NavMenuGroup[] }> = {
     nutra: { label: "Nutra", groups: nutra },
     food: { label: "Food", groups: food },
-    agro: { label: "Agro", groups: agro },
+    agro: { label: "Agri", groups: agro },
   }
   const { label, groups } = menus[open ?? "nutra"]
 
@@ -88,13 +88,13 @@ const MegaMenu = ({
       </LocalizedClientLink>
       {toggleBtn("nutra", "Nutra")}
       {toggleBtn("food", "Food")}
-      {toggleBtn("agro", "Agro")}
+      {toggleBtn("agro", "Agri")}
       {NAV_LINKS.map((link) =>
         link.label === "Deal of Month" ? (
           <LocalizedClientLink
             key={link.label}
             href={link.href}
-            className="flex items-center gap-1.5 px-2 large:px-2.5 py-2 text-sm font-bold whitespace-nowrap text-red-600 hover:bg-red-50 rounded-lg transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold whitespace-nowrap text-[#e7000b] hover:bg-red-50 rounded-lg transition-all"
           >
             <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
             {link.label}

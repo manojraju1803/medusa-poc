@@ -34,7 +34,7 @@ const HeroSlides = () => {
 
   return (
     <div
-      className="absolute inset-0 bg-[#00254d]"
+      className="absolute inset-0 bg-[#0d3320]"
       aria-roledescription="carousel"
       aria-label="Featured ingredients"
     >
@@ -51,7 +51,7 @@ const HeroSlides = () => {
           }`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#00254d]/[.92] via-[#00254d]/[.76] to-[#00254d]/[.15]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320]/95 via-[#0d3320]/80 to-[#0d3320]/25" />
 
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
         {SLIDES.map((slide, i) => (
@@ -62,7 +62,7 @@ const HeroSlides = () => {
             aria-label={`Show slide ${i + 1} of ${SLIDES.length}`}
             aria-current={i === index}
             className={`h-2.5 rounded-full transition-all ${
-              i === index ? "w-7 bg-[#7aba0c]" : "w-2.5 bg-white/50 hover:bg-white/80"
+              i === index ? "w-7 bg-[#4ade80]" : "w-2.5 bg-white/50 hover:bg-white/80"
             }`}
           />
         ))}

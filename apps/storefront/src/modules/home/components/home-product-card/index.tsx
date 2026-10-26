@@ -1,9 +1,10 @@
 import { getProductPrice } from "@lib/util/get-product-price"
+import { isRealProductImageUrl } from "@lib/util/product-image"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { ArrowRightIcon } from "@modules/layout/components/ib-icons"
+import ProductPlaceholder from "@modules/common/icons/product-placeholder"
 import CompareToggle from "@modules/products/components/compare-toggle"
-import PreviewPrice from "@modules/products/components/product-preview/price"
+import { UNIT, hsnOf } from "@modules/products/lib/access"
 
 export type PriceAccess = "guest" | "pending" | "approved"
 
@@ -14,17 +15,38 @@ const moqOf = (product: HttpTypes.StoreProduct) => {
   return values.length ? Math.min(...values) : null
 }
 
-// Each home-page row gets its own badge colour.
-const BADGE_STYLES: Record<string, string> = {
-  Featured: "bg-[#0077cf] text-white",
-  New: "bg-[#7aba0c] text-[#00254d]",
-  Trending: "bg-[#f97316] text-white",
+// Stock pill, approved buyers only, and only when the row was fetched with
+// inventory quantities (untracked variants count as in stock).
+const stockOf = (product: HttpTypes.StoreProduct) => {
+  const variants = product.variants ?? []
+  if (variants.some((v) => v.manage_inventory === false)) return "In Stock"
+  const qty = variants
+    .map((v) => v.inventory_quantity)
+    .filter((n): n is number => typeof n === "number")
+  if (!qty.length) return null
+  const total = qty.reduce((a, b) => a + Math.max(b, 0), 0)
+  if (total <= 0) return "Out of Stock"
+  // Less than one minimum order left.
+  return total < (moqOf(product) ?? 1) ? "Limited Stock" : "In Stock"
+}
+
+const STOCK_STYLES: Record<string, string> = {
+  "In Stock": "bg-[#f0fdf4] border-[#bbf7d0] text-[#166534]",
+  "Limited Stock": "bg-[#fffbeb] border-[#fde68a] text-[#b45309]",
+  "Out of Stock": "bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]",
 }
 
 const LockIcon = () => (
-  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+  <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
   </svg>
+)
+
+const Spec = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div className="min-w-0">
+    <dt className="text-[11px] leading-4 text-[#9ca3af]">{label}</dt>
+    <dd className="text-xs leading-5 font-semibold text-[#374151] truncate">{children}</dd>
+  </div>
 )
 
 const HomeProductCard = ({
@@ -40,115 +62,123 @@ const HomeProductCard = ({
   // (approved customers); nothing here derives a price on its own.
   const { cheapestPrice } = getProductPrice({ product })
   const moq = moqOf(product)
-  const brand = product.collection?.title
+  const hsn = hsnOf(product)
+  const brand = product.collection
+  const stock = access === "approved" ? stockOf(product) : null
   const href = `/products/${product.handle}`
+  const src = [product.thumbnail, ...(product.images?.map((i) => i.url) ?? [])].find(
+    isRealProductImageUrl
+  )
+
+  const price =
+    access === "approved" && cheapestPrice ? (
+      <span className="text-[#166534]" data-testid="price">
+        {(product.variants?.length ?? 0) > 1 && "From "}
+        {cheapestPrice.calculated_price}
+        <span className="font-normal text-[#6b7280]"> / {UNIT}</span>
+      </span>
+    ) : access === "approved" ? (
+      "On request"
+    ) : access === "pending" ? (
+      <span className="text-amber-700">Awaiting approval</span>
+    ) : (
+      <LocalizedClientLink
+        href="/account"
+        className="inline-flex items-center gap-1 text-[#0077cf] hover:underline"
+      >
+        <LockIcon /> Login to view
+      </LocalizedClientLink>
+    )
 
   return (
     <div
-      className="relative h-full bg-white border-2 border-[#dcebc6] rounded-2xl overflow-hidden shadow-[0_4px_14px_rgba(12,59,94,0.08)] hover:shadow-[0_16px_34px_rgba(77,124,15,0.18)] hover:-translate-y-1 hover:border-[#7aba0c] transition-all duration-300 flex flex-col group"
+      className="relative h-full bg-white border border-[#f3f4f6] rounded-xl shadow-[0_1px_3px_rgba(15,23,42,0.06)] hover:shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition-shadow duration-300 flex flex-col group"
       data-testid="product-wrapper"
     >
-      {/* Logo green-to-blue band. */}
-      <span className="h-1.5 shrink-0 bg-gradient-to-r from-[#7aba0c] via-[#3d996e] to-[#0077cf]" />
-
       <LocalizedClientLink
         href={href}
-        className="relative block aspect-[4/3] m-2.5 mb-0 rounded-xl overflow-hidden border border-[#e6f2d6] bg-gradient-to-br from-[#f6fbee] via-white to-[#eaf5fc]"
+        className="relative block aspect-[3/2] mx-3 mt-5 overflow-hidden bg-white"
       >
-        {product.thumbnail ? (
+        {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={product.thumbnail}
+            src={src}
             alt={product.title}
             loading="lazy"
-            className="relative w-full h-full object-contain p-4 mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-3xl font-extrabold text-[#4d7c0f]/40">
-            {product.title?.slice(0, 2).toUpperCase()}
-          </div>
-        )}
-        {badge && (
-          <span
-            className={`absolute top-2.5 left-2.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-full shadow-sm ${
-              BADGE_STYLES[badge] ?? "bg-[#4d7c0f] text-white"
-            }`}
-          >
-            {badge}
+          <span className="absolute inset-0 flex items-center justify-center text-gray-300 bg-[#f7faf9]">
+            <ProductPlaceholder size={40} />
           </span>
         )}
       </LocalizedClientLink>
 
-      <div className="px-4 pt-3 pb-4 flex flex-col flex-1">
-        {brand && (
-          <LocalizedClientLink
-            href={`/collections/${product.collection?.handle}`}
-            className="self-start mb-1.5 px-2 py-0.5 rounded-md bg-[#eaf5fc] text-[10px] font-bold uppercase tracking-wide text-[#0077cf] hover:bg-[#d6ecf9] transition-colors"
-          >
-            {brand}
-          </LocalizedClientLink>
-        )}
+      {badge && (
+        <span className="absolute top-4 left-2.5 px-2 py-0.5 rounded text-[10px] leading-4 font-bold text-white bg-[#166534] shadow-sm">
+          {badge}
+        </span>
+      )}
+      {stock && (
+        <span
+          className={`absolute top-4 right-2.5 px-2 py-0.5 rounded border text-[10px] leading-[14px] font-semibold ${STOCK_STYLES[stock]}`}
+          data-testid="product-availability"
+        >
+          {stock}
+        </span>
+      )}
+
+      <div className="px-4 pt-7 pb-4 flex flex-col flex-1">
         <LocalizedClientLink href={href}>
           <h3
-            className="font-bold text-[#0f172a] text-[15px] leading-snug group-hover:text-[#4d7c0f] transition-colors line-clamp-2 min-h-[2.6em]"
+            className="font-bold text-[#0f172a] text-[15px] leading-5 hover:text-[#166534] transition-colors line-clamp-2"
             data-testid="product-title"
           >
             {product.title}
           </h3>
         </LocalizedClientLink>
-
-        <div className="grid grid-cols-2 gap-2 mt-3 text-[11px]">
-          <div className="px-3 py-2 rounded-lg bg-[#f6fbee] border-l-[3px] border-[#7aba0c]">
-            <span className="text-[#64748b] block font-medium">MOQ</span>
-            <span className="font-bold text-[#334155]">{moq ?? "—"}</span>
-          </div>
-          <div className="px-3 py-2 min-w-0 rounded-lg bg-[#eaf5fc] border-l-[3px] border-[#0077cf]">
-            <span className="text-[#64748b] block font-medium">Price</span>
-            {access === "approved" && cheapestPrice ? (
-              <div className="flex flex-wrap gap-x-1 font-bold [&_p]:text-[13px] [&_p]:leading-snug [&_[data-testid=price]]:text-[#4d7c0f]">
-                <PreviewPrice price={cheapestPrice} />
-              </div>
-            ) : access === "approved" ? (
-              <span className="font-bold text-[#334155]">On request</span>
-            ) : access === "pending" ? (
-              <span className="font-semibold text-amber-700">Awaiting approval</span>
-            ) : (
-              <LocalizedClientLink
-                href="/account"
-                className="inline-flex items-center gap-1 font-bold text-[#0077cf] hover:underline"
-              >
-                <LockIcon /> Login to view
-              </LocalizedClientLink>
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      <div className="px-4 pt-3 pb-4 border-t border-[#e6f2d6] bg-[#fafdf5]">
-        <div className="flex items-center gap-2 mb-3 text-[11px]">
-          <CompareToggle productId={product.id} />
-          <span className="text-gray-200">|</span>
+        {brand?.title && (
           <LocalizedClientLink
-            href={`${href}#inquiry`}
-            className="text-[#4d7c0f] hover:text-[#3f6212] font-semibold"
+            href={`/collections/${brand.handle}`}
+            className="self-start mt-1 text-[11px] leading-4 text-[#6b7280] hover:text-[#166534] truncate max-w-full"
           >
-            Request Sample
+            {brand.title}
           </LocalizedClientLink>
-        </div>
-        <div className="flex gap-2">
-          <LocalizedClientLink
-            href={`${href}#inquiry`}
-            className="flex-1 py-2.5 text-center text-xs font-bold bg-[#4d7c0f] hover:bg-[#3f6212] text-white rounded-xl shadow-sm transition-colors"
-          >
-            Request Quote
-          </LocalizedClientLink>
+        )}
+
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 mt-4">
+          <Spec label="MOQ">{moq ? `${moq} ${UNIT}` : "—"}</Spec>
+          {hsn && <Spec label="HSN Code">{hsn}</Spec>}
+          <div className={`min-w-0 ${hsn ? "col-span-2" : ""}`}>
+            <dt className="text-[11px] leading-4 text-[#9ca3af]">Price</dt>
+            <dd className="text-xs leading-5 font-semibold text-[#374151]">{price}</dd>
+          </div>
+        </dl>
+
+        <div className="mt-auto pt-4">
+          <div className="flex items-center flex-wrap gap-y-1 text-xs leading-5 [&_[data-testid=compare-toggle]]:text-xs [&_[data-testid=compare-toggle]]:text-[#6b7280]">
+            <CompareToggle productId={product.id} />
+            <span className="mx-2.5 h-4 w-px bg-[#e5e7eb]" aria-hidden="true" />
+            <LocalizedClientLink
+              href="/bulk-enquiry"
+              className="font-medium text-[#166534] hover:underline"
+            >
+              Bulk Order
+            </LocalizedClientLink>
+            <span className="mx-2.5 h-4 w-px bg-[#e5e7eb]" aria-hidden="true" />
+            <LocalizedClientLink
+              href={`${href}#inquiry`}
+              className="font-medium text-[#0757a8] hover:underline"
+            >
+              Pre Order
+            </LocalizedClientLink>
+          </div>
           <LocalizedClientLink
             href={href}
             aria-label={`Details for ${product.title}`}
-            className="w-10 flex items-center justify-center bg-white border border-[#0077cf]/30 text-[#0077cf] hover:bg-[#0077cf] hover:text-white rounded-xl transition-colors"
+            className="mt-3 flex items-center justify-center h-[34px] rounded-lg border border-[#166534]/40 text-xs font-semibold text-[#166534] hover:bg-[#166534] hover:text-white hover:border-[#166534] transition-colors"
           >
-            <ArrowRightIcon className="w-4 h-4" />
+            Details
           </LocalizedClientLink>
         </div>
       </div>
