@@ -39,10 +39,10 @@ const GUIDES = [
     highlightFrom: 6,
     action: "Browse Products",
     href: "/store",
-    header: "bg-[#4d7c0f]",
-    solid: "bg-[#4d7c0f] hover:bg-[#3f6212]",
-    badge: "bg-[#4d7c0f]",
-    soft: "bg-[#f6fbee] border-[#d9edb8]",
+    header: "bg-[#006B4F]",
+    solid: "bg-[#006B4F] hover:bg-[#00563f]",
+    badge: "bg-[#006B4F]",
+    soft: "bg-[#f0fdf4] border-[#bbf7d0]",
   },
   {
     key: "signup",
@@ -54,10 +54,10 @@ const GUIDES = [
     highlightFrom: SIGNUP_INSTRUCTIONS.length,
     action: "Create an Account",
     href: "/account",
-    header: "bg-[#0077cf]",
-    solid: "bg-[#0077cf] hover:bg-[#0062ab]",
-    badge: "bg-[#0077cf]",
-    soft: "bg-[#eaf5fc] border-[#c4e2f5]",
+    header: "bg-[#0757a8]",
+    solid: "bg-[#0757a8] hover:bg-[#064985]",
+    badge: "bg-[#0757a8]",
+    soft: "bg-[#eff6ff] border-[#bfdbfe]",
   },
 ] as const
 
@@ -135,7 +135,7 @@ export const InstructionVideos = () => (
   <section className="bg-white py-14">
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="max-w-2xl mx-auto text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f6fbee] border border-[#d9edb8] text-[#4d7c0f] text-xs font-bold uppercase tracking-wider rounded-full mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f0fdf4] border border-[#dcfce7] text-[#006B4F] text-xs font-bold uppercase tracking-wider rounded-full mb-4">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.6-2.3a1 1 0 011.4.9v6.8a1 1 0 01-1.4.9L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>

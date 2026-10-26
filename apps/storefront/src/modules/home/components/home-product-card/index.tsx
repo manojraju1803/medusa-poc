@@ -1,6 +1,7 @@
 import { getProductPrice } from "@lib/util/get-product-price"
 import { isRealProductImageUrl } from "@lib/util/product-image"
 import { HttpTypes } from "@medusajs/types"
+import Image from "next/image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ProductPlaceholder from "@modules/common/icons/product-placeholder"
 import CompareToggle from "@modules/products/components/compare-toggle"
@@ -84,7 +85,7 @@ const HomeProductCard = ({
     ) : (
       <LocalizedClientLink
         href="/account"
-        className="inline-flex items-center gap-1 text-[#0077cf] hover:underline"
+        className="inline-flex items-center gap-1 text-[#0757a8] hover:underline"
       >
         <LockIcon /> Login to view
       </LocalizedClientLink>
@@ -100,11 +101,11 @@ const HomeProductCard = ({
         className="relative block aspect-[3/2] mx-3 mt-5 overflow-hidden bg-white"
       >
         {src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={src}
             alt={product.title}
-            loading="lazy"
+            fill
+            sizes="(min-width: 1280px) 300px, (min-width: 640px) 33vw, 50vw"
             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           />
         ) : (

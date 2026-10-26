@@ -74,7 +74,7 @@ const Testimonials = () => {
   if (!visible.length) return null
 
   return (
-    <section className="bg-[#f6fbee] py-12 border-y border-[#e6f2d6]">
+    <section className="bg-[#f0fdf4] py-12 border-y border-[#dcfce7]">
       <div className="max-w-[1440px] mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-8">
           <h2 className="text-2xl sm:text-[28px] font-bold text-[#0f172a] tracking-tight">
@@ -89,7 +89,7 @@ const Testimonials = () => {
           {visible.map((t, i) => (
             <li
               key={`${t.role}-${i}`}
-              className="relative flex flex-col bg-white rounded-xl border border-white hover:border-[#d9edb8] p-5 sm:p-6 shadow-[0_1px_3px_rgba(15,23,42,0.05)] hover:shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition-all"
+              className="relative flex flex-col bg-white rounded-xl border border-white hover:border-[#bbf7d0] p-5 sm:p-6 shadow-[0_1px_3px_rgba(15,23,42,0.05)] hover:shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition-all"
             >
               {t.sample && (
                 <span className="absolute top-4 right-4 px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[9px] font-bold uppercase tracking-wider">
@@ -101,7 +101,7 @@ const Testimonials = () => {
                 &ldquo;{t.quote}&rdquo;
               </blockquote>
               <div className="mt-5 flex items-center gap-3">
-                <span className="w-9 h-9 shrink-0 rounded-full bg-[#4d7c0f] text-white flex items-center justify-center text-xs font-bold">
+                <span className="w-9 h-9 shrink-0 rounded-full bg-[#166534] text-white flex items-center justify-center text-xs font-bold">
                   {initials(t.name)}
                 </span>
                 <div className="min-w-0">

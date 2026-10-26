@@ -1,11 +1,12 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import DealsTemplate from "@modules/deals/templates"
 
-export const metadata: Metadata = {
+export const generateMetadata = staticPageMetadata({
+  path: "/deals",
   title: "Deal of the Month",
   description: "Bulk discounts on selected ingredients.",
-}
+})
 
 type Params = {
   params: Promise<{ countryCode: string }>

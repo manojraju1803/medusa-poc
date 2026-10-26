@@ -71,7 +71,7 @@ const IconLink = ({
     data-testid={testId}
     aria-label={label}
     title={label}
-    className="hidden md:flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500 hover:text-[#4d7c0f] hover:bg-[#f6fbee] rounded-lg transition-all"
+    className="hidden md:flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500 hover:text-[#006B4F] hover:bg-[#f0fdf4] rounded-lg transition-all"
   >
     {children}
     <span className="hidden large:block text-[9px] leading-none">{label}</span>
@@ -150,27 +150,27 @@ export default async function Nav() {
                   href="/account"
                   data-testid="nav-account-link"
                   title={displayName}
-                  className="flex items-center gap-2 h-10 px-2 hover:bg-[#f6fbee] rounded-lg transition-all ml-1"
+                  className="flex items-center gap-2 h-10 px-2 hover:bg-[#f0fdf4] rounded-lg transition-all ml-1"
                 >
-                  <span className="w-7 h-7 bg-[#4d7c0f] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                  <span className="w-7 h-7 bg-[#166534] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
                     {initials}
                   </span>
                   <span className="hidden large:flex flex-col items-start max-w-[110px]">
                     <span className="text-xs font-semibold text-[#0f172a] leading-none truncate max-w-full">
                       {displayName}
                     </span>
-                    <span className="text-[9px] text-[#4d7c0f] leading-none mt-0.5">
+                    <span className="text-[9px] text-[#166534] leading-none mt-0.5">
                       {accountType}
                     </span>
                   </span>
                   <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </LocalizedClientLink>
                 <div className="absolute top-full right-0 w-52 bg-white border border-gray-100 rounded-xl shadow-lg py-1.5 z-50 hidden group-hover:block">
-                  <LocalizedClientLink href="/account/profile" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">My Profile</LocalizedClientLink>
-                  <LocalizedClientLink href="/account/orders" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">My Orders</LocalizedClientLink>
-                  <LocalizedClientLink href="/compare" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">Compare Ingredients</LocalizedClientLink>
-                  <LocalizedClientLink href="/account/wishlist" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">Wishlist</LocalizedClientLink>
-                  <LocalizedClientLink href="/contact" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors">Request Quote</LocalizedClientLink>
+                  <LocalizedClientLink href="/account/profile" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">My Profile</LocalizedClientLink>
+                  <LocalizedClientLink href="/account/orders" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">My Orders</LocalizedClientLink>
+                  <LocalizedClientLink href="/compare" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Compare Ingredients</LocalizedClientLink>
+                  <LocalizedClientLink href="/account/wishlist" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Wishlist</LocalizedClientLink>
+                  <LocalizedClientLink href="/contact" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Request Quote</LocalizedClientLink>
                   <div className="border-t border-gray-100 mt-1 pt-1">
                     <LogoutButton />
                   </div>

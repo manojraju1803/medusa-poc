@@ -1,12 +1,14 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 import { Suspense } from "react"
 
 import VerifyAccount from "@modules/account/components/verify-account"
 
-export const metadata: Metadata = {
+export const generateMetadata = staticPageMetadata({
+  path: "/verify-account",
   title: "Verify your email",
   description: "Verify your email address to complete your registration.",
-}
+  noindex: true,
+})
 
 export default function VerifyAccountPage() {
   return (

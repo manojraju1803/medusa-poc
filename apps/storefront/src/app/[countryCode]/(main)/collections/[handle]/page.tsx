@@ -1,8 +1,9 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { getCollectionByHandle, listCollections } from "@lib/data/collections"
+import { listCollections } from "@lib/data/collections"
 import { listRegions } from "@lib/data/regions"
+import { pageMetadata, toMetaDescription } from "@lib/util/seo"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
 import { getCollectionWithMetadata } from "@modules/suppliers/data"
@@ -22,9 +23,13 @@ type Props = {
 
 export const PRODUCT_LIMIT = 12
 
+// The page reads the buyer's cookies, so it can never render statically. With no
+// collections, generateStaticParams returns [] and Next would otherwise try to.
+export const dynamic = "force-dynamic"
+
 export async function generateStaticParams() {
   const { collections } = await listCollections({
-    fields: "*products",
+    fields: "handle",
   })
 
   if (!collections) {
@@ -56,19 +61,26 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params
-  const collection = await getCollectionByHandle(params.handle)
+  const { countryCode, handle } = await props.params
+  // The same request as the page below, so it is only made once.
+  const collection = await getCollectionWithMetadata(handle)
 
   if (!collection) {
     notFound()
   }
 
-  const metadata = {
-    title: `${collection.title} | IngredientsBazar`,
-    description: `${collection.title} products on IngredientsBazar`,
-  } as Metadata
+  const description =
+    typeof collection.metadata?.description === "string" &&
+    collection.metadata.description.trim()
+      ? toMetaDescription(collection.metadata.description)
+      : `Buy ${collection.title} ingredients in bulk from a verified supplier on Ingredients Bazar.`
 
-  return metadata
+  return pageMetadata({
+    countryCode,
+    path: `/collections/${handle}`,
+    title: `${collection.title} Ingredients`,
+    description,
+  })
 }
 
 export default async function CollectionPage(props: Props) {

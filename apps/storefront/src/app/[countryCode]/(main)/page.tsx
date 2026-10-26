@@ -1,8 +1,12 @@
-import { Metadata } from "next"
-
 import { retrieveCustomer } from "@lib/data/customer"
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TAGLINE,
+  staticPageMetadata,
+} from "@lib/util/seo"
 import { HttpTypes } from "@medusajs/types"
 import {
   APPLICATION_HANDLES,
@@ -25,11 +29,11 @@ import ProductRow from "@modules/home/components/product-row"
 import Testimonials from "@modules/home/components/testimonials"
 import { getMenuCategories } from "@modules/layout/lib/menu-categories"
 
-export const metadata: Metadata = {
-  title: "Ingredients Bazar",
-  description:
-    "Ingredients Bazar — bulk raw ingredients for manufacturers and traders.",
-}
+export const generateMetadata = staticPageMetadata({
+  path: "",
+  title: { absolute: `${SITE_NAME} - ${SITE_TAGLINE}` },
+  description: SITE_DESCRIPTION,
+})
 
 const CARD_FIELDS =
   "id,title,handle,thumbnail,created_at,+metadata,collection.id,collection.title,collection.handle,variants.id,+variants.metadata,+variants.inventory_quantity,+variants.manage_inventory,*variants.calculated_price"
@@ -59,8 +63,11 @@ export default async function Home(props: {
       getMenuCategories(),
       // Light-weight pass over the whole (channel-scoped) catalogue for
       // category images and counts.
+      // No prices asked for, so no auth: one cached response for every
+      // visitor instead of a ~1s cold fetch per signed-in buyer.
       listProducts({
         regionId: region.id,
+        withAuth: false,
         queryParams: {
           limit: 500,
           fields: "id,thumbnail,categories.id,categories.parent_category_id",

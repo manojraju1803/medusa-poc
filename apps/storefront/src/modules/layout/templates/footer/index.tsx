@@ -1,7 +1,7 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 const linkClass =
-  "text-left text-[13px] text-white/75 hover:text-[#c5e39a] transition-colors"
+  "text-left text-xs text-white/70 hover:text-[#86efac] transition-colors"
 
 // Same links and order as the original www.ingredientsbazar.com footer.
 const INFORMATION_LINKS = [
@@ -88,7 +88,7 @@ const FooterHeading = ({ children }: { children: React.ReactNode }) => (
     <div className="text-sm font-bold text-white uppercase tracking-wider">
       {children}
     </div>
-    <div className="w-10 h-0.5 bg-[#7aba0c] mt-2" />
+    <div className="w-10 h-0.5 bg-[#4ade80] mt-2" />
   </div>
 )
 
@@ -96,7 +96,7 @@ const FooterHeading = ({ children }: { children: React.ReactNode }) => (
 export default function Footer() {
 
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-br from-[#0077cf] via-[#0062ab] to-[#00254d] text-white font-sans">
+    <footer className="relative overflow-hidden bg-gradient-to-br from-[#087f5b] via-[#075e54] to-[#081d3a] text-white font-sans">
       <div className="pointer-events-none absolute inset-0 opacity-20" aria-hidden="true">
         <svg
           className="absolute bottom-0 left-0 w-full h-full"
@@ -104,43 +104,32 @@ export default function Footer() {
           preserveAspectRatio="none"
         >
           <path d="M0 310C220 230 390 390 620 310C860 225 1030 360 1440 180V520H0Z" fill="none" stroke="white" strokeWidth="1.5" />
-          <path d="M0 360C260 270 430 430 700 340C960 250 1160 330 1440 230" fill="none" stroke="#7aba0c" strokeWidth="1" />
+          <path d="M0 360C260 270 430 430 700 340C960 250 1160 330 1440 230" fill="none" stroke="#4ade80" strokeWidth="1" />
           <path d="M-40 170C250 70 480 250 760 150C1050 45 1240 140 1500 60" fill="none" stroke="white" strokeWidth="0.8" />
           <circle cx="1160" cy="110" r="170" fill="none" stroke="white" strokeWidth="0.6" />
-          <circle cx="1160" cy="110" r="220" fill="none" stroke="#7aba0c" strokeWidth="0.6" />
+          <circle cx="1160" cy="110" r="220" fill="none" stroke="#4ade80" strokeWidth="0.6" />
         </svg>
       </div>
 
-      <div className="relative max-w-[1440px] mx-auto px-6 pt-14 pb-11">
-        <div className="flex items-center gap-4 pb-8 mb-9 border-b border-white/15">
-          {/* Original colours on white, as in the header: the logo's green
-              wouldn't read on the footer gradient. */}
-          <LocalizedClientLink
-            href="/"
-            aria-label="Ingredients Bazar home"
-            className="inline-flex items-center gap-3"
+      <div className="relative max-w-[1440px] mx-auto px-6 pt-14 pb-10">
+        <div className="flex items-center gap-3 pb-8 mb-9 border-b border-white/15">
+          <span
+            className="w-10 h-10 shrink-0 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center"
+            aria-hidden="true"
           >
-            {/* Full-colour mark on a white tile, white wordmark beside it. */}
-            <span className="w-10 h-10 shrink-0 rounded-xl bg-white/95 border border-white/20 shadow-sm flex items-center justify-center">
+            <svg className="w-5 h-5 text-[#86efac]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21c4.5-2.5 7-6.3 7-11.5C14.4 9.2 11.3 6.8 9.8 3 6.7 5.3 5 8.2 5 11.3 5 16.1 7.7 19.2 12 21z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 20V9" />
+            </svg>
+          </span>
+          <div>
+            <LocalizedClientLink href="/" aria-label="Ingredients Bazar home" className="block w-fit">
+              {/* Full logo recoloured white, as in the design. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icon.png" alt="" className="w-8 h-8 object-contain" />
-            </span>
-            <span className="flex flex-col">
-              {/* logo-hd.png is mark + wordmark; the negative margin crops
-                  the mark so only the wordmark shows, recoloured white. */}
-              <span className="block h-[30px] w-[154px] overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/logo-hd.png"
-                  alt=""
-                  className="h-full w-auto max-w-none -ml-[53px] brightness-0 invert"
-                />
-              </span>
-              <span className="text-[11px] font-medium text-[#c5e39a] mt-1.5">
-                Premium B2B ingredient sourcing
-              </span>
-            </span>
-          </LocalizedClientLink>
+              <img src="/logo.png" alt="" className="block h-8 w-auto object-contain brightness-0 invert" />
+            </LocalizedClientLink>
+            <p className="text-[10px] text-white/60 mt-1">Premium B2B ingredient sourcing</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
@@ -159,15 +148,15 @@ export default function Footer() {
             <div className="space-y-4">
               {CARE.map((item) => (
                 <div key={item.label} className="flex items-start gap-3">
-                  <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-[#c5e39a]">
+                  <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-[#86efac]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">{item.icon}</svg>
                   </div>
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">{item.label}</div>
                     {item.href ? (
-                      <a href={item.href} className="text-[13px] text-white/85 hover:text-[#c5e39a] transition-colors break-words">{item.value}</a>
+                      <a href={item.href} className="text-xs text-white/80 hover:text-[#86efac] transition-colors break-words">{item.value}</a>
                     ) : (
-                      <div className="text-[13px] leading-relaxed text-white/85">{item.value}</div>
+                      <div className="text-xs leading-relaxed text-white/80">{item.value}</div>
                     )}
                   </div>
                 </div>
@@ -186,7 +175,7 @@ export default function Footer() {
                   key={method}
                   className="bg-white/10 border border-white/15 rounded-xl p-4 text-center"
                 >
-                  <svg className="w-5 h-5 text-[#c5e39a] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="w-5 h-5 text-[#86efac] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M5 6h14l2 4H3l2-4zm0 4v8m4-8v8m6-8v8m4-8v8M3 18h18v3H3v-3z" />
                   </svg>
                   <div className="text-xs font-bold text-white">{method}</div>
@@ -195,7 +184,7 @@ export default function Footer() {
             </div>
             <LocalizedClientLink
               href="/contact"
-              className="block w-full mt-4 py-2.5 border border-[#c5e39a]/40 text-[#c5e39a] hover:bg-white/10 text-xs font-bold rounded-xl transition-colors text-center"
+              className="block w-full mt-4 py-2.5 border border-[#86efac]/40 text-[#86efac] hover:bg-white/10 text-xs font-bold rounded-xl transition-colors text-center"
             >
               Payment Assistance
             </LocalizedClientLink>
@@ -213,7 +202,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Ingredients Bazar on ${social.label}`}
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white/70 hover:bg-[#7aba0c] hover:text-[#00254d] transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white/70 hover:bg-[#4ade80] hover:text-[#052e16] transition-colors"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">{social.path}</svg>
               </a>

@@ -14,7 +14,7 @@ const ORDER_PROCESS = [
 ]
 
 export const OrderProcess = () => (
-  <section className="bg-[#fafdf5] border-y border-[#e6f2d6] py-12">
+  <section className="bg-[#f8fffe] border-y border-[#e8f5e9] py-12">
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-[#0f172a] mb-1">Simple Process</h2>
@@ -23,13 +23,13 @@ export const OrderProcess = () => (
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
-        <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-[#ecf6dc]" />
+        <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-[#dcfce7]" />
         {ORDER_PROCESS.map((step) => (
           <div
             key={step.step}
-            className="relative z-[1] bg-white border border-gray-100 rounded-xl p-5 text-center hover:border-[#4d7c0f]/20 hover:shadow-md transition-all"
+            className="relative z-[1] bg-white border border-gray-100 rounded-xl p-5 text-center hover:border-[#166534]/20 hover:shadow-md transition-all"
           >
-            <div className="w-10 h-10 bg-[#4d7c0f] text-white rounded-full flex items-center justify-center text-sm font-extrabold mx-auto mb-3">
+            <div className="w-10 h-10 bg-[#166534] text-white rounded-full flex items-center justify-center text-sm font-extrabold mx-auto mb-3">
               {step.step}
             </div>
             <div className="font-bold text-[#0f172a] text-sm mb-1.5">{step.title}</div>
@@ -50,10 +50,10 @@ const COMPARISON = [
 ]
 
 export const MarketplaceComparison = () => (
-  <section className="bg-[#fafdf5] border-y border-[#e6f2d6] py-14">
+  <section className="bg-[#f8fffe] border-y border-[#e8f5e9] py-14">
     <div className="max-w-[1120px] mx-auto px-6">
       <div className="max-w-2xl mx-auto text-center mb-9">
-        <div className="text-xs font-bold text-[#4d7c0f] uppercase tracking-wider mb-2">
+        <div className="text-xs font-bold text-[#006B4F] uppercase tracking-wider mb-2">
           The Ingredients Bazar Difference
         </div>
         <h2 className="text-3xl font-bold text-[#0f172a]">
@@ -66,12 +66,12 @@ export const MarketplaceComparison = () => (
       </div>
 
       <div className="overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
-        <div className="hidden sm:grid grid-cols-[1.1fr_1fr_1fr] bg-[#00356e] text-white">
+        <div className="hidden sm:grid grid-cols-[1.1fr_1fr_1fr] bg-[#0d3320] text-white">
           <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider">What Matters</div>
           <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider border-l border-white/10">
             Other Companies
           </div>
-          <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider bg-[#4d7c0f] border-l border-white/10">
+          <div className="px-5 py-4 text-xs font-bold uppercase tracking-wider bg-[#006B4F] border-l border-white/10">
             Ingredients Bazar
           </div>
         </div>
@@ -94,8 +94,8 @@ export const MarketplaceComparison = () => (
                 {item.others}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-5 py-3 sm:py-4 bg-[#f6fbee] text-xs font-semibold text-[#3f6212] sm:border-l border-[#ecf6dc]">
-              <span className="w-5 h-5 shrink-0 flex items-center justify-center rounded-full bg-[#4d7c0f] text-white">
+            <div className="flex items-center gap-2 px-5 py-3 sm:py-4 bg-[#f0fdf4] text-xs font-semibold text-[#14532d] sm:border-l border-[#dcfce7]">
+              <span className="w-5 h-5 shrink-0 flex items-center justify-center rounded-full bg-[#006B4F] text-white">
                 <CheckIcon className="w-3 h-3" />
               </span>
               <span>
@@ -120,11 +120,11 @@ const FEATURE_EMOJI: Record<string, string> = {
 }
 
 export const WhyChooseUs = () => (
-  <section className="bg-[#00356e] py-14">
+  <section className="bg-[#0d3320] py-14">
     <div className="max-w-[1440px] mx-auto px-6">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold text-white mb-3">Why Ingredients Bazar?</h2>
-        <p className="text-[#c5e39a] text-sm sm:text-[15px] leading-relaxed max-w-[590px] mx-auto">
+        <p className="text-[#86efac] text-sm sm:text-[15px] leading-relaxed max-w-[590px] mx-auto">
           Building trust through measurable results: enabling food and
           nutraceutical companies to source and order bulk ingredients with
           live inventory, pricing and quality certifications.
@@ -141,10 +141,10 @@ export const WhyChooseUs = () => (
                 {FEATURE_EMOJI[title]}
               </span>
             ) : (
-              <Icon className="w-7 h-7 mb-4 text-[#c5e39a]" />
+              <Icon className="w-7 h-7 mb-4 text-[#86efac]" />
             )}
             <div className="font-bold text-white text-sm mb-2">{title}</div>
-            <p className="text-[#c5e39a] text-xs leading-relaxed">{desc}</p>
+            <p className="text-[#86efac] text-xs leading-relaxed">{desc}</p>
           </div>
         ))}
       </div>
@@ -154,7 +154,7 @@ export const WhyChooseUs = () => (
 
 export const CtaBanner = () => (
   <section className="bg-white px-4 sm:px-6 py-12">
-    <div className="max-w-[1392px] mx-auto rounded-2xl border border-[#d9edb8] bg-gradient-to-br from-[#f6fbee] via-[#f1f9e4] to-[#e6f2d6]">
+    <div className="max-w-[1392px] mx-auto rounded-2xl border border-[#bbf7d0] bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7]">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-7 sm:p-12">
         <div className="max-w-xl">
           <h2 className="text-[28px] sm:text-4xl font-bold text-[#0f172a] leading-tight tracking-tight">
@@ -170,13 +170,13 @@ export const CtaBanner = () => (
         <div className="flex flex-col sm:flex-row gap-3 shrink-0">
           <LocalizedClientLink
             href="/contact?subject=Requirement"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#4d7c0f] hover:bg-[#3f6212] text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#166534] hover:bg-[#14532d] text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
           >
             Post a Requirement <ArrowRightIcon className="w-4 h-4" />
           </LocalizedClientLink>
           <LocalizedClientLink
             href="/suppliers"
-            className="inline-flex items-center justify-center px-6 py-3.5 bg-white hover:bg-[#f6fbee] border border-[#d9edb8] text-[#3f6212] font-bold text-sm rounded-lg transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3.5 bg-white hover:border-[#166534] border border-[#166534]/30 text-[#166534] font-bold text-sm rounded-lg transition-colors"
           >
             Browse Suppliers
           </LocalizedClientLink>

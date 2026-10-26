@@ -18,7 +18,7 @@ const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
         </div>
         <LocalizedClientLink
           href="/store"
-          className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#4d7c0f] hover:text-[#3f6212] transition-colors"
+          className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#166534] hover:text-[#14532d] transition-colors"
         >
           View All <ChevronRightIcon className="w-4 h-4" />
         </LocalizedClientLink>
@@ -32,7 +32,7 @@ const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
           >
             <CardImage src={cat.image} alt={cat.name} />
             <div className="p-4 flex flex-col flex-1">
-              <div className="text-base font-semibold text-[#0f172a] group-hover:text-[#4d7c0f] transition-colors leading-6 line-clamp-1">
+              <div className="text-base font-semibold text-[#0f172a] group-hover:text-[#166534] transition-colors leading-6 line-clamp-1">
                 {cat.name}
               </div>
               <div className="mt-auto pt-1.5 flex items-end justify-between gap-2">
@@ -48,8 +48,8 @@ const CategoryStrip = ({ categories }: { categories: CategoryCard[] }) => {
                     </span>
                   )}
                 </div>
-                <span className="w-6 h-6 shrink-0 rounded-md bg-[#f6fbee] border border-[#dcebc6] group-hover:bg-[#4d7c0f] group-hover:border-[#4d7c0f] flex items-center justify-center transition-colors">
-                  <ChevronRightIcon className="w-3.5 h-3.5 text-[#4d7c0f] group-hover:text-white transition-colors" />
+                <span className="w-6 h-6 shrink-0 rounded-md bg-[#f0fdf4] border border-[#dcfce7] group-hover:bg-[#166534] group-hover:border-[#166534] flex items-center justify-center transition-colors">
+                  <ChevronRightIcon className="w-3.5 h-3.5 text-[#166534] group-hover:text-white transition-colors" />
                 </span>
               </div>
             </div>

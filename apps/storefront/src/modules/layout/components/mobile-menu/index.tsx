@@ -58,7 +58,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 <LocalizedClientLink
                   href={l.href}
                   onClick={close}
-                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#4d7c0f]"
+                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#006B4F]"
                 >
                   {l.label}
                 </LocalizedClientLink>

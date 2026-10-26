@@ -23,7 +23,10 @@ export const listStockLevels = async (
       method: "GET",
       query: { variant_id: variantId },
       headers: { ...(await getAuthHeaders()) },
-      cache: "no-store",
+      // Cached briefly rather than per request: the auth header keeps each
+      // buyer's entry apart, and 60s matches the listing's stock badges
+      // (AVAILABILITY_MAX_AGE_SECONDS in warehouses.ts).
+      next: { revalidate: 60 },
     })
     .then(({ levels }) => levels ?? [])
     .catch(() => [])

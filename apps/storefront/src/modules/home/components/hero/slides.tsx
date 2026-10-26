@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect, useState } from "react"
 
 const SLIDES = [
@@ -39,13 +40,15 @@ const HeroSlides = () => {
       aria-label="Featured ingredients"
     >
       {SLIDES.map((slide, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           key={slide.src}
           src={slide.src}
           alt={i === index ? slide.alt : ""}
           aria-hidden={i !== index}
-          loading={i === 0 ? "eager" : "lazy"}
+          fill
+          sizes="100vw"
+          priority={i === 0}
+          quality={70}
           className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 motion-reduce:duration-0 ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
