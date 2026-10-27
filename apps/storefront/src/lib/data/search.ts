@@ -1,8 +1,6 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import { HttpTypes } from "@medusajs/types"
-import { getAuthHeaders } from "./cookies"
 
 export type SearchSuggestionProduct = {
   id: string
@@ -12,50 +10,42 @@ export type SearchSuggestionProduct = {
   brand_name?: string | null
 }
 
-// name + image only: no region_id, so the store API never computes a price
-const SUGGESTION_FIELDS = "id,title,handle,thumbnail,collection.title"
-
-const listSuggestionProducts = async (
-  query: HttpTypes.StoreProductListParams,
-  headers: Record<string, string>
-) =>
-  sdk.store.product
-    .list({ ...query, fields: SUGGESTION_FIELDS }, headers)
-    .then(({ products }) => products)
-
-// Products matching the name, then products of matching brands (collections).
+/**
+ * Fetches lightweight product suggestions matching product name or brand.
+ * Starting from 3 characters.
+ * Suggestions contain ONLY product name, handle, image and optional brand name.
+ * Strictly NO pricing information is returned.
+ */
 export async function getSearchSuggestions(
   query: string,
   limit = 8
 ): Promise<SearchSuggestionProduct[]> {
-  const q = query.trim()
-  if (q.length < 3) return []
+  const trimmed = query ? query.trim() : ""
+  if (!trimmed || trimmed.length < 3) {
+    return []
+  }
 
-  const headers = { ...(await getAuthHeaders()) }
+  try {
+    const data = await sdk.client.fetch<{
+      products: SearchSuggestionProduct[]
+    }>(`/store/search-suggestions`, {
+      method: "GET",
+      query: {
+        q: trimmed,
+        limit,
+      },
+      cache: "no-store",
+    })
 
-  const [byName, brands] = await Promise.all([
-    listSuggestionProducts({ q, limit }, headers),
-    sdk.store.collection
-      .list({ q, fields: "id", limit: 20 }, headers)
-      .then(({ collections }) => collections),
-  ])
-
-  const byBrand = brands.length
-    ? await listSuggestionProducts(
-        { collection_id: brands.map((b) => b.id), limit },
-        headers
-      )
-    : []
-
-  const seen = new Set<string>()
-  return [...byName, ...byBrand]
-    .filter((p) => !seen.has(p.id) && seen.add(p.id))
-    .slice(0, limit)
-    .map((p) => ({
+    return (data.products || []).map((p) => ({
       id: p.id,
       title: p.title,
-      handle: p.handle!,
+      handle: p.handle,
       thumbnail: p.thumbnail ?? null,
-      brand_name: p.collection?.title ?? null,
+      brand_name: p.brand_name ?? null,
     }))
+  } catch (error) {
+    console.error("Failed to fetch search suggestions:", error)
+    return []
+  }
 }
