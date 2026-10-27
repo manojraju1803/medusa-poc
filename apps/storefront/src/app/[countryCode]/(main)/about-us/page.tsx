@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import {
   Checklist,
@@ -8,11 +8,12 @@ import {
   P,
 } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "About Us | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/about-us",
+  title: "About Us",
   description:
     "SaiSukrithkar Supplements Private Limited, the company behind Ingredients Bazar: multi-brand food and nutra ingredients under one umbrella.",
-}
+})
 
 const PRINCIPLES = [
   "We work ethically, with integrity and honesty.",

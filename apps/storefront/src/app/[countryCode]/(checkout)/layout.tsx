@@ -1,5 +1,11 @@
+import { NOINDEX } from "@lib/util/seo"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { Metadata } from "next"
 import ChevronDown from "@modules/common/icons/chevron-down"
+
+export const metadata: Metadata = {
+  robots: NOINDEX,
+}
 
 export default function CheckoutLayout({
   children,

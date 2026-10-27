@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import {
@@ -10,11 +10,12 @@ import {
   P,
 } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "Bulk Enquiry | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/bulk-enquiry",
+  title: "Bulk Enquiry",
   description:
     "Bulk buying and monthly multi-brand ingredient sourcing plans from Ingredients Bazar.",
-}
+})
 
 export default function BulkEnquiryPage() {
   return (

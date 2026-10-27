@@ -37,7 +37,10 @@ export const getCategoryByHandle = async (categoryHandle: string[]) => {
       `/store/product-categories`,
       {
         query: {
-          fields: "*category_children, products.id",
+          // Parents for the breadcrumb. Not `products.id`: that pulled every
+          // product id in the category (100+) just to size a loading skeleton.
+          fields:
+            "*category_children,*parent_category,*parent_category.parent_category",
           handle,
         },
         next,

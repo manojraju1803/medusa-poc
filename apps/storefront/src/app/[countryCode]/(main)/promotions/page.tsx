@@ -1,13 +1,14 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { H2, InfoLayout, P } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "Promotions | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/promotions",
+  title: "Promotions",
   description:
     "Brand promotion, bulk ingredient sales and new product launches with Ingredients Bazar.",
-}
+})
 
 const STEPS = [
   {

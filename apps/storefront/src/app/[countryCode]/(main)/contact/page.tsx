@@ -1,12 +1,13 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import ContactForm from "@modules/contact/components/contact-form"
 import PageBanner from "@modules/suppliers/components/page-banner"
 
-export const metadata: Metadata = {
-  title: "Contact us | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/contact",
+  title: "Contact us",
   description: "Get in touch with the Ingredients Bazar sourcing team.",
-}
+})
 
 // Public details from www.ingredientsbazar.com/contacts (2026-10-17).
 const PHONE = "+91 90350 22477"

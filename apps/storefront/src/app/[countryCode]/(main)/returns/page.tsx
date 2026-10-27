@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import {
   Checklist,
@@ -9,10 +9,11 @@ import {
   Phone,
 } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "Returns | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/returns",
+  title: "Returns",
   description: "Returns, cancellations and refunds at Ingredients Bazar.",
-}
+})
 
 export default function ReturnsPage() {
   return (

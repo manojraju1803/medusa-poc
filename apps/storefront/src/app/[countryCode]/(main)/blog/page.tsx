@@ -1,13 +1,14 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { InfoLayout } from "@modules/info-pages/components/info-layout"
 import { BLOG_POSTS, formatPostDate } from "@modules/info-pages/lib/blog-posts"
 
-export const metadata: Metadata = {
-  title: "Our Blog | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/blog",
+  title: "Our Blog",
   description: "News, magazine features and updates from Ingredients Bazar.",
-}
+})
 
 export default function BlogPage() {
   return (

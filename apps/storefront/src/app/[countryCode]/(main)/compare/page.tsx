@@ -12,11 +12,15 @@ import { CardPrice } from "@modules/products/components/product-card"
 import { UNIT, hsnOf, viewerFor } from "@modules/products/lib/access"
 import { CARD_FIELDS } from "@modules/products/lib/fields"
 import { COMPARE_MAX } from "@modules/products/lib/compare-constants"
+import { NOINDEX } from "@lib/util/seo"
 import { Metadata } from "next"
 import Image from "next/image"
 
+// Per-visitor selection of products: nothing here for search engines.
 export const metadata: Metadata = {
   title: "Compare ingredients",
+  description: "Compare ingredients side by side.",
+  robots: NOINDEX,
 }
 
 type Props = {
