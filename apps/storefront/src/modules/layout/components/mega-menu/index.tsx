@@ -135,18 +135,9 @@ const MegaMenu = ({
                         <LocalizedClientLink
                           href={item.href}
                           onClick={() => setOpen(null)}
-                          className="block w-full text-left text-xs font-semibold text-[#0757a8] hover:text-[#006B4F]"
+                          className="w-full flex items-center justify-between text-left text-xs font-semibold text-[#0757a8] hover:text-[#006B4F]"
                         >
-                          {item.label}
-                        </LocalizedClientLink>
-                        <LocalizedClientLink
-                          href={item.href}
-                          onClick={() => setOpen(null)}
-                          className="w-full flex items-center justify-between pl-2 pt-0.5 text-[11px] font-semibold text-[#0757a8] hover:text-[#006B4F]"
-                        >
-                          <span className="before:content-['-'] before:mr-1 before:text-gray-300">
-                            Product List
-                          </span>
+                          <span>{item.label}</span>
                           <span>›</span>
                         </LocalizedClientLink>
                       </div>

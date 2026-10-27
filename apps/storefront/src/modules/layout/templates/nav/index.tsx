@@ -9,7 +9,10 @@ import HeaderSearch from "@modules/layout/components/header-search"
 import {
   BagIcon,
   CompareIcon,
+  DocIcon,
   HeartIcon,
+  OrdersIcon,
+  UserIcon,
 } from "@modules/layout/components/ib-icons"
 import MegaMenu from "@modules/layout/components/mega-menu"
 import LogoutButton from "@modules/layout/components/logout-button"
@@ -55,28 +58,13 @@ const AnnouncementBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) =
   </div>
 )
 
-const IconLink = ({
-  href,
-  label,
-  children,
-  testId,
-}: {
-  href: string
-  label: string
-  children: React.ReactNode
-  testId?: string
-}) => (
-  <LocalizedClientLink
-    href={href}
-    data-testid={testId}
-    aria-label={label}
-    title={label}
-    className="hidden md:flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500 hover:text-[#006B4F] hover:bg-[#f0fdf4] rounded-lg transition-all"
-  >
-    {children}
-    <span className="hidden large:block text-[9px] leading-none">{label}</span>
-  </LocalizedClientLink>
-)
+const ACCOUNT_MENU = [
+  { href: "/account/profile", label: "My Profile", Icon: UserIcon },
+  { href: "/account/orders", label: "My Orders", Icon: OrdersIcon },
+  { href: "/compare", label: "Compare Ingredients", Icon: CompareIcon },
+  { href: "/account/wishlist", label: "Wishlist", Icon: HeartIcon },
+  { href: "/contact", label: "Request Quote", Icon: DocIcon },
+]
 
 export default async function Nav() {
   const [menus, customer, warehouse] = await Promise.all([
@@ -101,7 +89,7 @@ export default async function Nav() {
     <div className="sticky top-0 inset-x-0 z-50 font-sans">
       <AnnouncementBar warehouse={warehouse} />
       <header className="relative bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-4 h-[60px] flex items-center gap-3">
+        <div className="max-w-[1728px] mx-auto px-4 sm:px-6 py-[10.65px] flex items-center gap-3">
           <LocalizedClientLink
             href="/"
             className="flex items-center shrink-0"
@@ -117,16 +105,6 @@ export default async function Nav() {
 
           <div className="flex items-center gap-0.5 shrink-0 ml-auto md:ml-1">
             {customer && (
-              <>
-            <IconLink href="/account/wishlist" label="Wishlist" testId="nav-wishlist-link">
-              <HeartIcon className="w-4 h-4" />
-            </IconLink>
-            <IconLink href="/compare" label="Compare" testId="nav-compare-link">
-              <CompareIcon className="w-4 h-4" />
-            </IconLink>
-            <IconLink href="/account/orders" label="Orders" testId="nav-orders-link">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-            </IconLink>
             <Suspense
               fallback={
                 <LocalizedClientLink
@@ -141,7 +119,6 @@ export default async function Nav() {
             >
               <CartButton />
             </Suspense>
-              </>
             )}
 
             {customer ? (
@@ -166,11 +143,16 @@ export default async function Nav() {
                   <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </LocalizedClientLink>
                 <div className="absolute top-full right-0 w-52 bg-white border border-gray-100 rounded-xl shadow-lg py-1.5 z-50 hidden group-hover:block">
-                  <LocalizedClientLink href="/account/profile" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">My Profile</LocalizedClientLink>
-                  <LocalizedClientLink href="/account/orders" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">My Orders</LocalizedClientLink>
-                  <LocalizedClientLink href="/compare" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Compare Ingredients</LocalizedClientLink>
-                  <LocalizedClientLink href="/account/wishlist" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Wishlist</LocalizedClientLink>
-                  <LocalizedClientLink href="/contact" className="block w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors">Request Quote</LocalizedClientLink>
+                  {ACCOUNT_MENU.map(({ href, label, Icon }) => (
+                    <LocalizedClientLink
+                      key={href}
+                      href={href}
+                      className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors"
+                    >
+                      <Icon className="w-4 h-4 shrink-0" />
+                      {label}
+                    </LocalizedClientLink>
+                  ))}
                   <div className="border-t border-gray-100 mt-1 pt-1">
                     <LogoutButton />
                   </div>
