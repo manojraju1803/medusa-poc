@@ -5,7 +5,10 @@ import { retrieveCustomer } from "@lib/data/customer"
 import { listOrders } from "@lib/data/orders"
 import TransferRequestForm from "@modules/account/components/transfer-request-form"
 import OrdersTable from "@modules/order/components/orders-table"
-import { orderStatus } from "@modules/order/components/status-badge"
+import {
+  orderStatus,
+  statusColor,
+} from "@modules/order/components/status-badge"
 
 export const metadata: Metadata = {
   title: "Orders",
@@ -25,11 +28,9 @@ export default async function Orders() {
   const count = (st: string) => statuses.filter((x) => x === st).length
   const summary = [
     { label: "Total Orders", val: orders.length, color: "bg-blue-50 text-blue-700" },
-    { label: "Pending", val: count("Pending") + count("Confirmed"), color: "bg-amber-50 text-amber-700" },
-    { label: "Packed", val: count("Packed"), color: "bg-purple-50 text-purple-700" },
-    { label: "Shipped", val: count("Shipped"), color: "bg-blue-50 text-blue-700" },
-    { label: "Delivered", val: count("Delivered"), color: "bg-[#f6fbee] text-[#4d7c0f]" },
-    { label: "Cancelled", val: count("Cancelled"), color: "bg-red-50 text-red-600" },
+    ...["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"].map(
+      (st) => ({ label: st, val: count(st), color: statusColor(st).soft })
+    ),
   ]
 
   return (
@@ -40,7 +41,7 @@ export default async function Orders() {
           Track and manage your ingredient orders.
         </p>
       </div>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-4">
+      <div className="grid grid-cols-4 md:grid-cols-7 gap-3 mb-4">
         {summary.map((c) => (
           <div key={c.label} className={`${c.color} rounded-xl p-3 text-center`}>
             <div className="text-xl font-extrabold">{c.val}</div>
