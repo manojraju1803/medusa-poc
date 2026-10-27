@@ -10,6 +10,7 @@ import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
 import { adminDemoMiddlewares } from './admin/demo-middlewares';
 import { uploadWatermarkMiddlewares } from './admin/uploads/middlewares';
 import { monitoringMiddlewares } from './admin/monitoring/middlewares';
+import { adminCustomerDocumentMiddlewares } from './admin/customers/[id]/documents/middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
 import { stockLevelMiddlewares } from './store/stock-levels/middlewares';
 import { priceTierMiddlewares } from './store/price-tiers/middlewares';
@@ -94,6 +95,7 @@ export default defineMiddlewares({
     ...adminDemoMiddlewares,
     ...uploadWatermarkMiddlewares,
     ...monitoringMiddlewares,
+    ...adminCustomerDocumentMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',

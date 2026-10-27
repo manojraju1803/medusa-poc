@@ -8,8 +8,9 @@ import {
   Select,
   Text,
   Textarea,
+  toast,
 } from "@medusajs/ui"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
 import {
@@ -20,6 +21,7 @@ import {
   normalize,
   QUALITY_DOCUMENTS,
   Section,
+  StoredDocument,
   sectionsFor,
   updateBody,
   validate,
@@ -217,6 +219,154 @@ const SectionBlock = ({
   )
 }
 
+// Same limits as supplier registration and My Profile.
+const MAX_DOCUMENT_BYTES = 2 * 1024 * 1024
+const DOCUMENT_ACCEPT = ".pdf,.doc,.docx,.jpg,.jpeg,.png"
+
+const readBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "")
+    reader.onerror = () => reject(new Error("Couldn't read the file."))
+    reader.readAsDataURL(file)
+  })
+
+const DocumentRow = ({
+  label,
+  doc,
+  editing,
+  canReplace,
+  uploading,
+  onPick,
+}: {
+  label: string
+  doc?: StoredDocument
+  editing: boolean
+  canReplace: boolean
+  uploading: boolean
+  onPick: (file: File) => void
+}) => {
+  const input = useRef<HTMLInputElement>(null)
+  return (
+    <li className="flex items-center justify-between gap-3 rounded-lg border border-ui-border-base px-4 py-3">
+      <div className="min-w-0">
+        <Text size="small" weight="plus">{label}</Text>
+        <Text size="xsmall" className={`truncate ${doc ? "text-ui-fg-subtle" : "text-ui-fg-muted"}`}>
+          {doc ? doc.filename : "Not uploaded"}
+        </Text>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        {doc ? (
+          <Button size="small" variant="secondary" asChild>
+            <a href={doc.url} target="_blank" rel="noopener noreferrer">View</a>
+          </Button>
+        ) : (
+          !editing && <Badge color="grey">Missing</Badge>
+        )}
+        {editing && canReplace && (
+          <>
+            <input
+              ref={input}
+              type="file"
+              accept={DOCUMENT_ACCEPT}
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                e.target.value = ""
+                if (file) onPick(file)
+              }}
+            />
+            <Button size="small" isLoading={uploading} onClick={() => input.current?.click()}>
+              {doc ? "Replace" : "Upload"}
+            </Button>
+          </>
+        )}
+      </div>
+    </li>
+  )
+}
+
+const DocumentsBlock = ({
+  customer,
+  onSaved,
+}: {
+  customer: Customer
+  onSaved: (c: Customer) => void
+}) => {
+  const [editing, setEditing] = useState(false)
+  const [uploading, setUploading] = useState<string | null>(null)
+  const isSupplier = accountTypeOf(customer.metadata) === "supplier"
+  const documents = documentsOf(customer.metadata)
+  const docByLabel = new Map(documents.map((d) => [d.label, d]))
+  const extraDocs = documents.filter((d) => !QUALITY_DOCUMENTS.includes(d.label))
+
+  const upload = async (label: string, file: File) => {
+    if (file.size > MAX_DOCUMENT_BYTES) {
+      toast.error("Each document can be at most 2 MB.")
+      return
+    }
+    setUploading(label)
+    try {
+      await api(`/admin/customers/${customer.id}/documents`, {
+        method: "POST",
+        body: JSON.stringify({
+          label,
+          filename: file.name,
+          mimeType: file.type,
+          content: await readBase64(file),
+        }),
+      })
+      onSaved(await loadCustomer(customer.id))
+      toast.success(`${label} ${docByLabel.has(label) ? "replaced" : "uploaded"}`)
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not upload the document")
+    } finally {
+      setUploading(null)
+    }
+  }
+
+  return (
+    <Container className="divide-y p-0">
+      <div className="flex items-start justify-between gap-4 px-6 py-4">
+        <div>
+          <Heading level="h2">Quality documents</Heading>
+          <Text size="small" className="text-ui-fg-subtle">
+            {editing
+              ? "Replace or upload a document: PDF, Word, JPG or PNG, max 2 MB. The old file is deleted."
+              : "Uploaded by the supplier at registration or from their profile."}
+          </Text>
+        </div>
+        {isSupplier && (
+          <Button
+            size="small"
+            variant="secondary"
+            disabled={uploading !== null}
+            onClick={() => setEditing((v) => !v)}
+          >
+            {editing ? "Done" : "Edit"}
+          </Button>
+        )}
+      </div>
+      <ul className="grid grid-cols-1 gap-3 px-6 py-4 md:grid-cols-2">
+        {[
+          ...QUALITY_DOCUMENTS.map((label) => ({ label, doc: docByLabel.get(label), quality: true })),
+          ...extraDocs.map((d) => ({ label: d.label, doc: d, quality: false })),
+        ].map(({ label, doc, quality }) => (
+          <DocumentRow
+            key={label}
+            label={label}
+            doc={doc}
+            editing={editing}
+            canReplace={quality}
+            uploading={uploading === label}
+            onPick={(file) => upload(label, file)}
+          />
+        ))}
+      </ul>
+    </Container>
+  )
+}
+
 const CustomerProfilePage = () => {
   const { id = "" } = useParams()
   const [customer, setCustomer] = useState<Customer | null>(null)
@@ -250,9 +400,7 @@ const CustomerProfilePage = () => {
   const type = accountTypeOf(customer.metadata)
   const approved = customer.groups?.some((g) => g.name === "Approved") ?? false
   const name = [customer.first_name, customer.last_name].filter(Boolean).join(" ")
-  const documents = documentsOf(customer.metadata)
-  const docByLabel = new Map(documents.map((d) => [d.label, d]))
-  const extraDocs = documents.filter((d) => !QUALITY_DOCUMENTS.includes(d.label))
+  const hasDocuments = documentsOf(customer.metadata).length > 0
 
   const changeType = async (next: string) => {
     if (next === type) return
@@ -356,36 +504,8 @@ const CustomerProfilePage = () => {
         />
       ))}
 
-      {(type === "supplier" || documents.length > 0) && (
-        <Container className="divide-y p-0">
-          <div className="px-6 py-4">
-            <Heading level="h2">Quality documents</Heading>
-            <Text size="small" className="text-ui-fg-subtle">
-              Uploaded by the supplier at registration or from their profile.
-            </Text>
-          </div>
-          <ul className="grid grid-cols-1 gap-3 px-6 py-4 md:grid-cols-2">
-            {[...QUALITY_DOCUMENTS.map((label) => ({ label, doc: docByLabel.get(label) })), ...extraDocs.map((d) => ({ label: d.label, doc: d }))].map(
-              ({ label, doc }) => (
-                <li key={label} className="flex items-center justify-between gap-3 rounded-lg border border-ui-border-base px-4 py-3">
-                  <div className="min-w-0">
-                    <Text size="small" weight="plus">{label}</Text>
-                    <Text size="xsmall" className={`truncate ${doc ? "text-ui-fg-subtle" : "text-ui-fg-muted"}`}>
-                      {doc ? doc.filename : "Not uploaded"}
-                    </Text>
-                  </div>
-                  {doc ? (
-                    <a href={doc.url} target="_blank" rel="noopener noreferrer">
-                      <Button size="small" variant="secondary">View</Button>
-                    </a>
-                  ) : (
-                    <Badge color="grey">Missing</Badge>
-                  )}
-                </li>
-              )
-            )}
-          </ul>
-        </Container>
+      {(type === "supplier" || hasDocuments) && (
+        <DocumentsBlock customer={customer} onSaved={setCustomer} />
       )}
     </div>
   )
