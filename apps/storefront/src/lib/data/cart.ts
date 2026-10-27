@@ -376,6 +376,16 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
+
+    const gstNumber = formData.get("gst_number") as string | null
+    const poNumber = formData.get("po_number") as string | null
+    const meta: Record<string, string> = {}
+    if (gstNumber?.trim()) meta.gst_number = gstNumber.trim()
+    if (poNumber?.trim()) meta.po_number = poNumber.trim()
+    if (Object.keys(meta).length > 0) {
+      data.metadata = meta
+    }
+
     await updateCart(data)
   } catch (e: any) {
     return e.message
