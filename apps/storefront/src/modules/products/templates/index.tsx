@@ -1,3 +1,4 @@
+import { safeDescriptionHtml } from "@lib/util/description-html"
 import React, { Suspense } from "react"
 
 import { retrieveCustomer } from "@lib/data/customer"
@@ -161,7 +162,7 @@ const ProductTemplate = async ({
                 <div
                   className="product-description text-sm text-[#475569] leading-relaxed mt-2"
                   data-testid="product-description"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
+                  dangerouslySetInnerHTML={{ __html: safeDescriptionHtml(product.description) }}
                 />
               </div>
             )}
