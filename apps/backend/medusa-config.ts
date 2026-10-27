@@ -118,5 +118,17 @@ module.exports = defineConfig({
         ],
       },
     },
+    {
+      resolve: '@medusajs/medusa/payment',
+      options: {
+        providers: [
+          {
+            // registered as payment provider "pp_mock_default"
+            resolve: './src/modules/mock-payment',
+            id: 'default',
+          },
+        ],
+      },
+    },
   ],
 });

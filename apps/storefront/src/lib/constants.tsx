@@ -33,8 +33,15 @@ export const paymentInfoMap: Record<
     title: "Manual Payment",
     icon: <CreditCard />,
   },
+  pp_mock_default: {
+    title: "Mock Payment (Demo)",
+    icon: <CreditCard />,
+  },
   // Add more payment providers here
 }
+
+// Backend demo gateway (apps/backend/src/modules/mock-payment)
+export const MOCK_PAYMENT_PROVIDER_ID = "pp_mock_default"
 
 // This only checks if it is native stripe or medusa payments for card payments, it ignores the other stripe-based providers
 export const isStripeLike = (providerId?: string) => {
@@ -47,7 +54,10 @@ export const isPaypal = (providerId?: string) => {
   return providerId?.startsWith("pp_paypal")
 }
 export const isManual = (providerId?: string) => {
-  return providerId?.startsWith("pp_system_default")
+  return (
+    providerId?.startsWith("pp_system_default") ||
+    providerId === MOCK_PAYMENT_PROVIDER_ID
+  )
 }
 
 // Add currencies that don't need to be divided by 100
