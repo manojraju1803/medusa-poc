@@ -1,6 +1,7 @@
 "use server"
 
 import { sdk } from "@lib/config"
+import { safeReturnPath } from "@lib/util/login-return"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { FetchError } from "@medusajs/js-sdk"
@@ -319,7 +320,14 @@ export async function login(
     }
   }
 
-  return completeLogin(email, password)
+  const result = await completeLogin(email, password)
+
+  // Back to the page that sent the buyer to sign in, such as an order link.
+  const next = safeReturnPath(formData.get("next"))
+  if (result?.state === "success" && next) {
+    redirect(next)
+  }
+  return result
 }
 
 export type PasswordResetState =
