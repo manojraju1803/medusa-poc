@@ -13,6 +13,9 @@ const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
  */
 const nextConfig = {
   reactStrictMode: true,
+  // The middleware strips trailing slashes itself, after answering old
+  // WordPress URLs (which all end in "/") with a single 301.
+  skipTrailingSlashRedirect: true,
   experimental: {
     serverActions: {
       // Supplier registration carries up to 8 quality documents of 2 MB each.
