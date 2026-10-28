@@ -2,38 +2,6 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils';
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 
-// Where uploaded files, such as product images, are stored: the backend's own
-// disk (the `static` folder) until S3_BUCKET is set, then S3. Code that stores
-// files goes through Medusa's File Module, so switching needs no code changes.
-const fileProvider = process.env.S3_BUCKET
-  ? {
-      resolve: '@medusajs/medusa/file-s3',
-      id: 's3',
-      options: {
-        bucket: process.env.S3_BUCKET,
-        region: process.env.S3_REGION,
-        access_key_id: process.env.S3_ACCESS_KEY_ID,
-        secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-        // The public address files are served from, e.g. the bucket's URL.
-        file_url: process.env.S3_FILE_URL,
-        // Only for S3-compatible services other than AWS.
-        endpoint: process.env.S3_ENDPOINT,
-        prefix: process.env.S3_PREFIX,
-      },
-    }
-  : {
-      resolve: '@medusajs/medusa/file-local',
-      id: 'local',
-      options: {
-        // Links to stored files. Must be the backend's public address: the
-        // default is localhost, which only works on a developer's machine.
-        backend_url: `${process.env.MEDUSA_BACKEND_URL || 'http://localhost:9000'}/static`,
-      },
-    };
-
-// Medusa Cloud sets up S3 file storage itself, so leave it alone there.
-const onMedusaCloud = process.env.EXECUTION_CONTEXT === 'medusa-cloud';
-
 module.exports = defineConfig({
   admin: {
     // The admin refuses larger files the moment they're added (Medusa's
@@ -75,14 +43,28 @@ module.exports = defineConfig({
         : { ssl: false, sslmode: 'disable' },
   },
   modules: [
-    ...(onMedusaCloud
-      ? []
-      : [
+    // Uploaded files live in S3 only: images in a public media bucket, private
+    // documents in a locked documents bucket (src/modules/s3-file). The
+    // backend refuses to start without these settings, so a private file can
+    // never fall back to the public `static` folder. See docs/PRIVATE_DOCUMENTS.md.
+    {
+      resolve: '@medusajs/medusa/file',
+      options: {
+        providers: [
           {
-            resolve: '@medusajs/medusa/file',
-            options: { providers: [fileProvider] },
+            resolve: './src/modules/s3-file',
+            id: 's3',
+            options: {
+              region: process.env.S3_REGION,
+              media_bucket: process.env.S3_MEDIA_BUCKET,
+              media_url: process.env.S3_MEDIA_URL,
+              documents_bucket: process.env.S3_DOCUMENTS_BUCKET,
+              endpoint: process.env.S3_ENDPOINT,
+            },
           },
-        ]),
+        ],
+      },
+    },
     // Stock notification module with the local provider on the e-mail channel
     // too, so password-reset links are written to the server log in dev.
     // Swap in a real e-mail provider (e.g. @medusajs/medusa/notification-sendgrid)

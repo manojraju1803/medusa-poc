@@ -90,6 +90,18 @@ cp apps/backend/.env.template apps/backend/.env
 DATABASE_URL=postgres://postgres:@localhost:5432/medusa-dtc-starter
 ```
 
+   Uploaded files (product images, customers' documents) are stored in S3 only,
+   and the `S3_*` settings from `.env.template` point at the development
+   buckets. The backend won't start without them. Sign in to AWS before
+   starting it, and again when the session expires (after up to 12 hours):
+
+```bash
+aws login
+```
+
+   See [docs/PRIVATE_DOCUMENTS.md](docs/PRIVATE_DOCUMENTS.md) for the buckets and
+   what access you need.
+
 4. Run migrations:
 
 ```bash

@@ -18,6 +18,7 @@ import {
   AccountType,
   accountTypeOf,
   documentsOf,
+  documentType,
   normalize,
   QUALITY_DOCUMENTS,
   Section,
@@ -234,6 +235,7 @@ const readBase64 = (file: File) =>
 const DocumentRow = ({
   label,
   doc,
+  href,
   editing,
   canReplace,
   uploading,
@@ -241,6 +243,9 @@ const DocumentRow = ({
 }: {
   label: string
   doc?: StoredDocument
+  // The admin download route: checks the admin session, then redirects to a
+  // link that works for 5 minutes. Documents have no public address.
+  href: string
   editing: boolean
   canReplace: boolean
   uploading: boolean
@@ -258,7 +263,7 @@ const DocumentRow = ({
       <div className="flex shrink-0 items-center gap-2">
         {doc ? (
           <Button size="small" variant="secondary" asChild>
-            <a href={doc.url} target="_blank" rel="noopener noreferrer">View</a>
+            <a href={href} target="_blank" rel="noopener noreferrer">View</a>
           </Button>
         ) : (
           !editing && <Badge color="grey">Missing</Badge>
@@ -356,6 +361,7 @@ const DocumentsBlock = ({
             key={label}
             label={label}
             doc={doc}
+            href={`/admin/customers/${customer.id}/documents/${documentType(label)}`}
             editing={editing}
             canReplace={quality}
             uploading={uploading === label}

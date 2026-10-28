@@ -28,8 +28,8 @@ import {
  * thumbnail follows its image.
  *
  * Safe to run again: watermarked images are skipped, and a product that failed
- * is tried again. With local file storage, run it on the server that stores
- * the files, so the copies land in that server's `static` folder.
+ * is tried again. The copies go to the media bucket set in .env, so run it with
+ * the settings of the environment whose products you're changing.
  */
 
 // Products handled at once, to keep the load on the image host modest.
@@ -44,12 +44,12 @@ type Product = {
 };
 
 export default async function watermarkProductImages({ container, args }: ExecArgs) {
-  // Local storage on a shared database would link live products to this disk.
+  // Development buckets on a shared database would link live products to them.
   const localDb = /@(localhost|127\.0\.0\.1)[:/]/.test(process.env.DATABASE_URL ?? '');
-  if (!process.env.S3_BUCKET && !localDb) {
+  if (/-dev$/.test(process.env.S3_MEDIA_BUCKET ?? '') && !localDb) {
     throw new MedusaError(
       MedusaError.Types.NOT_ALLOWED,
-      'watermark-product-images needs S3_BUCKET set, or a local database.',
+      'watermark-product-images would put a shared database\'s images in the development bucket.',
     );
   }
 

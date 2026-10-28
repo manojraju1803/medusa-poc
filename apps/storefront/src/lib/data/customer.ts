@@ -107,7 +107,9 @@ export type RegisterState =
   | { state: "success" }
   | null
 
-type UploadedDocument = { label: string; filename: string; url: string }
+// `key` is where the file is in the private documents bucket; documents have
+// no public link.
+type UploadedDocument = { label: string; filename: string; key: string }
 
 // Fields copied verbatim into `customer.metadata`, per role.
 const METADATA_FIELDS: Record<"buyer" | "supplier", string[]> = {
@@ -165,7 +167,7 @@ async function uploadDocuments(
       headers: { authorization: `Bearer ${token}` },
     },
   )
-  return res.files.map(({ label, filename, url }) => ({ label, filename, url }))
+  return res.files.map(({ label, filename, key }) => ({ label, filename, key }))
 }
 
 const errorText = (error: unknown) => String(error).replace(/^Error:\s*/, "")
@@ -272,7 +274,9 @@ export async function registerAccount(
     }
   }
 
-  // Kept on the customer too, so the supplier's profile can show them.
+  // Kept on the customer too, so the supplier's profile can show them. The
+  // backend only accepts files from this signup's own upload, and moves them
+  // into the customer's folder once the account exists.
   if (uploaded.length) {
     const uploadedAt = new Date().toISOString()
     metadata.documents = uploaded.map((d) => ({ ...d, uploaded_at: uploadedAt }))
@@ -292,7 +296,11 @@ export async function registerAccount(
       email: values.email,
       phone: values.mobile || undefined,
       company: values.company_name,
-      metadata: { ...metadata, documents: uploaded },
+      // Names only: the team opens the documents from the customer's profile.
+      metadata: {
+        ...metadata,
+        documents: uploaded.map(({ label, filename }) => ({ label, filename })),
+      },
     }).catch(() => null)
   }
 

@@ -183,7 +183,10 @@ export const updateBody = (
   return body
 }
 
-export type StoredDocument = { label: string; filename: string; url: string; uploaded_at?: string }
+// Documents are stored privately and listed by their key in the documents
+// bucket; one definition for the backend and the admin.
+export { documentsOf, documentType } from "../../api/utils/document-files"
+export type { CustomerDocument as StoredDocument } from "../../api/utils/document-files"
 
 export const QUALITY_DOCUMENTS = [
   "Specification Sheet",
@@ -196,7 +199,3 @@ export const QUALITY_DOCUMENTS = [
   "Halal Certificate",
 ]
 
-export const documentsOf = (metadata: unknown): StoredDocument[] => {
-  const docs = (metadata as Record<string, unknown> | null)?.documents
-  return Array.isArray(docs) ? (docs as StoredDocument[]).filter((d) => d?.label && d?.url) : []
-}
