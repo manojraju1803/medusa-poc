@@ -5,9 +5,12 @@ import medusaError from "@lib/util/medusa-error"
 import { getAuthHeaders } from "./cookies"
 import { HttpTypes } from "@medusajs/types"
 
-export const retrieveOrder = async (id: string) => {
+// The backend serves an order only to its buyer, or with an invoice token
+// issued from the admin.
+export const retrieveOrder = async (id: string, invoiceToken?: string) => {
   const headers = {
     ...(await getAuthHeaders()),
+    ...(invoiceToken ? { "x-invoice-token": invoiceToken } : {}),
   }
 
   return sdk.client

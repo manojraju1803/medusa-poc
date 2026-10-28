@@ -20,6 +20,7 @@ import { filterProductsByWarehouse } from '../lib/warehouse-product-filter';
 import { registrationDocumentMiddlewares } from './store/registration-documents/middlewares';
 import { protectMetadataMiddlewares } from './store/customers/me/protect-metadata';
 import { myDocumentsMiddlewares } from './store/customers/me/documents/middlewares';
+import { orderAccessMiddlewares } from './store/orders/middlewares';
 import { isApproved } from './utils/is-approved';
 
 async function requireApproved(
@@ -96,6 +97,7 @@ export default defineMiddlewares({
     ...uploadWatermarkMiddlewares,
     ...monitoringMiddlewares,
     ...adminCustomerDocumentMiddlewares,
+    ...orderAccessMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',
