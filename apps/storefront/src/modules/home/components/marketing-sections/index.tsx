@@ -110,15 +110,6 @@ export const MarketplaceComparison = () => (
   </section>
 )
 
-// Illustrated icons as in the design, keyed by feature title; anything not
-// listed falls back to the feature's line icon.
-const FEATURE_EMOJI: Record<string, string> = {
-  "Quality Assured": "📋",
-  "Bulk Ordering": "📦",
-  "Live Inventory": "📊",
-  "Fast Delivery": "🚚",
-}
-
 export const WhyChooseUs = () => (
   <section className="bg-[#0d3320] py-14">
     <div className="max-w-[1440px] mx-auto px-6">
@@ -136,13 +127,7 @@ export const WhyChooseUs = () => (
             key={title}
             className="bg-white/[.08] border border-white/15 rounded-xl p-5 hover:bg-white/[.12] transition-colors"
           >
-            {FEATURE_EMOJI[title] ? (
-              <span className="block text-[28px] leading-none mb-4" aria-hidden="true">
-                {FEATURE_EMOJI[title]}
-              </span>
-            ) : (
-              <Icon className="w-7 h-7 mb-4 text-[#86efac]" />
-            )}
+            <Icon className="w-7 h-7 mb-4 text-[#86efac]" />
             <div className="font-bold text-white text-sm mb-2">{title}</div>
             <p className="text-[#86efac] text-xs leading-relaxed">{desc}</p>
           </div>
