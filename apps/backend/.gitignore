@@ -4,6 +4,7 @@
 /uploads
 /node_modules
 yarn-error.log
+password-reset-links.log
 
 .idea
 
@@ -11,6 +12,7 @@ coverage
 
 !src/**
 src/migration-scripts/*
+!src/migration-scripts/customer-account-type-groups.ts
 
 ./tsconfig.tsbuildinfo
 medusa-db.sql
