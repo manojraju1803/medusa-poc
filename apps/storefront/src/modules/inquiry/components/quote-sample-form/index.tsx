@@ -17,7 +17,7 @@ type Props = {
 }
 
 const inputClass =
-  "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#4d7c0f] focus:ring-2 focus:ring-[#4d7c0f]/10 bg-white text-[#0f172a]"
+  "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#166534] focus:ring-2 focus:ring-[#166534]/10 bg-white text-[#0f172a]"
 const labelClass = "block text-[11px] font-semibold text-[#64748b] mb-1"
 
 export default function QuoteSampleForm({
@@ -68,8 +68,8 @@ export default function QuoteSampleForm({
 
   if (doneId) {
     return (
-      <div className="bg-[#f6fbee] border border-[#d9edb8] rounded-xl p-6 text-center" data-testid="inquiry-success">
-        <div className="w-12 h-12 bg-[#4d7c0f] rounded-full flex items-center justify-center mx-auto mb-3">
+      <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl p-6 text-center" data-testid="inquiry-success">
+        <div className="w-12 h-12 bg-[#166534] rounded-full flex items-center justify-center mx-auto mb-3">
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
@@ -82,7 +82,7 @@ export default function QuoteSampleForm({
         <button
           type="button"
           onClick={() => setDoneId(null)}
-          className="mt-4 px-4 py-2 text-xs font-semibold border border-[#4d7c0f]/40 text-[#4d7c0f] rounded-lg hover:bg-white"
+          className="mt-4 px-4 py-2 text-xs font-semibold border border-[#166534]/40 text-[#166534] rounded-lg hover:bg-white"
         >
           Send another request
         </button>
@@ -119,7 +119,7 @@ export default function QuoteSampleForm({
             defaultValue={minQuantity && minQuantity > 1 ? minQuantity : undefined}
             className={inputClass}
           />
-          <select name="unit" defaultValue="kg" className="w-24 shrink-0 px-2 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#4d7c0f] bg-white text-[#0f172a]" aria-label="Unit">
+          <select name="unit" defaultValue="kg" className="w-24 shrink-0 px-2 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#166534] bg-white text-[#0f172a]" aria-label="Unit">
             <option value="kg">kg</option>
           </select>
         </div>
@@ -132,7 +132,7 @@ export default function QuoteSampleForm({
               type="checkbox"
               checked={wantsQuote}
               onChange={(e) => setWantsQuote(e.target.checked)}
-              className="accent-[#4d7c0f] w-4 h-4"
+              className="accent-[#166534] w-4 h-4"
             />
             Quote
           </label>
@@ -141,7 +141,7 @@ export default function QuoteSampleForm({
               type="checkbox"
               checked={wantsSample}
               onChange={(e) => setWantsSample(e.target.checked)}
-              className="accent-[#4d7c0f] w-4 h-4"
+              className="accent-[#166534] w-4 h-4"
             />
             Sample
           </label>
@@ -162,7 +162,7 @@ export default function QuoteSampleForm({
         <button
           type="submit"
           disabled={pending}
-          className="w-full sm:w-auto px-6 py-3 bg-[#4d7c0f] hover:bg-[#3f6212] disabled:opacity-60 text-white text-sm font-bold rounded-xl"
+          className="w-full sm:w-auto px-6 py-3 bg-[#166534] hover:bg-[#14532d] disabled:opacity-60 text-white text-sm font-bold rounded-xl"
           data-testid="inquiry-submit"
         >
           {pending ? "Sending…" : "Send request"}

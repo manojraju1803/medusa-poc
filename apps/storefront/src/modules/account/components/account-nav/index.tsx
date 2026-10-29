@@ -43,9 +43,9 @@ const AccountNav = ({
       className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden small:sticky small:top-[72px]"
       data-testid="account-nav"
     >
-      <div className="px-4 py-3 border-b border-gray-100 bg-[#fafdf5]">
+      <div className="px-4 py-3 border-b border-gray-100 bg-[#f8fffe]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#4d7c0f] rounded-xl text-white text-sm font-bold flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-[#166534] rounded-xl text-white text-sm font-bold flex items-center justify-center shrink-0">
             {initials}
           </div>
           <div className="min-w-0">
@@ -65,7 +65,7 @@ const AccountNav = ({
             className={clx(
               "text-[11px] font-bold px-2 py-0.5 rounded-full border",
               approved
-                ? "text-[#4d7c0f] bg-[#f6fbee] border-[#d9edb8]"
+                ? "text-[#166534] bg-[#f0fdf4] border-[#bbf7d0]"
                 : "text-amber-700 bg-amber-50 border-amber-200"
             )}
             data-testid="approval-status"
@@ -91,8 +91,8 @@ const AccountNav = ({
                 className={clx(
                   "w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-all",
                   active
-                    ? "bg-[#4d7c0f] text-white"
-                    : "text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f]"
+                    ? "bg-[#166534] text-white"
+                    : "text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]"
                 )}
                 data-testid={link.testId}
               >

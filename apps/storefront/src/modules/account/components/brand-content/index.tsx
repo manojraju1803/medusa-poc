@@ -86,7 +86,7 @@ export const FeatureCards = () => (
   <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
     {FEATURE_DETAILS.map((f) => (
       <li key={f.title} title={f.text} className="flex items-center gap-2.5 text-sm text-white/90">
-        <svg className="w-4 h-4 shrink-0 text-[#7aba0c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="w-4 h-4 shrink-0 text-[#4ade80]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={f.icon} />
         </svg>
         {f.title}
@@ -97,13 +97,13 @@ export const FeatureCards = () => (
 
 // Vision and mission side by side, for the dark sign-in banner.
 export const VisionMission = () => (
-  <dl className="space-y-3 border-l-2 border-[#7aba0c] pl-4">
+  <dl className="space-y-3 border-l-2 border-[#4ade80] pl-4">
     {[
       { label: "Our Vision", text: VISION },
       { label: "Our Mission", text: MISSION },
     ].map((b) => (
       <div key={b.label}>
-        <dt className="text-[11px] font-bold uppercase tracking-widest text-[#7aba0c]">{b.label}</dt>
+        <dt className="text-[11px] font-bold uppercase tracking-widest text-[#4ade80]">{b.label}</dt>
         <dd className="mt-0.5 text-xs leading-relaxed text-white/70">{b.text}</dd>
       </div>
     ))}
@@ -114,7 +114,7 @@ export const SupplierServicesList = () => (
   <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2.5">
     {SUPPLIER_SERVICES.map((item) => (
       <li key={item} className="flex gap-2.5 text-sm text-[#334155]">
-        <span className="mt-0.5 w-5 h-5 shrink-0 rounded-full bg-[#7aba0c] text-[#00254d] flex items-center justify-center" aria-hidden="true">
+        <span className="mt-0.5 w-5 h-5 shrink-0 rounded-full bg-[#4ade80] text-[#052e16] flex items-center justify-center" aria-hidden="true">
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>

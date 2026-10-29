@@ -50,10 +50,10 @@ export const ProfileCard = ({
   action?: React.ReactNode
   children: React.ReactNode
 }) => (
-  <section className="rounded-2xl border border-[#dbe3ec] bg-white overflow-hidden">
-    <div className="flex items-start justify-between gap-4 px-5 sm:px-6 py-4 bg-[#f8fbff] border-b border-[#dbe3ec]">
+  <section className="rounded-2xl border border-[#e5e7eb] bg-white overflow-hidden">
+    <div className="flex items-start justify-between gap-4 px-5 sm:px-6 py-4 bg-[#f8fffe] border-b border-[#e5e7eb]">
       <div>
-        <h2 className="text-sm font-extrabold uppercase tracking-wide text-[#0077cf]">
+        <h2 className="text-sm font-extrabold uppercase tracking-wide text-[#0757a8]">
           {title}
         </h2>
         {subtitle && <p className="mt-1 text-xs text-[#64748b]">{subtitle}</p>}
@@ -65,9 +65,9 @@ export const ProfileCard = ({
 )
 
 export const ghostButton =
-  "shrink-0 h-9 px-4 inline-flex items-center rounded-lg border border-[#cbd5e1] bg-white text-xs font-bold text-[#334155] hover:border-[#0077cf] hover:text-[#0077cf] transition-colors"
+  "shrink-0 h-9 px-4 inline-flex items-center rounded-lg border border-[#cbd5e1] bg-white text-xs font-bold text-[#334155] hover:border-[#0757a8] hover:text-[#0757a8] transition-colors"
 export const primaryButton =
-  "h-10 px-6 inline-flex items-center justify-center rounded-lg bg-[#4d7c0f] hover:bg-[#3f6212] disabled:opacity-70 text-white text-sm font-bold transition-colors"
+  "h-10 px-6 inline-flex items-center justify-center rounded-lg bg-[#166534] hover:bg-[#14532d] disabled:opacity-70 text-white text-sm font-bold transition-colors"
 
 const SectionCard = ({
   role,
@@ -187,7 +187,7 @@ const SectionCard = ({
             ))}
           </dl>
           {savedJustNow && (
-            <p role="status" className="mt-4 text-xs font-semibold text-[#4d7c0f]">
+            <p role="status" className="mt-4 text-xs font-semibold text-[#166534]">
               Saved.
             </p>
           )}

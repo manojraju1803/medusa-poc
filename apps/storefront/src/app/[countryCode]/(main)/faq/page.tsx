@@ -17,7 +17,7 @@ export const generateMetadata = staticPageMetadata({
     "Answers about registration, documents, payments, order confirmation, shipping and quality at Ingredients Bazar.",
 })
 
-const link = "font-semibold text-[#0077cf] hover:underline"
+const link = "font-semibold text-[#0757a8] hover:underline"
 
 const FAQS: { q: string; a: React.ReactNode }[] = [
   {
@@ -166,10 +166,10 @@ export default function FaqPage() {
           <details
             key={item.q}
             open={i === 0}
-            className="group rounded-xl border border-gray-100 open:border-[#d9edb8] open:bg-[#fafdf5] transition-colors"
+            className="group rounded-xl border border-gray-100 open:border-[#bbf7d0] open:bg-[#f8fffe] transition-colors"
           >
             <summary className="flex items-center gap-3 cursor-pointer list-none px-4 py-3.5 [&::-webkit-details-marker]:hidden">
-              <span className="w-7 h-7 shrink-0 rounded-full bg-[#4d7c0f] text-white text-xs font-bold flex items-center justify-center">
+              <span className="w-7 h-7 shrink-0 rounded-full bg-[#166534] text-white text-xs font-bold flex items-center justify-center">
                 {i + 1}
               </span>
               <span className="flex-1 text-sm font-bold text-[#0f172a]">{item.q}</span>

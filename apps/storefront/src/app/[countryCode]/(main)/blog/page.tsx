@@ -22,9 +22,9 @@ export default function BlogPage() {
           <li key={post.slug}>
             <LocalizedClientLink
               href={`/blog/${post.slug}`}
-              className="group h-full flex flex-col rounded-2xl border-2 border-[#e6f2d6] overflow-hidden bg-white hover:border-[#7aba0c] hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              className="group h-full flex flex-col rounded-2xl border-2 border-[#dcfce7] overflow-hidden bg-white hover:border-[#4ade80] hover:shadow-lg hover:-translate-y-0.5 transition-all"
             >
-              <div className="aspect-[1200/628] bg-gradient-to-br from-[#00356e] to-[#4d7c0f] overflow-hidden">
+              <div className="aspect-[1200/628] bg-gradient-to-br from-[#0d3320] to-[#166534] overflow-hidden">
                 {post.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -41,18 +41,18 @@ export default function BlogPage() {
               </div>
               <div className="p-4 flex flex-col flex-1">
                 <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
-                  <span className="px-2 py-0.5 rounded bg-[#eaf5fc] text-[#0077cf]">{post.category}</span>
+                  <span className="px-2 py-0.5 rounded bg-[#eff6ff] text-[#0757a8]">{post.category}</span>
                   <time dateTime={post.date} className="text-[#94a3b8]">
                     {formatPostDate(post.date)}
                   </time>
                 </div>
-                <h2 className="mt-2 text-sm font-bold text-[#0f172a] group-hover:text-[#4d7c0f] transition-colors leading-snug">
+                <h2 className="mt-2 text-sm font-bold text-[#0f172a] group-hover:text-[#166534] transition-colors leading-snug">
                   {post.title}
                 </h2>
                 {post.body[0] && (
                   <p className="mt-1.5 text-xs leading-relaxed text-[#64748b] line-clamp-3">{post.body[0]}</p>
                 )}
-                <span className="mt-auto pt-3 text-xs font-bold text-[#4d7c0f]">
+                <span className="mt-auto pt-3 text-xs font-bold text-[#166534]">
                   {post.youtubeId ? "Watch video" : "Read more"} →
                 </span>
               </div>

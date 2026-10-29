@@ -29,12 +29,12 @@ export const InfoLayout = ({
   current: string
   children: React.ReactNode
 }) => (
-  <div className="min-h-screen bg-[#fafdf5]">
+  <div className="min-h-screen bg-[#f8fffe]">
     <PageBanner title={title} subtitle={subtitle} />
     <div className="max-w-[1240px] mx-auto px-4 sm:px-6 py-8 grid lg:grid-cols-[230px_1fr] gap-6 items-start">
       <nav
         aria-label="Information pages"
-        className="order-last lg:order-first lg:sticky lg:top-28 bg-white border border-[#e6f2d6] rounded-2xl p-3 shadow-sm"
+        className="order-last lg:order-first lg:sticky lg:top-28 bg-white border border-[#dcfce7] rounded-2xl p-3 shadow-sm"
       >
         <div className="px-3 pt-1 pb-2 text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">
           Information
@@ -49,8 +49,8 @@ export const InfoLayout = ({
                   aria-current={active ? "page" : undefined}
                   className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                     active
-                      ? "bg-[#4d7c0f] text-white font-semibold"
-                      : "text-[#475569] hover:bg-[#f6fbee] hover:text-[#4d7c0f]"
+                      ? "bg-[#166534] text-white font-semibold"
+                      : "text-[#475569] hover:bg-[#f0fdf4] hover:text-[#166534]"
                   }`}
                 >
                   {p.label}
@@ -60,7 +60,7 @@ export const InfoLayout = ({
           })}
         </ul>
       </nav>
-      <article className="min-w-0 bg-white border border-[#e6f2d6] rounded-2xl shadow-sm p-5 sm:p-8">
+      <article className="min-w-0 bg-white border border-[#dcfce7] rounded-2xl shadow-sm p-5 sm:p-8">
         {children}
       </article>
     </div>
@@ -69,13 +69,13 @@ export const InfoLayout = ({
 
 export const H2 = ({ children }: { children: React.ReactNode }) => (
   <h2 className="flex items-center gap-2.5 text-lg sm:text-xl font-extrabold text-[#0f172a] mt-8 first:mt-0 mb-3">
-    <span className="w-1.5 h-5 shrink-0 rounded-full bg-gradient-to-b from-[#7aba0c] to-[#0077cf]" aria-hidden="true" />
+    <span className="w-1.5 h-5 shrink-0 rounded-full bg-gradient-to-b from-[#4ade80] to-[#0757a8]" aria-hidden="true" />
     {children}
   </h2>
 )
 
 export const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-base font-bold text-[#00356e] mt-5 mb-2">{children}</h3>
+  <h3 className="text-base font-bold text-[#0f172a] mt-5 mb-2">{children}</h3>
 )
 
 export const P = ({ children }: { children: React.ReactNode }) => (
@@ -86,7 +86,7 @@ export const Checklist = ({ items }: { items: React.ReactNode[] }) => (
   <ul className="space-y-2 mb-4">
     {items.map((item, i) => (
       <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-[#475569]">
-        <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-[#7aba0c]/20 text-[#4d7c0f] flex items-center justify-center" aria-hidden="true">
+        <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-[#4ade80]/20 text-[#166534] flex items-center justify-center" aria-hidden="true">
           <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
           </svg>
@@ -116,19 +116,19 @@ export const Figure = ({
 )
 
 export const Callout = ({ children }: { children: React.ReactNode }) => (
-  <div className="my-5 rounded-xl border border-[#cfe5f4] bg-[#eaf5fc] px-4 py-3 text-sm leading-relaxed text-[#00356e]">
+  <div className="my-5 rounded-xl border border-[#bfdbfe] bg-[#eff6ff] px-4 py-3 text-sm leading-relaxed text-[#0f172a]">
     {children}
   </div>
 )
 
 export const Mail = ({ to = "info@ingredientsbazar.com" }: { to?: string }) => (
-  <a href={`mailto:${to}`} className="font-semibold text-[#0077cf] hover:underline">
+  <a href={`mailto:${to}`} className="font-semibold text-[#0757a8] hover:underline">
     {to}
   </a>
 )
 
 export const Phone = () => (
-  <a href="tel:+919035022477" className="font-semibold text-[#0077cf] hover:underline">
+  <a href="tel:+919035022477" className="font-semibold text-[#0757a8] hover:underline">
     +91 90350 22477
   </a>
 )

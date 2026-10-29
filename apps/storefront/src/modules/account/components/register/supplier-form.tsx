@@ -75,7 +75,7 @@ const SupplierForm = ({
       />
 
       <main className="relative max-w-[1180px] mx-auto px-4 sm:px-6 -mt-20 pb-12">
-        <div className="bg-white rounded-3xl border border-[#dbe3ec] overflow-hidden shadow-[0_20px_50px_rgba(0,37,77,0.15)]">
+        <div className="bg-white rounded-3xl border border-[#e5e7eb] overflow-hidden shadow-[0_20px_50px_rgba(0,37,77,0.15)]">
         <RoleTabs role="supplier" onChange={onRoleChange} />
         <FormSection
           title="Why join as a supplier"
@@ -83,8 +83,8 @@ const SupplierForm = ({
           className="grid md:grid-cols-3 gap-3"
         >
           {HIGHLIGHTS.map((h) => (
-            <div key={h.title} className="border border-[#dbe3ec] rounded-xl p-4 bg-[#f8fbff]">
-              <div className="text-lg font-extrabold text-[#0077cf]">{h.value}</div>
+            <div key={h.title} className="border border-[#e5e7eb] rounded-xl p-4 bg-[#f8fffe]">
+              <div className="text-lg font-extrabold text-[#0757a8]">{h.value}</div>
               <div className="text-xs font-bold text-[#0f172a] mt-1">{h.title}</div>
               <p className="text-[11px] text-[#64748b] leading-relaxed mt-1">{h.text}</p>
             </div>
@@ -100,7 +100,7 @@ const SupplierForm = ({
         ) : (
           <form onSubmit={reg.submit} noValidate>
             {(reg.hasErrors || reg.formError) && (
-              <div className="px-5 sm:px-8 py-5 border-t border-[#dbe3ec]">
+              <div className="px-5 sm:px-8 py-5 border-t border-[#e5e7eb]">
                 <FormAlert>
                   {reg.formError ?? "Please review the highlighted fields before submitting your registration."}
                 </FormAlert>
@@ -163,7 +163,7 @@ const SupplierForm = ({
                 return (
                   <div
                     key={label}
-                    className={`border rounded-xl p-4 min-w-0 ${error ? "border-red-300" : "border-[#dbe3ec]"}`}
+                    className={`border rounded-xl p-4 min-w-0 ${error ? "border-red-300" : "border-[#e5e7eb]"}`}
                   >
                     <label htmlFor={id} className="block text-xs font-bold text-[#1e293b]">
                       {label}
@@ -172,7 +172,7 @@ const SupplierForm = ({
                     <div className="flex items-center gap-3">
                       <label
                         htmlFor={id}
-                        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 bg-[#0077cf] hover:bg-[#0062ab] text-white text-xs font-bold rounded-lg cursor-pointer transition-colors"
+                        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 bg-[#0757a8] hover:bg-[#064985] text-white text-xs font-bold rounded-lg cursor-pointer transition-colors"
                       >
                         <UploadIcon />
                         Upload
@@ -190,7 +190,7 @@ const SupplierForm = ({
                         }}
                       />
                       <span
-                        className={`min-w-0 truncate text-[11px] ${file ? "font-semibold text-[#4d7c0f]" : "text-[#94a3b8]"}`}
+                        className={`min-w-0 truncate text-[11px] ${file ? "font-semibold text-[#166534]" : "text-[#94a3b8]"}`}
                       >
                         {file?.name ?? "No file selected"}
                       </span>
@@ -198,7 +198,7 @@ const SupplierForm = ({
                         <button
                           type="button"
                           onClick={() => openLocalFile(file)}
-                          className="ml-auto shrink-0 h-7 px-2.5 rounded-md border border-[#0077cf]/40 text-[11px] font-bold text-[#0077cf] hover:bg-[#eaf5fc] transition-colors"
+                          className="ml-auto shrink-0 h-7 px-2.5 rounded-md border border-[#0757a8]/40 text-[11px] font-bold text-[#0757a8] hover:bg-[#eff6ff] transition-colors"
                         >
                           View
                         </button>
@@ -218,8 +218,8 @@ const SupplierForm = ({
                       <p className="text-[11px] font-medium text-red-600 mt-2">{error}</p>
                     ) : (
                       file && (
-                        <div className="flex items-center gap-1 text-[10px] text-[#4d7c0f] mt-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#7aba0c]" />
+                        <div className="flex items-center gap-1 text-[10px] text-[#166534] mt-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
                           Ready to upload
                         </div>
                       )

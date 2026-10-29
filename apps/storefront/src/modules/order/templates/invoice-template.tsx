@@ -152,7 +152,7 @@ const InvoiceTemplate = ({ order }: { order: HttpTypes.StoreOrder }) => {
             </div>
             <div className="flex flex-col items-end justify-between">
               <img src="/logo-full.png" alt="Ingredients Bazar" className="h-14 w-auto" />
-              <p className="text-[9px] font-bold tracking-wide text-[#4d7c0f]">
+              <p className="text-[9px] font-bold tracking-wide text-[#166534]">
                 NEXT GENERATION MULTI BRAND INGREDIENTS PLATFORM
               </p>
             </div>

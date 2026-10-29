@@ -24,7 +24,7 @@ const SecurityCard = ({ email }: { email: string }) => {
           <dd className="mt-0.5 text-sm text-[#0f172a]">••••••••</dd>
           <dd className="mt-2">
             {state?.state === "sent" ? (
-              <span role="status" className="text-xs font-semibold text-[#4d7c0f]">
+              <span role="status" className="text-xs font-semibold text-[#166534]">
                 Reset link sent to {state.email}. It expires in 15 minutes.
               </span>
             ) : (

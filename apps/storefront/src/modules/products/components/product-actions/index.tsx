@@ -296,13 +296,13 @@ export default function ProductActions({
       <LocationBlock />
       <h2 className="text-sm font-bold text-[#0f172a] mt-7 mb-3">Select Qty & Payment</h2>
       <div
-        className="rounded-xl border border-[#e6f2d6] bg-[#fafdf5] p-5 flex flex-col gap-3"
+        className="rounded-xl border border-[#dcfce7] bg-[#f8fffe] p-5 flex flex-col gap-3"
         data-testid="price-gate"
       >
         {viewer === "guest" ? (
           <>
             <div className="flex items-center gap-2 text-sm font-bold text-[#0f172a]">
-              <svg className="w-4 h-4 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-[#166534]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               Pricing & stock for verified buyers
@@ -313,7 +313,7 @@ export default function ProductActions({
             </p>
             <LocalizedClientLink
               href="/account"
-              className="w-full py-3 text-center bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-xl"
+              className="w-full py-3 text-center bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl"
               data-testid="login-to-view-price"
             >
               Login to view price & stock
@@ -373,7 +373,7 @@ export default function ProductActions({
           />
           {saving && (
             <span
-              className="px-2.5 py-1 bg-[#4d7c0f] text-white text-[11px] font-bold rounded-full"
+              className="px-2.5 py-1 bg-[#166534] text-white text-[11px] font-bold rounded-full"
               data-testid="tier-saving-badge"
             >
               Save {saving.percent}% at {saving.from}+ {UNIT}
@@ -387,7 +387,7 @@ export default function ProductActions({
               <div
                 className={clx(
                   "mt-5 rounded-xl border p-4 flex items-start gap-3",
-                  stockQty > 0 ? "bg-[#f3fde9] border-lime-400" : "bg-amber-50 border-amber-300"
+                  stockQty > 0 ? "bg-[#f0fdf4] border-lime-400" : "bg-amber-50 border-amber-300"
                 )}
                 data-testid="stock-line"
               >
@@ -426,7 +426,7 @@ export default function ProductActions({
                       key={term.value}
                       className={clx(
                         "min-w-[82px] px-1 py-2 text-center text-[10px] font-semibold",
-                        paymentTerm === term.value ? "text-[#0077cf]" : "text-[#64748b]"
+                        paymentTerm === term.value ? "text-[#0757a8]" : "text-[#64748b]"
                       )}
                     >
                       {term.value === "advance" ? "Adv." : term.label.replace(" days", "D")}
@@ -439,7 +439,7 @@ export default function ProductActions({
                   const rowActive = activeTier ? activeTier.from === row.from : row === gridRows[0]
                   return (
                     <tr key={row.from} data-testid="price-tier-row" data-active={rowActive}>
-                      <th className={clx("px-1 py-1.5 text-left text-xs font-bold", rowActive ? "text-[#0077cf]" : "text-[#0f172a]")}>
+                      <th className={clx("px-1 py-1.5 text-left text-xs font-bold", rowActive ? "text-[#0757a8]" : "text-[#0f172a]")}>
                         {row.label}
                       </th>
                       {PAYMENT_TERMS.map((term) => {
@@ -456,8 +456,8 @@ export default function ProductActions({
                               className={clx(
                                 "w-full min-h-12 px-2 py-1.5 rounded-xl border text-center transition-all",
                                 selected
-                                  ? "bg-[#0077cf] border-[#0077cf] text-white shadow-sm"
-                                  : "bg-gray-50 border-gray-100 text-[#0f172a] hover:border-[#0077cf]/40"
+                                  ? "bg-[#0757a8] border-[#0757a8] text-white shadow-sm"
+                                  : "bg-gray-50 border-gray-100 text-[#0f172a] hover:border-[#0757a8]/40"
                               )}
                             >
                               <span className="block text-xs font-extrabold">
@@ -481,7 +481,7 @@ export default function ProductActions({
 
           <div className="flex flex-wrap items-center gap-4 mt-1 pt-2 border-t border-gray-100 text-[9px] text-[#64748b]">
             <span className="inline-flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#0077cf]" /> Selected
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#0757a8]" /> Selected
             </span>
             {saving && <span>Save {saving.percent}% at {saving.from}+ {UNIT}</span>}
           </div>
@@ -502,7 +502,7 @@ export default function ProductActions({
               !isValidVariant ||
               belowMinimum
             }
-            className="flex-1 h-11 bg-[#4d7c0f] hover:bg-[#3f6212] disabled:bg-gray-300 text-white text-sm font-bold rounded-xl"
+            className="flex-1 h-11 bg-[#166534] hover:bg-[#14532d] disabled:bg-gray-300 text-white text-sm font-bold rounded-xl"
             data-testid="add-product-button"
           >
             {isAdding
@@ -526,7 +526,7 @@ export default function ProductActions({
           </span>
         )}
         {added && (
-          <div className="text-sm text-[#4d7c0f] font-semibold" data-testid="added-to-cart">
+          <div className="text-sm text-[#166534] font-semibold" data-testid="added-to-cart">
             Added to cart ·{" "}
             <LocalizedClientLink href="/cart" className="underline">
               View cart
@@ -575,7 +575,7 @@ function LocationBlock({
   return (
     <>
       <h2 className="flex items-center gap-2 text-sm font-bold text-[#0f172a] mb-3">
-        <svg className="w-4 h-4 text-[#0077cf]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-[#0757a8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 21s7-4.35 7-11a7 7 0 10-14 0c0 6.65 7 11 7 11z" />
           <circle cx="12" cy="10" r="2" />
         </svg>
@@ -592,8 +592,8 @@ function LocationBlock({
             className={clx(
               "inline-flex items-center justify-center px-4 py-2 text-xs font-bold rounded-xl border",
               c === selected
-                ? "bg-[#0077cf] border-[#0077cf] text-white shadow-sm"
-                : "bg-white border-gray-200 text-[#0f172a] hover:border-[#0077cf]/40"
+                ? "bg-[#0757a8] border-[#0757a8] text-white shadow-sm"
+                : "bg-white border-gray-200 text-[#0f172a] hover:border-[#0757a8]/40"
             )}
           >
             {c}

@@ -44,8 +44,8 @@ export default function CompareToggle({ productId, variant = "checkbox" }: Props
           className={clx(
             "w-full py-2.5 border text-sm font-semibold rounded-xl transition-colors",
             checked
-              ? "bg-[#0077cf] border-[#0077cf] text-white"
-              : "border-[#0077cf]/40 text-[#0077cf] hover:bg-blue-50"
+              ? "bg-[#0757a8] border-[#0757a8] text-white"
+              : "border-[#0757a8]/40 text-[#0757a8] hover:bg-blue-50"
           )}
         >
           {checked ? "Added to compare ✓" : "Add to compare"}
@@ -53,7 +53,7 @@ export default function CompareToggle({ productId, variant = "checkbox" }: Props
         {(checked || full) && (
           <span className="text-[11px] text-[#64748b] text-center">
             {full ? `Compare holds up to ${COMPARE_MAX} products. ` : ""}
-            <LocalizedClientLink href="/compare" className="text-[#0077cf] font-semibold hover:underline">
+            <LocalizedClientLink href="/compare" className="text-[#0757a8] font-semibold hover:underline">
               View compare ({ids.length})
             </LocalizedClientLink>
           </span>
@@ -68,12 +68,12 @@ export default function CompareToggle({ productId, variant = "checkbox" }: Props
         type="button"
         onClick={toggle}
         data-testid="compare-toggle"
-        className="flex items-center gap-1.5 text-[11px] text-[#64748b] hover:text-[#4d7c0f] transition-colors"
+        className="flex items-center gap-1.5 text-[11px] text-[#64748b] hover:text-[#166534] transition-colors"
       >
         <span
           className={clx(
             "w-3.5 h-3.5 border rounded flex items-center justify-center",
-            checked ? "bg-[#4d7c0f] border-[#4d7c0f]" : "border-gray-300"
+            checked ? "bg-[#166534] border-[#166534]" : "border-gray-300"
           )}
         >
           {checked && (
@@ -85,7 +85,7 @@ export default function CompareToggle({ productId, variant = "checkbox" }: Props
         Compare
       </button>
       {checked && (
-        <LocalizedClientLink href="/compare" className="text-[11px] text-[#0077cf] hover:underline">
+        <LocalizedClientLink href="/compare" className="text-[11px] text-[#0757a8] hover:underline">
           View ({ids.length})
         </LocalizedClientLink>
       )}

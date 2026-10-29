@@ -36,7 +36,7 @@ export default async function ContactPage(props: {
   const { subject } = await props.searchParams
 
   return (
-    <div className="min-h-screen bg-[#fafdf5]" data-testid="contact-page">
+    <div className="min-h-screen bg-[#f8fffe]" data-testid="contact-page">
       <PageBanner
         title="Contact Us"
         subtitle="Get in touch with our expert sourcing team — we're here to help"
@@ -76,13 +76,13 @@ export default async function ContactPage(props: {
                     key={loc.type}
                     className="flex items-start gap-2.5 py-2 border-b border-gray-50 last:border-0"
                   >
-                    <div className="w-6 h-6 bg-[#f6fbee] rounded-lg flex items-center justify-center text-[#4d7c0f] shrink-0">
+                    <div className="w-6 h-6 bg-[#f0fdf4] rounded-lg flex items-center justify-center text-[#166534] shrink-0">
                       🏢
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-[#0f172a]">
                         {loc.city}{" "}
-                        <span className="text-[9px] font-normal text-[#4d7c0f]">
+                        <span className="text-[9px] font-normal text-[#166534]">
                           ({loc.type})
                         </span>
                       </p>
@@ -92,17 +92,17 @@ export default async function ContactPage(props: {
                 ))}
               </div>
             </div>
-            <div className="bg-[#00356e] rounded-2xl p-4 text-center">
+            <div className="bg-[#0d3320] rounded-2xl p-4 text-center">
               <div className="text-xl mb-1">💬</div>
               <p className="text-xs font-bold text-white mb-1">
                 Need Immediate Assistance?
               </p>
-              <p className="text-[9px] text-[#c5e39a]/70 mb-3">
+              <p className="text-[9px] text-[#bbf7d0]/70 mb-3">
                 Talk to our sourcing team right now
               </p>
               <a
                 href={`tel:${PHONE.replace(/\s/g, "")}`}
-                className="block w-full py-2 bg-[#7aba0c] hover:bg-[#6aa30a] text-[#00254d] text-xs font-bold rounded-xl transition-colors"
+                className="block w-full py-2 bg-[#4ade80] hover:bg-[#22c55e] text-[#052e16] text-xs font-bold rounded-xl transition-colors"
               >
                 Call {PHONE}
               </a>

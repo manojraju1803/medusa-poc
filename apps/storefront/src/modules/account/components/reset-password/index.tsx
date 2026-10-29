@@ -29,7 +29,7 @@ const ResetPasswordForm = ({ token, email }: { token: string; email: string }) =
     return (
       <Card>
         <div role="status">
-          <div className="w-12 h-12 rounded-full bg-[#ecf6dc] text-[#4d7c0f] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
@@ -101,7 +101,7 @@ const ResetPasswordForm = ({ token, email }: { token: string; email: string }) =
         <button
           type="submit"
           disabled={pending}
-          className="w-full h-12 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-70"
+          className="w-full h-12 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-70"
           data-testid="reset-password-button"
         >
           {pending ? "Saving…" : "Update password"}
@@ -110,7 +110,7 @@ const ResetPasswordForm = ({ token, email }: { token: string; email: string }) =
       {state?.state === "error" && (
         <LocalizedClientLink
           href="/account?view=forgot-password"
-          className="mt-4 block text-center text-sm font-semibold text-[#0077cf] hover:underline"
+          className="mt-4 block text-center text-sm font-semibold text-[#0757a8] hover:underline"
         >
           Request a new reset link
         </LocalizedClientLink>
@@ -121,7 +121,7 @@ const ResetPasswordForm = ({ token, email }: { token: string; email: string }) =
 
 const Card = ({ children }: { children: React.ReactNode }) => (
   <section className="bg-white border border-white/20 rounded-2xl overflow-hidden shadow-[0_24px_60px_rgba(0,20,45,0.45)] text-[#0f172a]">
-    <div className="h-1.5 bg-gradient-to-r from-[#7aba0c] via-[#3d996e] to-[#0077cf]" />
+    <div className="h-1.5 bg-gradient-to-r from-[#4ade80] via-[#3d996e] to-[#0757a8]" />
     <div className="p-6 sm:p-8">{children}</div>
   </section>
 )
@@ -129,7 +129,7 @@ const Card = ({ children }: { children: React.ReactNode }) => (
 const LinkButton = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <LocalizedClientLink
     href={href}
-    className="mt-6 flex items-center justify-center w-full h-12 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-lg transition-colors"
+    className="mt-6 flex items-center justify-center w-full h-12 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-lg transition-colors"
   >
     {children}
   </LocalizedClientLink>

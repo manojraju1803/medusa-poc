@@ -16,7 +16,7 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
   // Logged out: the login / register screens use the full width.
   if (!customer) {
     return (
-      <div className="flex-1 bg-[#fafdf5]" data-testid="account-page">
+      <div className="flex-1 bg-[#f8fffe]" data-testid="account-page">
         {children}
       </div>
     )
@@ -25,7 +25,7 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
   const approved = await isCustomerApproved()
 
   return (
-    <div className="flex-1 bg-[#fafdf5]" data-testid="account-page">
+    <div className="flex-1 bg-[#f8fffe]" data-testid="account-page">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <Suspense fallback={null}>
           <ApprovalBanner approved={approved} />
@@ -42,7 +42,7 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
             {children}
           </div>
         </div>
-        <div className="mt-8 flex flex-col small:flex-row items-start small:items-center justify-between gap-4 bg-white border border-[#e6f2d6] rounded-2xl p-6">
+        <div className="mt-8 flex flex-col small:flex-row items-start small:items-center justify-between gap-4 bg-white border border-[#dcfce7] rounded-2xl p-6">
           <div>
             <h3 className="text-base font-bold text-[#0f172a] mb-1">
               Got questions?
@@ -54,7 +54,7 @@ const AccountLayout = async ({ customer, children }: AccountLayoutProps) => {
           </div>
           <LocalizedClientLink
             href="/contact"
-            className="px-5 py-2.5 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-semibold rounded-xl transition-colors"
+            className="px-5 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-semibold rounded-xl transition-colors"
           >
             Contact us
           </LocalizedClientLink>

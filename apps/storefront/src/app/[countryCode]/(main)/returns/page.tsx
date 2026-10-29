@@ -45,8 +45,8 @@ export default function ReturnsPage() {
 
       <H2>Cancellation &amp; refunds</H2>
       <div className="grid sm:grid-cols-2 gap-4">
-        <section className="rounded-2xl border border-[#d9edb8] bg-[#f6fbee] p-5">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#4d7c0f] mb-2">
+        <section className="rounded-2xl border border-[#bbf7d0] bg-[#f0fdf4] p-5">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-[#166534] mb-2">
             Before you receive the order
           </h3>
           <p className="text-sm leading-relaxed text-[#334155]">
@@ -56,8 +56,8 @@ export default function ReturnsPage() {
             is refunded within 3–4 working days.
           </p>
         </section>
-        <section className="rounded-2xl border border-[#cfe5f4] bg-[#eaf5fc] p-5">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#0077cf] mb-2">
+        <section className="rounded-2xl border border-[#bfdbfe] bg-[#eff6ff] p-5">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-[#0757a8] mb-2">
             After you receive the order
           </h3>
           <p className="text-sm leading-relaxed text-[#334155]">

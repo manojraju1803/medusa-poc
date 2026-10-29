@@ -14,11 +14,11 @@ const ForgotPassword = ({ onBack }: { onBack: () => void }) => {
       className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
       data-testid="forgot-password-page"
     >
-      <div className="h-1.5 bg-gradient-to-r from-[#7aba0c] via-[#3d996e] to-[#0077cf]" />
+      <div className="h-1.5 bg-gradient-to-r from-[#4ade80] via-[#3d996e] to-[#0757a8]" />
       <div className="p-6 sm:p-7">
         {state?.state === "sent" ? (
           <div role="status">
-            <div className="w-12 h-12 rounded-full bg-[#ecf6dc] text-[#4d7c0f] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-[#dcfce7] text-[#166534] flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.9 5.3a2 2 0 002.2 0L21 8m-2-3H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2z" />
               </svg>
@@ -56,7 +56,7 @@ const ForgotPassword = ({ onBack }: { onBack: () => void }) => {
               <button
                 type="submit"
                 disabled={pending}
-                className="w-full h-12 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-70"
+                className="w-full h-12 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-70"
                 data-testid="send-reset-link-button"
               >
                 {pending ? "Sending…" : "Send reset link"}
@@ -67,7 +67,7 @@ const ForgotPassword = ({ onBack }: { onBack: () => void }) => {
         <button
           type="button"
           onClick={onBack}
-          className="mt-6 w-full text-center text-sm font-semibold text-[#0077cf] hover:underline"
+          className="mt-6 w-full text-center text-sm font-semibold text-[#0757a8] hover:underline"
           data-testid="back-to-sign-in"
         >
           ← Back to sign in

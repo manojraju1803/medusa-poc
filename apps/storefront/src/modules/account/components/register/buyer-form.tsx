@@ -52,7 +52,7 @@ const BuyerForm = ({
         image={isRnd ? "/home-hero.jpg" : "/home-hero-2.jpg"}
       />
       <main className="relative max-w-[1180px] mx-auto px-4 sm:px-6 -mt-20 pb-12">
-        <div className="bg-white rounded-3xl border border-[#dbe3ec] overflow-hidden shadow-[0_20px_50px_rgba(0,37,77,0.15)]">
+        <div className="bg-white rounded-3xl border border-[#e5e7eb] overflow-hidden shadow-[0_20px_50px_rgba(0,37,77,0.15)]">
           <RoleTabs role={role} onChange={onRoleChange} />
           {reg.state?.state === "verification_required" ? (
             <VerificationNotice email={reg.state.email} />

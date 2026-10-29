@@ -44,11 +44,11 @@ export default async function WishlistPage(props: Props) {
         </p>
       </div>
       {products.length === 0 ? (
-        <div className="bg-[#fafdf5] border border-[#e6f2d6] rounded-xl p-10 text-center">
+        <div className="bg-[#f8fffe] border border-[#dcfce7] rounded-xl p-10 text-center">
           <p className="text-sm text-[#64748b] mb-4">Your wishlist is empty.</p>
           <LocalizedClientLink
             href="/store"
-            className="inline-block px-4 py-2 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-semibold rounded-lg"
+            className="inline-block px-4 py-2 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-semibold rounded-lg"
           >
             Browse ingredients
           </LocalizedClientLink>

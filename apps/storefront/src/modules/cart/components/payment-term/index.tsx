@@ -36,8 +36,8 @@ const PaymentTerm = ({ cart }: { cart: HttpTypes.StoreCart }) => {
               disabled={!!saving}
               className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border transition-colors ${
                 active
-                  ? "bg-[#4d7c0f] border-[#4d7c0f] text-white"
-                  : "bg-white border-[#ecf6dc] text-[#4d7c0f] hover:bg-[#f6fbee]"
+                  ? "bg-[#166534] border-[#166534] text-white"
+                  : "bg-white border-[#dcfce7] text-[#166534] hover:bg-[#f0fdf4]"
               }`}
             >
               {label}

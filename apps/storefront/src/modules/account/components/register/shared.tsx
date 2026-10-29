@@ -28,7 +28,7 @@ export const AgreementField = ({
             checked={value === opt}
             onChange={() => onChange("agreement", opt)}
             aria-invalid={!!error || undefined}
-            className="w-4 h-4 accent-[#0077cf]"
+            className="w-4 h-4 accent-[#0757a8]"
           />
           <span className="text-sm font-semibold text-[#1e293b] capitalize">{opt}</span>
         </label>
@@ -54,8 +54,8 @@ export const VerificationNotice = ({ email }: { email: string }) => (
     className="max-w-lg mx-auto text-center px-5 sm:px-8 py-12"
     data-testid="register-verification-message"
   >
-    <div className="w-14 h-14 bg-[#ecf6dc] rounded-full flex items-center justify-center mx-auto mb-4">
-      <svg className="w-7 h-7 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <div className="w-14 h-14 bg-[#dcfce7] rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg className="w-7 h-7 text-[#166534]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
       </svg>
     </div>
@@ -80,10 +80,10 @@ export const RegisterBanner = ({
 }) => (
   // Fixed height so every role's banner (and photo) is the same size,
   // whatever the subtitle length.
-  <section className="relative overflow-hidden bg-[#00254d] text-white h-[340px] sm:h-[380px]">
+  <section className="relative overflow-hidden bg-[#052e16] text-white h-[340px] sm:h-[380px]">
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
-    <div className="absolute inset-0 bg-gradient-to-br from-[#00254d]/[.92] via-[#00356e]/[.82] to-[#2f5d1a]/[.75]" />
+    <div className="absolute inset-0 bg-gradient-to-br from-[#052e16]/[.92] via-[#0d3320]/[.82] to-[#14532d]/[.75]" />
     <div className="relative h-full max-w-[900px] mx-auto px-4 sm:px-6 pt-12 pb-24 flex flex-col items-center justify-center text-center">
       <nav
         aria-label="Breadcrumb"
@@ -139,19 +139,19 @@ export const RoleTabs = ({
             onClick={() => onChange(r)}
             className={`relative text-center rounded-xl px-2 sm:px-4 py-2.5 sm:py-3 border-2 transition-colors ${
               active
-                ? "bg-white border-[#0077cf] shadow-[0_6px_16px_rgba(0,119,207,0.15)]"
-                : "bg-white border-[#dbe3ec] hover:border-[#0077cf]/40"
+                ? "bg-white border-[#0757a8] shadow-[0_6px_16px_rgba(0,119,207,0.15)]"
+                : "bg-white border-[#e5e7eb] hover:border-[#0757a8]/40"
             }`}
             data-testid={`register-role-${r}`}
           >
             {active && (
-              <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#0077cf] text-white flex items-center justify-center" aria-hidden="true">
+              <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#0757a8] text-white flex items-center justify-center" aria-hidden="true">
                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
                 </svg>
               </span>
             )}
-            <span className={`block text-sm font-extrabold ${active ? "text-[#0077cf]" : "text-[#0f172a]"}`}>
+            <span className={`block text-sm font-extrabold ${active ? "text-[#0757a8]" : "text-[#0f172a]"}`}>
               {ROLE_LABEL[r]}
             </span>
             <span className="hidden sm:block text-[11px] leading-snug mt-0.5 text-[#64748b]">
@@ -176,9 +176,9 @@ export const FormSection = ({
   className?: string
   children: React.ReactNode
 }) => (
-  <section className="border-t border-[#dbe3ec]">
-    <div className="px-5 sm:px-8 py-4 bg-[#f8fbff] border-b border-[#dbe3ec]">
-      <h2 className="text-base font-extrabold uppercase tracking-wide text-[#0077cf]">
+  <section className="border-t border-[#e5e7eb]">
+    <div className="px-5 sm:px-8 py-4 bg-[#f8fffe] border-b border-[#e5e7eb]">
+      <h2 className="text-base font-extrabold uppercase tracking-wide text-[#0757a8]">
         {title}
       </h2>
       {subtitle && <p className="mt-1 text-xs text-[#64748b]">{subtitle}</p>}
@@ -188,10 +188,10 @@ export const FormSection = ({
 )
 
 export const PRIMARY_BUTTON =
-  "h-12 px-8 inline-flex items-center justify-center bg-[#4d7c0f] hover:bg-[#3f6212] disabled:opacity-70 text-white text-sm font-bold rounded-lg transition-colors"
+  "h-12 px-8 inline-flex items-center justify-center bg-[#166534] hover:bg-[#14532d] disabled:opacity-70 text-white text-sm font-bold rounded-lg transition-colors"
 
 export const SECONDARY_BUTTON =
-  "h-12 px-8 inline-flex items-center justify-center bg-white border border-[#cbd5e1] hover:border-[#0077cf] hover:text-[#0077cf] text-[#334155] text-sm font-bold rounded-lg transition-colors"
+  "h-12 px-8 inline-flex items-center justify-center bg-white border border-[#cbd5e1] hover:border-[#0757a8] hover:text-[#0757a8] text-[#334155] text-sm font-bold rounded-lg transition-colors"
 
 // Register / Login row at the end of every registration form.
 export const FormActions = ({

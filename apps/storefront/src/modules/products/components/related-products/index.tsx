@@ -66,7 +66,7 @@ export default async function RelatedProducts({
         </div>
         <LocalizedClientLink
           href="/store"
-          className="px-4 py-2 border border-[#4d7c0f]/30 text-[#4d7c0f] text-xs font-bold rounded-lg hover:bg-[#f6fbee]"
+          className="px-4 py-2 border border-[#166534]/30 text-[#166534] text-xs font-bold rounded-lg hover:bg-[#f0fdf4]"
         >
           View All
         </LocalizedClientLink>

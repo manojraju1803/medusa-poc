@@ -91,8 +91,8 @@ export default function ProductDevelopmentPage() {
     >
       <div className="grid md:grid-cols-3 gap-4 mb-8">
         {SERVICES.map((s) => (
-          <section key={s.title} className="rounded-2xl border border-gray-100 p-5 border-t-4 border-t-[#7aba0c] odd:border-t-[#0077cf]">
-            <h2 className="text-sm font-extrabold uppercase tracking-wide text-[#00356e] mb-2">{s.title}</h2>
+          <section key={s.title} className="rounded-2xl border border-gray-100 p-5 border-t-4 border-t-[#4ade80] odd:border-t-[#0757a8]">
+            <h2 className="text-sm font-extrabold uppercase tracking-wide text-[#0f172a] mb-2">{s.title}</h2>
             <p className="text-xs leading-relaxed text-[#475569]">{s.text}</p>
           </section>
         ))}
@@ -120,7 +120,7 @@ export default function ProductDevelopmentPage() {
             {f.text && <P>{f.text}</P>}
             {f.consumer && (
               <P>
-                <strong className="text-[#4d7c0f]">Consumer-centric: </strong>
+                <strong className="text-[#166534]">Consumer-centric: </strong>
                 {f.consumer}
               </P>
             )}
@@ -128,7 +128,7 @@ export default function ProductDevelopmentPage() {
               {f.products.map((p) => (
                 <span
                   key={p}
-                  className="px-2.5 py-1 rounded-lg bg-[#eaf5fc] border border-[#cfe5f4] text-xs font-semibold text-[#0077cf]"
+                  className="px-2.5 py-1 rounded-lg bg-[#eff6ff] border border-[#bfdbfe] text-xs font-semibold text-[#0757a8]"
                 >
                   {p}
                 </span>
@@ -141,7 +141,7 @@ export default function ProductDevelopmentPage() {
       <div className="mt-6">
         <LocalizedClientLink
           href="/contact?subject=Product%20Development"
-          className="inline-flex px-5 py-2.5 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-xl transition-colors"
+          className="inline-flex px-5 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl transition-colors"
         >
           Discuss a product idea
         </LocalizedClientLink>

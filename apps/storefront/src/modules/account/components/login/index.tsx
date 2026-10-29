@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const authInputClass =
-  "w-full h-11 px-3.5 border border-[#cbd5e1] rounded-lg text-sm text-[#0f172a] outline-none focus:border-[#0077cf] focus:ring-2 focus:ring-[#0077cf]/15"
+  "w-full h-11 px-3.5 border border-[#cbd5e1] rounded-lg text-sm text-[#0f172a] outline-none focus:border-[#0757a8] focus:ring-2 focus:ring-[#0757a8]/15"
 
 const Login = ({ onRegister, onForgotPassword }: Props) => {
   const [message, formAction, pending] = useActionState(login, null)
@@ -26,7 +26,7 @@ const Login = ({ onRegister, onForgotPassword }: Props) => {
       className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
       data-testid="login-page"
     >
-      <div className="h-1.5 bg-gradient-to-r from-[#7aba0c] via-[#3d996e] to-[#0077cf]" />
+      <div className="h-1.5 bg-gradient-to-r from-[#4ade80] via-[#3d996e] to-[#0757a8]" />
       <div className="p-6 sm:p-7">
         <h2 className="text-2xl font-extrabold text-[#0f172a]">Sign in</h2>
         <p className="text-sm text-[#64748b] mt-1">
@@ -35,7 +35,7 @@ const Login = ({ onRegister, onForgotPassword }: Props) => {
 
         {message?.state === "verification_required" && (
           <div
-            className="mt-5 text-xs text-[#0f172a] bg-[#f6fbee] border border-[#d9edb8] rounded-lg p-3"
+            className="mt-5 text-xs text-[#0f172a] bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-3"
             data-testid="login-verification-message"
           >
             We sent a verification link to <strong>{message.email}</strong>.
@@ -68,7 +68,7 @@ const Login = ({ onRegister, onForgotPassword }: Props) => {
               <button
                 type="button"
                 onClick={onForgotPassword}
-                className="text-xs font-semibold text-[#0077cf] hover:underline"
+                className="text-xs font-semibold text-[#0757a8] hover:underline"
                 data-testid="forgot-password-link"
               >
                 Forgot password?
@@ -98,7 +98,7 @@ const Login = ({ onRegister, onForgotPassword }: Props) => {
           <button
             type="submit"
             disabled={pending}
-            className="w-full h-12 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-70"
+            className="w-full h-12 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-70"
             data-testid="sign-in-button"
           >
             {pending ? "Signing in…" : "Sign in"}
@@ -113,7 +113,7 @@ const Login = ({ onRegister, onForgotPassword }: Props) => {
         <button
           type="button"
           onClick={onRegister}
-          className="w-full h-11 border border-[#0077cf]/40 text-[#0077cf] hover:bg-[#eaf5fc] text-sm font-bold rounded-lg transition-colors"
+          className="w-full h-11 border border-[#0757a8]/40 text-[#0757a8] hover:bg-[#eff6ff] text-sm font-bold rounded-lg transition-colors"
           data-testid="register-button"
         >
           Create an account

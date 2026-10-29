@@ -64,19 +64,19 @@ const LoginTemplate = () => {
   return (
     // Sized to one screen: everything on the left is kept compact so the page
     // doesn't need to scroll on laptops.
-    <section className="relative min-h-[100svh] overflow-hidden bg-[#00254d] text-white">
+    <section className="relative min-h-[100svh] overflow-hidden bg-[#052e16] text-white">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/home-hero.jpg"
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00254d]/[.95] via-[#00356e]/[.86] to-[#2f5d1a]/[.78]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#052e16]/[.95] via-[#0d3320]/[.86] to-[#14532d]/[.78]" />
       <div
         className="absolute inset-0 opacity-[.10] [background-image:radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"
         aria-hidden="true"
       />
-      <div className="absolute -top-32 -right-24 w-[28rem] h-[28rem] rounded-full bg-[#7aba0c]/20 blur-3xl" aria-hidden="true" />
+      <div className="absolute -top-32 -right-24 w-[28rem] h-[28rem] rounded-full bg-[#4ade80]/20 blur-3xl" aria-hidden="true" />
 
       <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6 pt-16 pb-6 lg:py-8 min-h-[100svh] grid lg:grid-cols-[1fr_420px] gap-6 lg:gap-14 items-center">
         <div className="max-w-xl">
@@ -88,12 +88,12 @@ const LoginTemplate = () => {
             <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-8 sm:h-9 w-auto" />
           </LocalizedClientLink>
 
-          <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#c5e39a]">
+          <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#bbf7d0]">
             {PLATFORM_TAGLINE}
           </p>
           <h1 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-[1.1]">
             Welcome back to
-            <span className="block text-[#7aba0c]">Ingredients Bazar</span>
+            <span className="block text-[#4ade80]">Ingredients Bazar</span>
           </h1>
           <p className="hidden sm:block mt-3 text-sm text-white/75 leading-relaxed max-w-lg">
             {PLATFORM_INTRO}

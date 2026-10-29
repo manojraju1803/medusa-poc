@@ -25,7 +25,7 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
           <p className="text-[10px] text-[#64748b]">Verified product imagery</p>
         </div>
         {realImages.length > 0 && (
-          <span className="px-2.5 py-1 bg-[#f6fbee] border border-[#ecf6dc] text-[#4d7c0f] text-[10px] font-semibold rounded-full">
+          <span className="px-2.5 py-1 bg-[#f0fdf4] border border-[#dcfce7] text-[#166534] text-[10px] font-semibold rounded-full">
             {realImages.length} image{realImages.length > 1 ? "s" : ""} available
           </span>
         )}
@@ -50,7 +50,7 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
       </div>
       {realImages.length === 1 && (
         <div className="flex items-center gap-3 mt-3">
-          <span className="relative w-20 h-14 shrink-0 rounded-lg overflow-hidden bg-white ring-2 ring-[#0077cf] ring-offset-2">
+          <span className="relative w-20 h-14 shrink-0 rounded-lg overflow-hidden bg-white ring-2 ring-[#0757a8] ring-offset-2">
             <Image src={realImages[0].url!} alt="" fill sizes="80px" className="object-contain p-1" />
           </span>
           <p className="text-[10px] leading-relaxed text-[#64748b]">
@@ -69,7 +69,7 @@ const ImageGallery = ({ images, title }: ImageGalleryProps) => {
               className={clx(
                 "relative w-20 h-16 shrink-0 rounded-lg overflow-hidden border bg-white",
                 i === active
-                  ? "ring-2 ring-[#4d7c0f] ring-offset-2 border-transparent"
+                  ? "ring-2 ring-[#166534] ring-offset-2 border-transparent"
                   : "border-gray-200"
               )}
             >

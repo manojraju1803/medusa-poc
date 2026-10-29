@@ -43,7 +43,7 @@ const ReorderButton = ({
         type="button"
         onClick={onClick}
         disabled={pending}
-        className={`px-3 py-1.5 text-[11px] font-semibold bg-[#4d7c0f] text-white rounded-lg hover:bg-[#3f6212] transition-colors whitespace-nowrap disabled:opacity-60 ${className}`}
+        className={`px-3 py-1.5 text-[11px] font-semibold bg-[#166534] text-white rounded-lg hover:bg-[#14532d] transition-colors whitespace-nowrap disabled:opacity-60 ${className}`}
         data-testid="reorder-button"
       >
         {pending ? "Reordering…" : "Reorder"}

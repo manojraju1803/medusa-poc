@@ -33,7 +33,7 @@ const SupplierLogo = ({
 
   return (
     <div
-      className={`${box} bg-[#4d7c0f] flex items-center justify-center text-white font-extrabold shrink-0`}
+      className={`${box} bg-[#166534] flex items-center justify-center text-white font-extrabold shrink-0`}
     >
       {initials(supplier.title)}
     </div>

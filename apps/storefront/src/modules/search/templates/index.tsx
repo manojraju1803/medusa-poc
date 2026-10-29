@@ -20,7 +20,7 @@ const SearchForm = ({ q }: { q: string }) => (
     />
     <button
       type="submit"
-      className="px-5 py-2.5 bg-[#7aba0c] hover:bg-[#6aa30a] text-[#00254d] text-sm font-bold rounded-xl transition-colors"
+      className="px-5 py-2.5 bg-[#4ade80] hover:bg-[#22c55e] text-[#052e16] text-sm font-bold rounded-xl transition-colors"
     >
       Search
     </button>
@@ -41,7 +41,7 @@ export default async function SearchTemplate({
 
   if (!term || !region) {
     return (
-      <div className="min-h-[60vh] bg-[#fafdf5]">
+      <div className="min-h-[60vh] bg-[#f8fffe]">
         <PageBanner title="Search" subtitle="Find ingredients and brands">
           <SearchForm q={term} />
         </PageBanner>
@@ -61,7 +61,7 @@ export default async function SearchTemplate({
   const totalPages = Math.ceil(count / PAGE_SIZE)
 
   return (
-    <div className="min-h-screen bg-[#fafdf5]" data-testid="search-page">
+    <div className="min-h-screen bg-[#f8fffe]" data-testid="search-page">
       <PageBanner
         title={`Results for “${term}”`}
         subtitle={`${brands.length} ${brands.length === 1 ? "brand" : "brands"} · ${count} ${count === 1 ? "product" : "products"}`}

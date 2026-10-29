@@ -51,7 +51,7 @@ export default function PromotionsPage() {
       <ol className="grid sm:grid-cols-2 gap-4 mb-6">
         {STEPS.map((s, i) => (
           <li key={s.title} className="rounded-2xl border border-gray-100 p-4 flex gap-3">
-            <span className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-[#7aba0c] to-[#0077cf] text-white text-sm font-extrabold flex items-center justify-center">
+            <span className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-[#4ade80] to-[#0757a8] text-white text-sm font-extrabold flex items-center justify-center">
               {i + 1}
             </span>
             <div>
@@ -89,13 +89,13 @@ export default function PromotionsPage() {
       <div className="mt-6 flex flex-wrap gap-3">
         <LocalizedClientLink
           href="/contact?subject=Promotions"
-          className="px-5 py-2.5 bg-[#4d7c0f] hover:bg-[#3f6212] text-white text-sm font-bold rounded-xl transition-colors"
+          className="px-5 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white text-sm font-bold rounded-xl transition-colors"
         >
           Promote your brand
         </LocalizedClientLink>
         <LocalizedClientLink
           href="/deals"
-          className="px-5 py-2.5 border border-[#0077cf]/40 text-[#0077cf] hover:bg-[#eaf5fc] text-sm font-bold rounded-xl transition-colors"
+          className="px-5 py-2.5 border border-[#0757a8]/40 text-[#0757a8] hover:bg-[#eff6ff] text-sm font-bold rounded-xl transition-colors"
         >
           See current deals
         </LocalizedClientLink>

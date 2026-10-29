@@ -32,7 +32,7 @@ const Card = ({
     className={`bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden ${className}`}
   >
     {title && (
-      <div className="px-5 py-3.5 border-b border-gray-100 bg-[#fafdf5]">
+      <div className="px-5 py-3.5 border-b border-gray-100 bg-[#f8fffe]">
         <h2 className="text-sm font-bold text-[#0f172a]">{title}</h2>
       </div>
     )}
@@ -66,7 +66,7 @@ const OrderView = ({
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-lg font-extrabold text-[#0f172a]">
                 Order{" "}
-                <span className="font-mono text-[#4d7c0f]" data-testid="order-id">
+                <span className="font-mono text-[#166534]" data-testid="order-id">
                   #{order.display_id}
                 </span>
               </h2>
@@ -93,7 +93,7 @@ const OrderView = ({
             <InvoiceButton orderId={order.id} />
             <LocalizedClientLink
               href="/contact"
-              className="px-3 py-1.5 border border-[#4d7c0f]/40 text-[#4d7c0f] text-xs font-bold rounded-lg hover:bg-[#f6fbee] transition-colors"
+              className="px-3 py-1.5 border border-[#166534]/40 text-[#166534] text-xs font-bold rounded-lg hover:bg-[#f0fdf4] transition-colors"
             >
               Contact us
             </LocalizedClientLink>
@@ -105,12 +105,12 @@ const OrderView = ({
               <div key={label} className="flex flex-col gap-1.5">
                 <div
                   className={`h-1.5 rounded-full ${
-                    i <= step ? "bg-[#4d7c0f]" : "bg-gray-200"
+                    i <= step ? "bg-[#166534]" : "bg-gray-200"
                   }`}
                 />
                 <span
                   className={`text-[10px] small:text-[11px] ${
-                    i <= step ? "text-[#4d7c0f] font-semibold" : "text-[#9ca3af]"
+                    i <= step ? "text-[#166534] font-semibold" : "text-[#9ca3af]"
                   }`}
                 >
                   {label}
@@ -160,7 +160,7 @@ const OrderView = ({
                       ) : null}
                     </p>
                   </div>
-                  <span className="text-sm font-extrabold text-[#4d7c0f]">
+                  <span className="text-sm font-extrabold text-[#166534]">
                     {fmt(item.subtotal ?? item.unit_price * item.quantity)}
                   </span>
                 </div>

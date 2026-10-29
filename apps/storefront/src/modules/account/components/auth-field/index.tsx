@@ -1,7 +1,7 @@
 import React from "react"
 
 export const fieldClass =
-  "w-full px-3.5 py-2.5 text-sm text-[#0f172a] border border-gray-200 rounded-lg outline-none transition-all bg-white focus:border-[#4d7c0f] focus:ring-2 focus:ring-[#4d7c0f]/10"
+  "w-full px-3.5 py-2.5 text-sm text-[#0f172a] border border-gray-200 rounded-lg outline-none transition-all bg-white focus:border-[#166534] focus:ring-2 focus:ring-[#166534]/10"
 
 type AuthFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label: string
@@ -47,7 +47,7 @@ export const SubmitAuthButton = ({
   <button
     type="submit"
     disabled={pending}
-    className="w-full py-3 bg-[#4d7c0f] hover:bg-[#3f6212] disabled:opacity-70 text-white font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2"
+    className="w-full py-3 bg-[#166534] hover:bg-[#14532d] disabled:opacity-70 text-white font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2"
     {...props}
   >
     {pending ? pendingLabel : children}

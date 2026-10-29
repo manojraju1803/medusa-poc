@@ -37,11 +37,11 @@ export default async function BlogPostPage(props: Props) {
   return (
     // The banner carries the post title as the page h1 (one h1 per page).
     <InfoLayout title={post.title} subtitle="Our Blog" current="/blog">
-      <LocalizedClientLink href="/blog" className="text-xs font-semibold text-[#0077cf] hover:underline">
+      <LocalizedClientLink href="/blog" className="text-xs font-semibold text-[#0757a8] hover:underline">
         ← All posts
       </LocalizedClientLink>
       <div className="flex items-center gap-2 mt-4 mb-5 text-[10px] font-bold uppercase tracking-wider">
-        <span className="px-2 py-0.5 rounded bg-[#eaf5fc] text-[#0077cf]">{post.category}</span>
+        <span className="px-2 py-0.5 rounded bg-[#eff6ff] text-[#0757a8]">{post.category}</span>
         <time dateTime={post.date} className="text-[#94a3b8]">{formatPostDate(post.date)}</time>
       </div>
 
@@ -79,7 +79,7 @@ export default async function BlogPostPage(props: Props) {
 
       <nav aria-label="More posts" className="mt-8 pt-5 border-t border-gray-100 grid sm:grid-cols-2 gap-3 text-sm">
         {prev ? (
-          <LocalizedClientLink href={`/blog/${prev.slug}`} className="rounded-xl border border-gray-100 p-3 hover:border-[#7aba0c]">
+          <LocalizedClientLink href={`/blog/${prev.slug}`} className="rounded-xl border border-gray-100 p-3 hover:border-[#4ade80]">
             <span className="block text-[10px] font-bold uppercase text-[#94a3b8]">Older</span>
             <span className="font-semibold text-[#0f172a]">{prev.title}</span>
           </LocalizedClientLink>
@@ -87,7 +87,7 @@ export default async function BlogPostPage(props: Props) {
           <span />
         )}
         {next && (
-          <LocalizedClientLink href={`/blog/${next.slug}`} className="rounded-xl border border-gray-100 p-3 text-right hover:border-[#7aba0c]">
+          <LocalizedClientLink href={`/blog/${next.slug}`} className="rounded-xl border border-gray-100 p-3 text-right hover:border-[#4ade80]">
             <span className="block text-[10px] font-bold uppercase text-[#94a3b8]">Newer</span>
             <span className="font-semibold text-[#0f172a]">{next.title}</span>
           </LocalizedClientLink>

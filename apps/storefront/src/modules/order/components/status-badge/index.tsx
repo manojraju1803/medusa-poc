@@ -18,10 +18,10 @@ export const orderStatus = (order: HttpTypes.StoreOrder) => {
 // Full class strings so Tailwind's scanner picks them up.
 export const STATUS_COLORS: Record<string, { soft: string; border: string }> = {
   Pending: { soft: "bg-amber-50 text-amber-700", border: "border-amber-100" },
-  Confirmed: { soft: "bg-[#eaf5fc] text-[#0077cf]", border: "border-[#cfe5f4]" },
+  Confirmed: { soft: "bg-[#eff6ff] text-[#0757a8]", border: "border-[#bfdbfe]" },
   Packed: { soft: "bg-purple-50 text-purple-700", border: "border-purple-100" },
   Shipped: { soft: "bg-blue-50 text-blue-700", border: "border-blue-100" },
-  Delivered: { soft: "bg-[#f6fbee] text-[#4d7c0f]", border: "border-[#d9edb8]" },
+  Delivered: { soft: "bg-[#f0fdf4] text-[#166534]", border: "border-[#bbf7d0]" },
   Cancelled: { soft: "bg-red-50 text-red-600", border: "border-red-100" },
 }
 

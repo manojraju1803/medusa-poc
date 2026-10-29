@@ -53,7 +53,7 @@ const SupplierDirectory = ({ suppliers }: { suppliers: Supplier[] }) => {
                     type="checkbox"
                     checked={countries.includes(c)}
                     onChange={() => toggleCountry(c)}
-                    className="w-3 h-3 accent-[#4d7c0f]"
+                    className="w-3 h-3 accent-[#166534]"
                   />
                   <span className="text-[10px] text-[#374151]">{c}</span>
                 </label>
@@ -89,7 +89,7 @@ const SupplierDirectory = ({ suppliers }: { suppliers: Supplier[] }) => {
                 key={m}
                 onClick={() => setViewMode(m)}
                 aria-label={`${m} view`}
-                className={`p-1.5 ${viewMode === m ? "bg-[#4d7c0f] text-white" : "bg-white text-gray-400"} transition-colors`}
+                className={`p-1.5 ${viewMode === m ? "bg-[#166534] text-white" : "bg-white text-gray-400"} transition-colors`}
               >
                 {m === "grid" ? (
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -120,7 +120,7 @@ const SupplierDirectory = ({ suppliers }: { suppliers: Supplier[] }) => {
             {filtered.map((s) => (
               <div
                 key={s.id}
-                className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-[#4d7c0f]/25 hover:shadow-md transition-all flex items-center gap-4 p-4"
+                className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-[#166534]/25 hover:shadow-md transition-all flex items-center gap-4 p-4"
               >
                 <SupplierLogo supplier={s} />
                 <div className="flex-1 min-w-0">
@@ -139,13 +139,13 @@ const SupplierDirectory = ({ suppliers }: { suppliers: Supplier[] }) => {
                 <div className="flex gap-2 shrink-0">
                   <LocalizedClientLink
                     href={`/collections/${s.handle}`}
-                    className="px-3 py-1.5 bg-[#4d7c0f] text-white text-[10px] font-bold rounded-lg hover:bg-[#3f6212] transition-colors"
+                    className="px-3 py-1.5 bg-[#166534] text-white text-[10px] font-bold rounded-lg hover:bg-[#14532d] transition-colors"
                   >
                     View Profile
                   </LocalizedClientLink>
                   <LocalizedClientLink
                     href={`/contact?subject=${encodeURIComponent(`Enquiry about ${s.title}`)}`}
-                    className="px-3 py-1.5 border border-[#4d7c0f]/40 text-[#4d7c0f] text-[10px] font-bold rounded-lg hover:bg-[#f6fbee] transition-colors"
+                    className="px-3 py-1.5 border border-[#166534]/40 text-[#166534] text-[10px] font-bold rounded-lg hover:bg-[#f0fdf4] transition-colors"
                   >
                     Contact
                   </LocalizedClientLink>

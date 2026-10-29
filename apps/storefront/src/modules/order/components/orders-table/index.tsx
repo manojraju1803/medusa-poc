@@ -21,7 +21,7 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
         </p>
         <LocalizedClientLink
           href="/store"
-          className="inline-block px-5 py-2.5 bg-[#4d7c0f] hover:bg-[#3f6212] text-white font-semibold text-sm rounded-xl"
+          className="inline-block px-5 py-2.5 bg-[#166534] hover:bg-[#14532d] text-white font-semibold text-sm rounded-xl"
         >
           Browse ingredients
         </LocalizedClientLink>
@@ -34,7 +34,7 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" data-testid="orders-table">
-            <thead className="bg-[#fafdf5] border-b border-gray-100">
+            <thead className="bg-[#f8fffe] border-b border-gray-100">
               <tr>
                 {["Order", "Product", "Date", "Qty", "Value", "Status", ""].map(
                   (h) => (
@@ -57,10 +57,10 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                 return (
                   <tr
                     key={order.id}
-                    className="hover:bg-[#fafdf5] transition-colors"
+                    className="hover:bg-[#f8fffe] transition-colors"
                     data-testid="order-row"
                   >
-                    <td className="px-4 py-3 text-xs font-mono text-[#4d7c0f] font-semibold whitespace-nowrap">
+                    <td className="px-4 py-3 text-xs font-mono text-[#166534] font-semibold whitespace-nowrap">
                       #{order.display_id}
                     </td>
                     <td className="px-4 py-3">
@@ -90,7 +90,7 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                     <td className="px-4 py-3 text-xs font-medium text-[#374151]">
                       {qty}
                     </td>
-                    <td className="px-4 py-3 text-xs font-bold text-[#4d7c0f] whitespace-nowrap">
+                    <td className="px-4 py-3 text-xs font-bold text-[#166534] whitespace-nowrap">
                       {convertToLocale({
                         amount: order.total,
                         currency_code: order.currency_code,
@@ -103,7 +103,7 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                       <div className="flex items-start gap-2">
                       <LocalizedClientLink
                         href={`/account/orders/details/${order.id}`}
-                        className="px-3 py-1.5 text-[11px] font-semibold border border-[#4d7c0f]/40 text-[#4d7c0f] rounded-lg hover:bg-[#f6fbee] transition-colors whitespace-nowrap"
+                        className="px-3 py-1.5 text-[11px] font-semibold border border-[#166534]/40 text-[#166534] rounded-lg hover:bg-[#f0fdf4] transition-colors whitespace-nowrap"
                         data-testid="order-details-link"
                       >
                         View details

@@ -175,7 +175,7 @@ const Shipping: React.FC<ShippingProps> = ({
             <Text>
               <button
                 onClick={handleEdit}
-                className="text-[#0077cf] hover:underline font-semibold"
+                className="text-[#0757a8] hover:underline font-semibold"
                 data-testid="edit-delivery-button"
               >
                 Edit
@@ -372,7 +372,7 @@ const Shipping: React.FC<ShippingProps> = ({
             />
             <Button
               size="large"
-              className="mt !bg-[#4d7c0f] hover:!bg-[#3f6212] !rounded-xl font-bold"
+              className="mt !bg-[#166534] hover:!bg-[#14532d] !rounded-xl font-bold"
               onClick={handleSubmit}
               isLoading={isLoading}
               disabled={!cart.shipping_methods?.[0]}

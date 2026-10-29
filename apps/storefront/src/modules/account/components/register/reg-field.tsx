@@ -61,7 +61,7 @@ const RegField = ({
   const isPassword = type === "password"
   const border = error
     ? "border-red-400 focus:border-red-500"
-    : "border-[#cbd5e1] focus:border-[#0077cf]"
+    : "border-[#cbd5e1] focus:border-[#0757a8]"
   const shared = {
     id,
     name,
@@ -130,7 +130,7 @@ const RegField = ({
             type="button"
             onClick={() => setVisible((v) => !v)}
             aria-label={visible ? "Hide password" : "Show password"}
-            className="absolute right-3 w-7 h-7 flex items-center justify-center text-[#64748b] hover:text-[#0077cf]"
+            className="absolute right-3 w-7 h-7 flex items-center justify-center text-[#64748b] hover:text-[#0757a8]"
           >
             <EyeIcon open={visible} />
           </button>

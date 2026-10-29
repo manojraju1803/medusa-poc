@@ -61,7 +61,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="txt-medium text-[#0077cf] hover:underline font-semibold"
+              className="txt-medium text-[#0757a8] hover:underline font-semibold"
               data-testid="add-discount-button"
             >
               Add Promotion Code(s)

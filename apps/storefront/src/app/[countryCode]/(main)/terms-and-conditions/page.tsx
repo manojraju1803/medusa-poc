@@ -112,11 +112,11 @@ export default function TermsPage() {
       <ol className="space-y-5">
         {CLAUSES.map((c, i) => (
           <li key={c.title} className="flex gap-4">
-            <span className="w-8 h-8 shrink-0 rounded-lg bg-[#f6fbee] border border-[#d9edb8] text-[#4d7c0f] text-xs font-extrabold flex items-center justify-center">
+            <span className="w-8 h-8 shrink-0 rounded-lg bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534] text-xs font-extrabold flex items-center justify-center">
               {i + 1}
             </span>
             <div className="min-w-0">
-              <h2 className="text-sm font-extrabold uppercase tracking-wide text-[#00356e] mb-1.5 mt-1">
+              <h2 className="text-sm font-extrabold uppercase tracking-wide text-[#0f172a] mb-1.5 mt-1">
                 {c.title}
               </h2>
               {c.body.map((para) => (

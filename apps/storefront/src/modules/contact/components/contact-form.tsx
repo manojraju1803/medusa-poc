@@ -14,7 +14,7 @@ const CATEGORIES = [
 ]
 
 const inputClass =
-  "mt-1 w-full px-3 py-2 text-sm text-[#0f172a] border border-gray-200 rounded-xl outline-none focus:border-[#4d7c0f] bg-white"
+  "mt-1 w-full px-3 py-2 text-sm text-[#0f172a] border border-gray-200 rounded-xl outline-none focus:border-[#166534] bg-white"
 const labelClass =
   "text-[10px] font-bold text-[#64748b] uppercase tracking-wide"
 
@@ -53,8 +53,8 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
         className="bg-white border border-gray-100 rounded-2xl shadow-sm p-10 text-center"
         data-testid="contact-success"
       >
-        <div className="w-16 h-16 bg-[#f6fbee] rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-[#4d7c0f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 bg-[#f0fdf4] rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-[#166534]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -66,7 +66,7 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
         </p>
         <LocalizedClientLink
           href="/"
-          className="inline-block px-5 py-2.5 bg-[#4d7c0f] text-white font-semibold text-sm rounded-xl hover:bg-[#3f6212] transition-colors"
+          className="inline-block px-5 py-2.5 bg-[#166534] text-white font-semibold text-sm rounded-xl hover:bg-[#14532d] transition-colors"
         >
           Back to Home
         </LocalizedClientLink>
@@ -88,8 +88,8 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
               onClick={() => setCategory(cat)}
               className={`w-full text-left px-3 py-2.5 text-xs font-medium rounded-xl transition-all ${
                 category === cat
-                  ? "bg-[#4d7c0f] text-white"
-                  : "text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f]"
+                  ? "bg-[#166534] text-white"
+                  : "text-[#374151] hover:bg-[#f0fdf4] hover:text-[#166534]"
               }`}
             >
               {cat}
@@ -150,10 +150,10 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
             />
           </label>
           <label className="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" required className="mt-0.5 w-4 h-4 accent-[#4d7c0f]" />
+            <input type="checkbox" required className="mt-0.5 w-4 h-4 accent-[#166534]" />
             <span className="text-xs text-[#64748b]">
               I agree to the{" "}
-              <span className="text-[#4d7c0f] font-semibold">Privacy Policy</span>{" "}
+              <span className="text-[#166534] font-semibold">Privacy Policy</span>{" "}
               and consent to being contacted by Ingredients Bazar.
             </span>
           </label>
@@ -165,7 +165,7 @@ const ContactForm = ({ defaultSubject = "" }: { defaultSubject?: string }) => {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full py-3 bg-[#4d7c0f] hover:bg-[#3f6212] disabled:opacity-70 text-white font-bold text-sm rounded-xl transition-colors"
+            className="w-full py-3 bg-[#166534] hover:bg-[#14532d] disabled:opacity-70 text-white font-bold text-sm rounded-xl transition-colors"
             data-testid="contact-submit"
           >
             {status === "sending" ? "Sending…" : "Send Message"}

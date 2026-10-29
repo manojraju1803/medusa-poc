@@ -102,7 +102,7 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
             <li
               key={label}
               className={`rounded-xl border p-4 min-w-0 ${
-                error ? "border-red-300" : markedForRemoval ? "border-amber-300 bg-amber-50/40" : "border-[#dbe3ec]"
+                error ? "border-red-300" : markedForRemoval ? "border-amber-300 bg-amber-50/40" : "border-[#e5e7eb]"
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -125,7 +125,7 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
                 </div>
                 <span
                   className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                    current && !markedForRemoval ? "bg-[#ecf6dc] text-[#4d7c0f]" : "bg-gray-100 text-[#64748b]"
+                    current && !markedForRemoval ? "bg-[#dcfce7] text-[#166534]" : "bg-gray-100 text-[#64748b]"
                   }`}
                 >
                   {current && !markedForRemoval ? "On file" : "Missing"}
@@ -140,14 +140,14 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
                     href={current.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center h-8 px-3 rounded-lg border border-[#0077cf]/40 text-[11px] font-bold text-[#0077cf] hover:bg-[#eaf5fc] transition-colors"
+                    className="inline-flex items-center h-8 px-3 rounded-lg border border-[#0757a8]/40 text-[11px] font-bold text-[#0757a8] hover:bg-[#eff6ff] transition-colors"
                   >
                     View
                   </a>
                 )}
                 <label
                   htmlFor={id}
-                  className="cursor-pointer inline-flex items-center h-8 px-3 rounded-lg bg-[#0077cf] hover:bg-[#0062ab] text-white text-[11px] font-bold transition-colors"
+                  className="cursor-pointer inline-flex items-center h-8 px-3 rounded-lg bg-[#0757a8] hover:bg-[#064985] text-white text-[11px] font-bold transition-colors"
                 >
                   {current ? "Replace" : "Upload"}
                 </label>
@@ -171,12 +171,12 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
                   </button>
                 )}
                 {file && (
-                  <span className="min-w-0 flex items-center gap-1.5 text-[11px] font-semibold text-[#4d7c0f]">
+                  <span className="min-w-0 flex items-center gap-1.5 text-[11px] font-semibold text-[#166534]">
                     <span className="truncate">{file.name}</span>
                     <button
                       type="button"
                       onClick={() => openLocalFile(file)}
-                      className="shrink-0 h-6 px-2 rounded-md border border-[#0077cf]/40 text-[10px] font-bold text-[#0077cf] hover:bg-[#eaf5fc]"
+                      className="shrink-0 h-6 px-2 rounded-md border border-[#0757a8]/40 text-[10px] font-bold text-[#0757a8] hover:bg-[#eff6ff]"
                     >
                       View
                     </button>
@@ -203,7 +203,7 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
         </p>
       )}
       {state?.state === "saved" && !dirty && (
-        <p role="status" className="mt-4 text-xs font-semibold text-[#4d7c0f]">
+        <p role="status" className="mt-4 text-xs font-semibold text-[#166534]">
           Documents saved.
         </p>
       )}

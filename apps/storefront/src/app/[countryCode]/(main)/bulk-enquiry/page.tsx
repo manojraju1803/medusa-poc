@@ -70,18 +70,18 @@ export default function BulkEnquiryPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-r from-[#00356e] to-[#4d7c0f] p-6 text-white flex flex-col sm:flex-row sm:items-center gap-4">
+      <div className="rounded-2xl bg-gradient-to-r from-[#0d3320] to-[#166534] p-6 text-white flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1">
           <div className="text-lg font-extrabold">Source like a pro</div>
           <p className="text-sm text-white/80 mt-1">
             For a monthly multi-brand food and nutra ingredient sourcing plan,
-            write to <span className="[&_a]:text-[#c5e39a]"><Mail /></span> or send
+            write to <span className="[&_a]:text-[#bbf7d0]"><Mail /></span> or send
             us your requirement.
           </p>
         </div>
         <LocalizedClientLink
           href="/contact?subject=Bulk%20Enquiry"
-          className="shrink-0 px-5 py-2.5 bg-[#7aba0c] hover:bg-[#6aa30a] text-[#00254d] text-sm font-bold rounded-xl transition-colors text-center"
+          className="shrink-0 px-5 py-2.5 bg-[#4ade80] hover:bg-[#22c55e] text-[#052e16] text-sm font-bold rounded-xl transition-colors text-center"
         >
           Send a bulk enquiry
         </LocalizedClientLink>

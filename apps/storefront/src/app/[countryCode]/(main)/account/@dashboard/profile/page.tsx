@@ -44,10 +44,10 @@ export default async function Profile() {
 
   return (
     <div className="w-full space-y-6" data-testid="profile-page-wrapper">
-      <div className="rounded-2xl overflow-hidden border border-[#dbe3ec] bg-gradient-to-br from-[#00356e] to-[#2f5d1a] text-white">
+      <div className="rounded-2xl overflow-hidden border border-[#e5e7eb] bg-gradient-to-br from-[#0d3320] to-[#14532d] text-white">
         <div className="px-5 sm:px-6 py-5 flex flex-wrap items-center gap-4 justify-between">
           <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#c5e39a]">My profile</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#bbf7d0]">My profile</p>
             <h1 className="mt-1 text-xl sm:text-2xl font-extrabold break-words">
               {customer.company_name || contactName || customer.email}
             </h1>
@@ -63,7 +63,7 @@ export default async function Profile() {
             </span>
             <span
               className={`rounded-full px-3 py-1 text-xs font-bold ${
-                approved ? "bg-[#7aba0c] text-[#00254d]" : "bg-amber-300 text-amber-950"
+                approved ? "bg-[#4ade80] text-[#052e16]" : "bg-amber-300 text-amber-950"
               }`}
             >
               {approved ? "Approved" : "Awaiting approval"}

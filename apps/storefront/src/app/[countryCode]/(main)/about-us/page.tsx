@@ -52,16 +52,16 @@ export default function AboutUsPage() {
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4 my-8">
-        <div className="rounded-2xl border border-[#d9edb8] bg-[#f6fbee] p-5">
-          <div className="text-xs font-bold uppercase tracking-widest text-[#4d7c0f] mb-2">Our Vision</div>
+        <div className="rounded-2xl border border-[#bbf7d0] bg-[#f0fdf4] p-5">
+          <div className="text-xs font-bold uppercase tracking-widest text-[#166534] mb-2">Our Vision</div>
           <p className="text-sm leading-relaxed text-[#334155]">
             To become the globally most preferred and reliable intermediary
             organisation for premium quality multi-brand ingredients for the Nutra
             and Food industry, driven by values, innovation and expertise.
           </p>
         </div>
-        <div className="rounded-2xl border border-[#cfe5f4] bg-[#eaf5fc] p-5">
-          <div className="text-xs font-bold uppercase tracking-widest text-[#0077cf] mb-2">Our Mission</div>
+        <div className="rounded-2xl border border-[#bfdbfe] bg-[#eff6ff] p-5">
+          <div className="text-xs font-bold uppercase tracking-widest text-[#0757a8] mb-2">Our Mission</div>
           <p className="text-sm leading-relaxed text-[#334155]">
             To enrich and empower the Nutra and Food industry customer base through
             our premium, quality multi-brand ingredient supply, by establishing the

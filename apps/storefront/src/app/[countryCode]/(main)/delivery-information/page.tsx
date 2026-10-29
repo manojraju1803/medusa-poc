@@ -85,7 +85,7 @@ export default function DeliveryInformationPage() {
           >
             <div>
               <h2 className="text-base font-bold text-[#0f172a] mb-2">
-                <span className="text-[#4d7c0f]">Q{i + 1}.</span> {item.q}
+                <span className="text-[#166534]">Q{i + 1}.</span> {item.q}
               </h2>
               {item.a.map((para) => (
                 <P key={para}>{para}</P>
@@ -102,7 +102,7 @@ export default function DeliveryInformationPage() {
       <div className="overflow-x-auto rounded-xl border border-gray-100">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#00356e] text-white text-left">
+            <tr className="bg-[#0d3320] text-white text-left">
               <th className="px-4 py-2.5 font-semibold w-20">Zone</th>
               <th className="px-4 py-2.5 font-semibold">Destinations</th>
               <th className="px-4 py-2.5 font-semibold text-right whitespace-nowrap">Price (₹/kg)</th>
@@ -110,8 +110,8 @@ export default function DeliveryInformationPage() {
           </thead>
           <tbody>
             {RATES.map(([zone, dest, price]) => (
-              <tr key={zone} className="border-t border-gray-100 even:bg-[#fafdf5]">
-                <td className="px-4 py-2 font-bold text-[#4d7c0f]">{zone}</td>
+              <tr key={zone} className="border-t border-gray-100 even:bg-[#f8fffe]">
+                <td className="px-4 py-2 font-bold text-[#166534]">{zone}</td>
                 <td className="px-4 py-2 text-[#334155]">{dest}</td>
                 <td className="px-4 py-2 text-right font-semibold text-[#0f172a]">{price}</td>
               </tr>
