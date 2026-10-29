@@ -18,7 +18,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     { label: "Home", href: "/" },
     { label: "Nutraceuticals", href: "/store" },
     { label: "Food Ingredients", href: "/store" },
-    { label: "Agro Ingredients", href: "/store" },
+    { label: "Agri Ingredients", href: "/store" },
     { label: "Supplier Directory", href: "/suppliers" },
     { label: "Deal of Month", href: "/deals" },
     { label: "Contact Us", href: "/contact" },
@@ -30,14 +30,14 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           { label: "Wishlist", href: "/account/wishlist" },
           { label: "My Account", href: "/account" },
         ]
-      : []),
+      : [{ label: "Get Started", href: "/account" }]),
   ]
 
   return (
     <>
       <button
         type="button"
-        className="lg:hidden p-2 text-gray-500 ml-1"
+        className="xl:hidden p-2 text-gray-500 ml-1"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
@@ -49,7 +49,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       {open && (
         <div
           data-testid="nav-menu-popup"
-          className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-100 bg-white px-4 pb-4 shadow-lg max-h-[calc(100vh-7rem)] overflow-y-auto z-50"
+          className="xl:hidden absolute top-full left-0 right-0 border-t border-gray-100 bg-white px-4 pb-4 shadow-lg max-h-[calc(100vh-7rem)] overflow-y-auto z-50"
         >
           <HeaderSearch className="mt-3 mb-3" onSubmitted={close} />
           <ul>
@@ -58,7 +58,7 @@ const MobileMenu = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 <LocalizedClientLink
                   href={l.href}
                   onClick={close}
-                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#4d7c0f]"
+                  className="block w-full px-2 py-3 text-sm font-medium text-[#374151] border-b border-gray-50 hover:text-[#006B4F]"
                 >
                   {l.label}
                 </LocalizedClientLink>

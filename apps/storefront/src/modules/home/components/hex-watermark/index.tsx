@@ -2,7 +2,7 @@
 // inside a `relative overflow-hidden group` container.
 const HexWatermark = ({ className = "" }: { className?: string }) => (
   <svg
-    className={`absolute -right-6 -bottom-8 w-40 h-40 text-[#7aba0c]/15 group-hover:text-[#0077cf]/15 transition-colors duration-500 ${className}`}
+    className={`absolute -right-6 -bottom-8 w-40 h-40 text-[#4ade80]/15 group-hover:text-[#166534]/15 transition-colors duration-500 ${className}`}
     viewBox="0 0 100 100"
     fill="none"
     stroke="currentColor"

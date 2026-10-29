@@ -36,7 +36,7 @@ export const generateMetadata = staticPageMetadata({
 })
 
 const CARD_FIELDS =
-  "id,title,handle,thumbnail,created_at,collection.id,collection.title,collection.handle,variants.id,+variants.metadata,*variants.calculated_price"
+  "id,title,handle,thumbnail,created_at,+metadata,collection.id,collection.title,collection.handle,variants.id,+variants.metadata,+variants.inventory_quantity,+variants.manage_inventory,*variants.calculated_price"
 const ROW_SIZE = 4
 
 export default async function Home(props: {
