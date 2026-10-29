@@ -422,6 +422,12 @@ export async function placeOrder(cartId?: string) {
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
   }
 
+  // Payment authorization failures come back as HTTP 200 with the cart and an
+  // `error`, not as a thrown request error - surface them to the caller.
+  if (cartRes?.type === "cart" && cartRes.error) {
+    throw new Error(cartRes.error.message)
+  }
+
   return cartRes.cart
 }
 
