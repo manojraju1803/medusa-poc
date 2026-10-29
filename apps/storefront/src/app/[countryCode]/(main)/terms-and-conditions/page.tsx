@@ -1,11 +1,12 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import { Callout, InfoLayout, P } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/terms-and-conditions",
+  title: "Terms & Conditions",
   description: "Terms and conditions of sale for Ingredients Bazar orders.",
-}
+})
 
 const CLAUSES: { title: string; body: string[] }[] = [
   {

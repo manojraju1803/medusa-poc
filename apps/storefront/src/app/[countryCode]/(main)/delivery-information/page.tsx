@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import {
   Callout,
@@ -7,11 +7,12 @@ import {
   P,
 } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "Delivery Information | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/delivery-information",
+  title: "Delivery Information",
   description:
     "Same-day dispatch, shipping options, shipment tracking and V-Trans freight rates for Ingredients Bazar orders.",
-}
+})
 
 const QUESTIONS = [
   {

@@ -21,6 +21,7 @@ export const listProducts = async ({
   countryCode,
   regionId,
   warehouseId,
+  withAuth = true,
 }: {
   pageParam?: number
   queryParams?: ProductListQueryParams
@@ -29,6 +30,10 @@ export const listProducts = async ({
   // Narrows the result to what this warehouse carries. Listings pass it;
   // product pages don't, so a product opens even if this warehouse lacks it.
   warehouseId?: string
+  // `false` sends the request without the buyer's token, so one cached
+  // response serves every visitor. Only for queries that read no price
+  // fields (`calculated_price` is what the backend gates per customer).
+  withAuth?: boolean
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -58,7 +63,7 @@ export const listProducts = async ({
   }
 
   const headers = {
-    ...(await getAuthHeaders()),
+    ...(withAuth ? await getAuthHeaders() : {}),
     // Sent as a header because Medusa rejects unrecognised store query params.
     // Next's data cache keys on headers too, so each warehouse caches apart.
     ...(warehouseId ? { "x-warehouse-id": warehouseId } : {}),

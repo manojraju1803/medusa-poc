@@ -1,8 +1,5 @@
-import { Metadata } from "next"
-
 import { listCartOptions, retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
-import { getBaseURL } from "@lib/util/env"
 import { StoreCartShippingOption } from "@medusajs/types"
 import BackButton from "@modules/layout/components/back-button"
 import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
@@ -11,13 +8,12 @@ import Nav from "@modules/layout/templates/nav"
 import SiteChrome from "@modules/layout/components/site-chrome"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 
-export const metadata: Metadata = {
-  metadataBase: new URL(getBaseURL()),
-}
-
 export default async function PageLayout(props: { children: React.ReactNode }) {
-  const customer = await retrieveCustomer()
-  const cart = await retrieveCart()
+  // Independent lookups, so side by side rather than one after the other.
+  const [customer, cart] = await Promise.all([
+    retrieveCustomer(),
+    retrieveCart(),
+  ])
   let shippingOptions: StoreCartShippingOption[] = []
 
   if (cart) {
