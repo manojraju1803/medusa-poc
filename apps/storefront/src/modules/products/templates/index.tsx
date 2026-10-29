@@ -1,9 +1,11 @@
+import { safeDescriptionHtml } from "@lib/util/description-html"
 import React, { Suspense } from "react"
 
 import { retrieveCustomer } from "@lib/data/customer"
 import { listProducts } from "@lib/data/products"
 import { wishlistOf } from "@lib/data/wishlist"
 import { minQuantityOf } from "@lib/util/min-quantity"
+import { withoutOldSiteLinks } from "@lib/util/old-site-links"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import QuoteSampleForm from "@modules/inquiry/components/quote-sample-form"
@@ -15,6 +17,8 @@ import ProductActions from "@modules/products/components/product-actions"
 import RelatedProducts from "@modules/products/components/related-products"
 import WishlistButton from "@modules/products/components/wishlist-button"
 import { UNIT, forViewer, hsnOf, viewerFor } from "@modules/products/lib/access"
+import { productJsonLd } from "@modules/products/lib/json-ld"
+import { jsonLd } from "@lib/util/seo"
 import { notFound } from "next/navigation"
 
 import ProductActionsWrapper from "./product-actions-wrapper"
@@ -36,29 +40,38 @@ const ProductTemplate = async ({
     return notFound()
   }
 
-  const [customer, extras] = await Promise.all([
+  // The page fetches the product with its collection and categories, so the
+  // customer and the compare peers can load side by side.
+  const brand = rawProduct.collection
+  const brandCountry =
+    typeof brand?.metadata?.country === "string" ? brand.metadata.country : null
+  const categories = rawProduct.categories ?? []
+  // Most specific first: categories that have a parent.
+  const primaryCategory =
+    categories.find((c) => c.parent_category_id) ?? categories[0]
+
+  // Compare: this product plus up to 3 others from its most specific category.
+  const [customer, peers] = await Promise.all([
     retrieveCustomer(),
-    listProducts({
-      regionId: region.id,
-      queryParams: {
-        id: [rawProduct.id],
-        fields:
-          "id,collection.id,collection.title,collection.handle,collection.metadata,categories.id,categories.name,categories.handle,categories.parent_category_id",
-      },
-    }).then(({ response }) => response.products[0]),
+    primaryCategory
+      ? listProducts({
+          regionId: region.id,
+          queryParams: {
+            category_id: [primaryCategory.id],
+            limit: 8,
+            fields: CARD_FIELDS,
+          },
+        })
+          .then(({ response }) =>
+            response.products.filter((p) => p.id !== rawProduct.id).slice(0, 3)
+          )
+          .catch(() => [] as HttpTypes.StoreProduct[])
+      : Promise.resolve([] as HttpTypes.StoreProduct[]),
   ])
 
   const viewer = viewerFor(customer, [rawProduct])
   const product = forViewer(rawProduct, viewer)
   const wishlist = await wishlistOf(customer)
-
-  const brand = extras?.collection ?? rawProduct.collection
-  const brandCountry =
-    typeof brand?.metadata?.country === "string" ? brand.metadata.country : null
-  const categories = extras?.categories ?? []
-  // Most specific first: categories that have a parent.
-  const primaryCategory =
-    categories.find((c) => c.parent_category_id) ?? categories[0]
   const firstVariant = product.variants?.[0]
   const moq = minQuantityOf(firstVariant)
   const hsn = hsnOf(product)
@@ -79,15 +92,6 @@ const ProductTemplate = async ({
       : []),
   ]
 
-  // Compare: this product plus up to 3 others from its most specific category.
-  const peers = primaryCategory
-    ? await listProducts({
-        regionId: region.id,
-        queryParams: { category_id: [primaryCategory.id], limit: 8, fields: CARD_FIELDS },
-      })
-        .then(({ response }) => response.products.filter((p) => p.id !== product.id).slice(0, 3))
-        .catch(() => [])
-    : []
   const priceOf = (p: HttpTypes.StoreProduct) =>
     viewer === "approved" ? p.variants?.[0]?.calculated_price ?? undefined : undefined
   const comparePool = [product, ...peers]
@@ -141,8 +145,22 @@ const ProductTemplate = async ({
     .filter(Boolean)
     .join(" ")
 
+  // `currentPrice` is only set for approved viewers, so guests get no Offer.
+  const structuredData = productJsonLd({
+    product,
+    countryCode,
+    brand: brand?.title,
+    category: primaryCategory?.name,
+    price: currentPrice,
+    stock,
+  })
+
   return (
     <div className="bg-[#f7faf9] min-h-screen" data-testid="product-container">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLd(structuredData)}
+      />
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <nav className="flex items-center gap-2 text-xs text-[#64748b] mb-5">
           <LocalizedClientLink href="/" className="hover:text-[#4d7c0f]">Home</LocalizedClientLink>
@@ -161,7 +179,12 @@ const ProductTemplate = async ({
                 <div
                   className="product-description text-sm text-[#475569] leading-relaxed mt-2"
                   data-testid="product-description"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
+                  dangerouslySetInnerHTML={{
+                    __html: withoutOldSiteLinks(
+                      safeDescriptionHtml(product.description),
+                      countryCode
+                    ),
+                  }}
                 />
               </div>
             )}
@@ -231,7 +254,7 @@ const ProductTemplate = async ({
                 />
               }
             >
-              <ProductActionsWrapper id={product.id} region={region} viewer={viewer} />
+              <ProductActionsWrapper product={product} region={region} viewer={viewer} />
             </Suspense>
 
             <div className="grid grid-cols-2 gap-2">

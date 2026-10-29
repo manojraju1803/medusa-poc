@@ -1,34 +1,27 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
+import { useEffect } from "react"
 
-// The login/register page is a full-screen layout in the design: no site
-// header, back row or footer while signed out, only a floating Back button.
+import { recordPage } from "@lib/util/in-app-history"
+
+// The sign-in / register page is a full-screen layout: no site header, back
+// row or footer while signed out. Its logo links home.
 export default function SiteChrome({
   loggedIn,
-  floatingBack = false,
   children,
 }: {
   loggedIn: boolean
-  floatingBack?: boolean
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const router = useRouter()
   const onAuthPage = /^\/[^/]+\/account\/?$/.test(pathname)
 
-  if (!onAuthPage || loggedIn) return <>{children}</>
-  if (!floatingBack) return null
+  // Always mounted (around the header, back row and footer), so it records
+  // every page change for the Back buttons.
+  useEffect(() => {
+    recordPage(pathname)
+  }, [pathname])
 
-  return (
-    <button
-      onClick={() => (window.history.length > 1 ? router.back() : router.push("/"))}
-      className="fixed top-4 left-4 z-[60] inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-[#334155] hover:text-[#4d7c0f] text-xs font-semibold rounded-lg shadow-md"
-    >
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-      </svg>
-      Back
-    </button>
-  )
+  return !onAuthPage || loggedIn ? <>{children}</> : null
 }

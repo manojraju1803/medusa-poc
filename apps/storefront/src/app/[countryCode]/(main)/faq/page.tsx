@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 import React from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -10,11 +10,12 @@ import {
   Phone,
 } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "FAQ | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/faq",
+  title: "FAQ",
   description:
     "Answers about registration, documents, payments, order confirmation, shipping and quality at Ingredients Bazar.",
-}
+})
 
 const link = "font-semibold text-[#0077cf] hover:underline"
 

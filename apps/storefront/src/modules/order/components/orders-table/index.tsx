@@ -1,24 +1,13 @@
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ReorderButton from "@modules/order/components/reorder-button"
 import StatusBadge, { orderStatus } from "@modules/order/components/status-badge"
 import Thumbnail from "@modules/products/components/thumbnail"
 
-const SUMMARY = [
-  { label: "Total orders", color: "bg-blue-50 text-blue-700" },
-  { label: "Pending", color: "bg-amber-50 text-amber-700" },
-  { label: "Confirmed", color: "bg-[#f6fbee] text-[#4d7c0f]" },
-  { label: "Shipped", color: "bg-blue-50 text-blue-700" },
-  { label: "Delivered", color: "bg-[#f6fbee] text-[#4d7c0f]" },
-  { label: "Cancelled", color: "bg-red-50 text-red-600" },
-]
-
+// The status count tiles live on the orders page itself, above this table.
 const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
   const statuses = orders.map(orderStatus)
-  const count = (label: string) =>
-    label === "Total orders"
-      ? orders.length
-      : statuses.filter((s) => s === label).length
 
   if (!orders.length) {
     return (
@@ -42,15 +31,6 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-3 small:grid-cols-6 gap-3">
-        {SUMMARY.map((s) => (
-          <div key={s.label} className={`${s.color} rounded-xl p-3 text-center`}>
-            <div className="text-xl font-extrabold">{count(s.label)}</div>
-            <div className="text-[10px] font-medium mt-0.5">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" data-testid="orders-table">
@@ -120,6 +100,7 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                       <StatusBadge status={statuses[i]} />
                     </td>
                     <td className="px-4 py-3">
+                      <div className="flex items-start gap-2">
                       <LocalizedClientLink
                         href={`/account/orders/details/${order.id}`}
                         className="px-3 py-1.5 text-[11px] font-semibold border border-[#4d7c0f]/40 text-[#4d7c0f] rounded-lg hover:bg-[#f6fbee] transition-colors whitespace-nowrap"
@@ -127,6 +108,8 @@ const OrdersTable = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
                       >
                         View details
                       </LocalizedClientLink>
+                      <ReorderButton orderId={order.id} />
+                      </div>
                     </td>
                   </tr>
                 )

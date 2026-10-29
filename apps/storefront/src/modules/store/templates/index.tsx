@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Suspense } from "react"
 
 import { listCategories } from "@lib/data/categories"
@@ -70,11 +71,14 @@ const StoreTemplate = async ({
     <div className="bg-[#fafdf5] min-h-screen" data-testid="category-container">
       <div className="relative bg-white border-b border-gray-100 overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-[38%] hidden lg:block">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/* Decorative, desktop only. Lazy, so phones (where it's hidden)
+              don't download it. */}
+          <Image
             src="/home-hero.jpg"
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="38vw"
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent" />
         </div>

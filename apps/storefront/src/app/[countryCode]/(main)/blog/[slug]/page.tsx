@@ -4,19 +4,25 @@ import { notFound } from "next/navigation"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { InfoLayout, P } from "@modules/info-pages/components/info-layout"
 import { BLOG_POSTS, formatPostDate } from "@modules/info-pages/lib/blog-posts"
+import { pageMetadata, toMetaDescription } from "@lib/util/seo"
 
 type Props = { params: Promise<{ slug: string; countryCode: string }> }
 
 const findPost = (slug: string) => BLOG_POSTS.find((p) => p.slug === slug)
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const { slug } = await props.params
+  const { slug, countryCode } = await props.params
   const post = findPost(slug)
-  if (!post) return {}
-  return {
-    title: `${post.title} | IngredientsBazar Blog`,
-    description: post.body[0]?.slice(0, 160),
-  }
+  if (!post) notFound()
+  return pageMetadata({
+    countryCode,
+    path: `/blog/${post.slug}`,
+    title: post.title,
+    description:
+      toMetaDescription(post.body[0]) ||
+      `${post.title} - from the Ingredients Bazar blog.`,
+    images: post.image ? [{ url: post.image, alt: post.title }] : undefined,
+  })
 }
 
 export default async function BlogPostPage(props: Props) {
@@ -29,15 +35,15 @@ export default async function BlogPostPage(props: Props) {
   const next = BLOG_POSTS[index - 1]
 
   return (
-    <InfoLayout title="Our Blog" subtitle="How we came this far" current="/blog">
+    // The banner carries the post title as the page h1 (one h1 per page).
+    <InfoLayout title={post.title} subtitle="Our Blog" current="/blog">
       <LocalizedClientLink href="/blog" className="text-xs font-semibold text-[#0077cf] hover:underline">
         ← All posts
       </LocalizedClientLink>
-      <div className="flex items-center gap-2 mt-4 text-[10px] font-bold uppercase tracking-wider">
+      <div className="flex items-center gap-2 mt-4 mb-5 text-[10px] font-bold uppercase tracking-wider">
         <span className="px-2 py-0.5 rounded bg-[#eaf5fc] text-[#0077cf]">{post.category}</span>
         <time dateTime={post.date} className="text-[#94a3b8]">{formatPostDate(post.date)}</time>
       </div>
-      <h1 className="mt-2 mb-5 text-2xl font-extrabold text-[#0f172a]">{post.title}</h1>
 
       {post.youtubeId ? (
         <div className="aspect-video mb-5 rounded-xl overflow-hidden bg-black">
@@ -52,7 +58,7 @@ export default async function BlogPostPage(props: Props) {
       ) : (
         post.image && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.image} alt="" className="w-full rounded-xl border border-gray-100 mb-5" />
+          <img src={post.image} alt={post.title} className="w-full rounded-xl border border-gray-100 mb-5" />
         )
       )}
 

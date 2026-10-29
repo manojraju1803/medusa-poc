@@ -1,13 +1,14 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import ResetPasswordForm from "@modules/account/components/reset-password"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
-export const metadata: Metadata = {
-  title: "Reset password | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/reset-password",
+  title: "Reset password",
   description: "Set a new password for your Ingredients Bazar account.",
-  robots: { index: false },
-}
+  noindex: true,
+})
 
 export default async function ResetPasswordPage(props: {
   searchParams: Promise<{ token?: string; email?: string }>

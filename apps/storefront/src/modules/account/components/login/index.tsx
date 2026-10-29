@@ -1,8 +1,10 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { useActionState, useState } from "react"
 
 import { login } from "@lib/data/customer"
+import { safeReturnPath } from "@lib/util/login-return"
 import { AuthError } from "../auth-field"
 
 type Props = {
@@ -16,6 +18,8 @@ export const authInputClass =
 const Login = ({ onRegister, onForgotPassword }: Props) => {
   const [message, formAction, pending] = useActionState(login, null)
   const [showPassword, setShowPassword] = useState(false)
+  // Set when an order link sent the buyer here to sign in first
+  const next = safeReturnPath(useSearchParams().get("next"))
 
   return (
     <section
@@ -40,6 +44,7 @@ const Login = ({ onRegister, onForgotPassword }: Props) => {
         )}
 
         <form action={formAction} className="space-y-4 mt-5">
+          {next && <input type="hidden" name="next" value={next} />}
           <div>
             <label htmlFor="login-email" className="block text-xs font-semibold text-[#1e293b] mb-2">
               E-mail

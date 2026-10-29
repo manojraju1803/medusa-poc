@@ -31,7 +31,7 @@ const ANNOUNCEMENTS = [
 ]
 
 const AnnouncementBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) => (
-  <div className="bg-[#00356e] text-white border-b border-white/10 shrink-0 flex items-center">
+  <div className="bg-[#0d3320] text-white border-b border-white/10 shrink-0 flex items-center">
     <div className="flex-1 min-w-0 overflow-hidden">
     {/* Messages are rendered twice so the -50% scroll loops seamlessly. */}
     <div className="announcement-track flex w-max items-center py-2">
@@ -41,7 +41,7 @@ const AnnouncementBar = ({ warehouse }: { warehouse: ActiveWarehouse | null }) =
           aria-hidden={i >= ANNOUNCEMENTS.length || undefined}
           className="flex items-center gap-3 px-8 text-[11px] font-medium whitespace-nowrap"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#7aba0c]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
           {msg}
         </div>
       ))}
@@ -101,19 +101,19 @@ export default async function Nav() {
 
           <MegaMenu nutra={menus.nutra} food={menus.food} agro={menus.agro} />
 
-          <HeaderSearch className="flex-1 hidden md:flex max-w-[320px] ml-auto" />
+          <HeaderSearch className="flex-1 hidden md:flex min-w-[200px] max-w-[320px] ml-auto" />
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 shrink-0 ml-auto md:ml-1">
             {customer && (
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-gray-500"
+                  className="flex flex-col items-center justify-center gap-0.5 min-w-[40px] h-10 px-2 text-gray-500"
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
                   <BagIcon className="w-4 h-4" />
-                  <span className="text-[9px] leading-none">Cart</span>
+                  <span className="hidden large:block text-[9px] leading-none">Cart</span>
                 </LocalizedClientLink>
               }
             >
@@ -126,16 +126,17 @@ export default async function Nav() {
                 <LocalizedClientLink
                   href="/account"
                   data-testid="nav-account-link"
-                  className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#f6fbee] rounded-lg transition-all ml-1"
+                  title={displayName}
+                  className="flex items-center gap-2 h-10 px-2 hover:bg-[#f0fdf4] rounded-lg transition-all ml-1"
                 >
-                  <span className="w-7 h-7 bg-[#4d7c0f] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                  <span className="w-7 h-7 bg-[#166534] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
                     {initials}
                   </span>
-                  <span className="hidden lg:flex flex-col items-start max-w-[140px]">
+                  <span className="hidden large:flex flex-col items-start max-w-[110px]">
                     <span className="text-xs font-semibold text-[#0f172a] leading-none truncate max-w-full">
                       {displayName}
                     </span>
-                    <span className="text-[9px] text-[#4d7c0f] leading-none mt-0.5">
+                    <span className="text-[9px] text-[#166534] leading-none mt-0.5">
                       {accountType}
                     </span>
                   </span>
@@ -146,7 +147,7 @@ export default async function Nav() {
                     <LocalizedClientLink
                       key={href}
                       href={href}
-                      className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f6fbee] hover:text-[#4d7c0f] transition-colors"
+                      className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-sm text-[#374151] hover:bg-[#f0fdf4] hover:text-[#006B4F] transition-colors"
                     >
                       <Icon className="w-4 h-4 shrink-0" />
                       {label}
@@ -161,9 +162,9 @@ export default async function Nav() {
               <LocalizedClientLink
                 href="/account"
                 data-testid="nav-account-link"
-                className="inline-flex px-4 py-2 text-sm font-semibold bg-[#4d7c0f] text-white rounded-lg hover:bg-[#3f6212] transition-colors whitespace-nowrap ml-1"
+                className="hidden sm:inline-flex items-center shrink-0 h-9 px-4 text-sm font-semibold bg-[#006b4f] text-white rounded-lg hover:bg-[#00563f] transition-colors whitespace-nowrap"
               >
-                Sign Up / Login
+                Get Started
               </LocalizedClientLink>
             )}
 
