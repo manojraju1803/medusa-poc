@@ -2,6 +2,7 @@
 
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
+import { normalizeValues, validateFields } from "@lib/util/registration"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
@@ -377,6 +378,21 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
+
+    // Optional B2B fields, normalised and checked with the registration rules
+    // (the GSTIN rule is the same for every role). Blank fields are still sent:
+    // Medusa deletes a metadata key whose value is "", so this clears them.
+    const { gst_number, po_number } = normalizeValues({
+      gst_number: String(formData.get("gst_number") ?? ""),
+      po_number: String(formData.get("po_number") ?? ""),
+    })
+    if (gst_number) {
+      const error = validateFields("buyer", { gst_number }, ["gst_number"])
+        .gst_number
+      if (error) return error
+    }
+    data.metadata = { gst_number, po_number }
+
     await updateCart(data)
   } catch (e: any) {
     return e.message
