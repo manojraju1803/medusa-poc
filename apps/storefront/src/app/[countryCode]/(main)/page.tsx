@@ -64,10 +64,12 @@ export default async function Home(props: {
       // Light-weight pass over the whole (channel-scoped) catalogue for
       // category images and counts.
       // No prices asked for, so no auth: one cached response for every
-      // visitor instead of a ~1s cold fetch per signed-in buyer.
+      // visitor instead of a ~1s cold fetch per signed-in buyer. Refreshed
+      // hourly, so new products show up in the counts.
       listProducts({
         regionId: region.id,
         withAuth: false,
+        revalidate: 3600,
         queryParams: {
           limit: 500,
           fields: "id,thumbnail,categories.id,categories.parent_category_id",

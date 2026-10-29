@@ -22,6 +22,7 @@ export const listProducts = async ({
   regionId,
   warehouseId,
   withAuth = true,
+  revalidate,
 }: {
   pageParam?: number
   queryParams?: ProductListQueryParams
@@ -34,6 +35,9 @@ export const listProducts = async ({
   // response serves every visitor. Only for queries that read no price
   // fields (`calculated_price` is what the backend gates per customer).
   withAuth?: boolean
+  // Seconds before the cached response is fetched again. Without it the
+  // response stays cached until its tag is revalidated.
+  revalidate?: number
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -71,6 +75,7 @@ export const listProducts = async ({
 
   const next = {
     ...(await getCacheOptions("products")),
+    ...(revalidate ? { revalidate } : {}),
   }
 
   return sdk.client
