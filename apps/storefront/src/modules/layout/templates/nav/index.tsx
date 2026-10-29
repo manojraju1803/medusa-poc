@@ -96,7 +96,7 @@ export default async function Nav() {
             data-testid="nav-store-link"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Ingredients Bazar" className="h-9 sm:h-10 w-auto object-contain" />
+            <img src="/logo-hd.png" alt="Ingredients Bazar" className="h-6 sm:h-8 xl:h-11 w-auto object-contain" />
           </LocalizedClientLink>
 
           <MegaMenu nutra={menus.nutra} food={menus.food} agro={menus.agro} />
