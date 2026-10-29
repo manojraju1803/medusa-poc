@@ -24,8 +24,13 @@ export default function medusaError(error: unknown): never {
   // `message` and the HTTP status on `status`. It has no `response` or
   // `request`, so without this branch every server error fell through to
   // "Error setting up the request".
+  // A 404 isn't logged: callers turn it into the not-found page (e.g. an
+  // order that isn't the signed-in customer's), and the log showed up as an
+  // error in the Next.js dev overlay.
   if (err.status) {
-    console.error("Status code:", err.status, "Message:", err.message)
+    if (err.status !== 404) {
+      console.error("Status code:", err.status, "Message:", err.message)
+    }
     throw new Error(toSentence(err.message || "An unknown error occurred"))
   }
 
