@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react"
 
-const SLIDES = [
+import type { HeroSlideContent } from "@lib/data/hero"
+
+// The bundled images (public/), used for any slide the admin hasn't changed.
+// The backend lists the same files in src/api/utils/hero-slides.ts.
+const DEFAULT_SLIDES = [
   {
     src: "/home-hero.jpg",
     alt: "Natural ingredient powders and botanical extracts in a laboratory",
@@ -20,13 +24,18 @@ const SLIDES = [
 const INTERVAL_MS = 3000
 
 // Cross-fading hero backgrounds. The hero text sits on top and stays put.
-const HeroSlides = () => {
+// `custom` holds the images and descriptions set in the admin, by position.
+const HeroSlides = ({ custom = [] }: { custom?: HeroSlideContent[] }) => {
+  const SLIDES = DEFAULT_SLIDES.map((slide, i) => ({
+    src: custom[i]?.image_url || slide.src,
+    alt: custom[i]?.alt || slide.alt,
+  }))
   const [index, setIndex] = useState(0)
 
   // Restarting on `index` gives a full interval after a dot is clicked.
   useEffect(() => {
     const id = window.setTimeout(
-      () => setIndex((i) => (i + 1) % SLIDES.length),
+      () => setIndex((i) => (i + 1) % DEFAULT_SLIDES.length),
       INTERVAL_MS
     )
     return () => window.clearTimeout(id)
@@ -41,7 +50,7 @@ const HeroSlides = () => {
       {SLIDES.map((slide, i) => (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          key={slide.src}
+          key={i}
           src={slide.src}
           alt={i === index ? slide.alt : ""}
           aria-hidden={i !== index}
@@ -56,7 +65,7 @@ const HeroSlides = () => {
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
         {SLIDES.map((slide, i) => (
           <button
-            key={slide.src}
+            key={i}
             type="button"
             onClick={() => setIndex(i)}
             aria-label={`Show slide ${i + 1} of ${SLIDES.length}`}

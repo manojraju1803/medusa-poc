@@ -6,6 +6,7 @@ import {
   DocIcon,
   TruckIcon,
 } from "@modules/layout/components/ib-icons"
+import { getHeroSlides } from "@lib/data/hero"
 import HeroSlides from "./slides"
 
 export const TRUST_FEATURES = [
@@ -33,10 +34,13 @@ export const TRUST_FEATURES = [
 
 // Fills the screen below the sticky header (announcement bar + nav, ~94px),
 // so the next section starts below the fold.
-const Hero = () => {
+const Hero = async () => {
+  // Images set on the admin's Hero slides page; any slide left unset keeps
+  // its bundled image.
+  const customSlides = await getHeroSlides()
   return (
     <section className="relative min-h-[520px] h-[calc(100svh-94px)] flex items-center overflow-hidden">
-      <HeroSlides />
+      <HeroSlides custom={customSlides} />
       <div className="relative max-w-[1440px] mx-auto px-6 w-full pt-16 pb-20">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-[#c5e39a] text-xs font-semibold px-3 py-1.5 rounded-full mb-5">

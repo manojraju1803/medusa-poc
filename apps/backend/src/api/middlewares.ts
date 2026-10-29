@@ -9,6 +9,8 @@ import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
 import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
 import { adminDemoMiddlewares } from './admin/demo-middlewares';
 import { uploadWatermarkMiddlewares } from './admin/uploads/middlewares';
+import { siteImageMiddlewares } from './admin/site-images/middlewares';
+import { heroSlideMiddlewares } from './admin/hero-slides/middlewares';
 import { monitoringMiddlewares } from './admin/monitoring/middlewares';
 import { adminCustomerDocumentMiddlewares } from './admin/customers/[id]/documents/middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
@@ -94,6 +96,8 @@ export default defineMiddlewares({
     ...approvalMiddlewares,
     ...adminDemoMiddlewares,
     ...uploadWatermarkMiddlewares,
+    ...siteImageMiddlewares,
+    ...heroSlideMiddlewares,
     ...monitoringMiddlewares,
     ...adminCustomerDocumentMiddlewares,
     {
