@@ -3,19 +3,20 @@ import {
   MedusaResponse,
 } from '@medusajs/framework/http';
 import { uploadFilesWorkflow } from '@medusajs/medusa/core-flows';
-import { documentFileName, pendingFolder } from '../../utils/document-files';
+import { documentFileName, signupFolder } from '../../utils/document-files';
 import { StorePostRegistrationDocuments } from './middlewares';
 
 // Quality/compliance documents attached to a supplier registration, uploaded
-// before the customer exists. They're stored privately under the uploader's
-// pending folder; when the account is created they're moved into the
-// customer's own folder (src/subscribers/customer-documents.ts).
+// before the customer exists. They're stored privately in the uploader's
+// signup folder and stay there: once the account exists, the download check
+// accepts that folder because the login belongs to the customer
+// (src/api/utils/document-owner.ts).
 export async function POST(
   req: AuthenticatedMedusaRequest<StorePostRegistrationDocuments>,
   res: MedusaResponse,
 ) {
   const { files } = req.validatedBody;
-  const folder = pendingFolder(req.auth_context.auth_identity_id);
+  const folder = signupFolder(req.auth_context.auth_identity_id);
 
   const { result } = await uploadFilesWorkflow(req.scope).run({
     input: {

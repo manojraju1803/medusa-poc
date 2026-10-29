@@ -184,9 +184,10 @@ export const updateBody = (
 }
 
 // Documents are stored privately and listed by their key in the documents
-// bucket; one definition for the backend and the admin.
-export { documentsOf, documentType } from "../../api/utils/document-files"
-export type { CustomerDocument as StoredDocument } from "../../api/utils/document-files"
+// bucket; one definition for the backend and the admin. One saved before
+// storage moved to S3 has no key until the move script has secured it.
+export { listedDocumentsOf as documentsOf, documentType } from "../../api/utils/document-files"
+export type { ListedDocument as StoredDocument } from "../../api/utils/document-files"
 
 export const QUALITY_DOCUMENTS = [
   "Specification Sheet",

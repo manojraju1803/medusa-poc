@@ -9,7 +9,7 @@ import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 import {
   isInFolder,
   isStoredDocument,
-  pendingFolder,
+  signupFolder,
 } from '../../../utils/document-files';
 
 // Customer metadata keys only the platform may set. Medusa's stock
@@ -70,9 +70,9 @@ async function protectCustomerMetadata(
 }
 
 // At account creation the storefront lists the documents uploaded during
-// signup. Only files in the caller's own pending folder are kept, so nobody can
-// claim another supplier's documents. They are moved into the customer's
-// folder once the account exists (src/subscribers/customer-documents.ts).
+// signup. Only files in the caller's own signup folder are kept, so nobody can
+// claim another supplier's documents. They stay in that folder
+// (src/api/utils/document-owner.ts).
 async function limitSignupDocuments(
   req: AuthenticatedMedusaRequest,
   _res: MedusaResponse,
@@ -85,7 +85,7 @@ async function limitSignupDocuments(
         (doc) =>
           !!authIdentityId &&
           isStoredDocument(doc) &&
-          isInFolder(doc.key, pendingFolder(authIdentityId)),
+          isInFolder(doc.key, signupFolder(authIdentityId)),
       )
       .map(({ label, filename, key, uploaded_at }) => ({
         label,

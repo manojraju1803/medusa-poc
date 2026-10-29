@@ -4,18 +4,14 @@ import {
   MedusaError,
   Modules,
 } from '@medusajs/framework/utils';
-import {
-  customerFolder,
-  documentsOf,
-  documentType,
-  isInFolder,
-} from './document-files';
+import { documentsOf, documentType } from './document-files';
+import { ownDocumentKeys } from './document-owner';
 
 /**
  * A short-lived link to one of a customer's documents, found by its type
  * ("coa-form"). Callers decide who may ask; this only checks that the stored
- * file really is in that customer's folder, so an edited metadata entry can't
- * point at someone else's file.
+ * file really is the customer's (their folder, or their own signup folder), so
+ * an edited metadata entry can't point at someone else's file.
  */
 export async function documentDownloadUrl(
   container: MedusaContainer,
@@ -31,7 +27,10 @@ export async function documentDownloadUrl(
   const document = documentsOf(customers[0]?.metadata).find(
     (doc) => documentType(doc.label) === type,
   );
-  if (!document || !isInFolder(document.key, customerFolder(customerId))) {
+  if (
+    !document ||
+    !(await ownDocumentKeys(container, customerId, [document.key])).length
+  ) {
     throw new MedusaError(MedusaError.Types.NOT_FOUND, 'Document not found.');
   }
 

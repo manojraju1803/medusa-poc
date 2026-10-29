@@ -261,10 +261,13 @@ const DocumentRow = ({
         </Text>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        {doc ? (
+        {doc?.key ? (
           <Button size="small" variant="secondary" asChild>
             <a href={href} target="_blank" rel="noopener noreferrer">View</a>
           </Button>
+        ) : doc ? (
+          // Saved before storage moved to S3; it opens once the move script has run.
+          <Badge color="orange">Being secured</Badge>
         ) : (
           !editing && <Badge color="grey">Missing</Badge>
         )}

@@ -136,7 +136,10 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
               <p className="mt-2 text-[10px] text-[#94a3b8]">{DOCUMENT_HINT}</p>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                {current && !markedForRemoval && !file && (
+                {current && !current.key && !markedForRemoval && !file && (
+                  <span className="text-[11px] text-[#94a3b8]">Being moved to secure storage</span>
+                )}
+                {current?.key && !markedForRemoval && !file && (
                   <a
                     href={documentHref(current.label)}
                     target="_blank"

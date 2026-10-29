@@ -11,6 +11,7 @@ import {
   watermarkAndCompress,
   watermarkedFileName,
 } from '../api/utils/watermark';
+import { assertStorageMatchesDatabase } from './utils/assert-storage-matches-database';
 
 /**
  * Burns the logo into every product image that doesn't have it yet.
@@ -44,14 +45,7 @@ type Product = {
 };
 
 export default async function watermarkProductImages({ container, args }: ExecArgs) {
-  // Development buckets on a shared database would link live products to them.
-  const localDb = /@(localhost|127\.0\.0\.1)[:/]/.test(process.env.DATABASE_URL ?? '');
-  if (/-dev$/.test(process.env.S3_MEDIA_BUCKET ?? '') && !localDb) {
-    throw new MedusaError(
-      MedusaError.Types.NOT_ALLOWED,
-      'watermark-product-images would put a shared database\'s images in the development bucket.',
-    );
-  }
+  assertStorageMatchesDatabase('watermark-product-images');
 
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);

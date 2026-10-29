@@ -31,19 +31,25 @@ export async function GET(
       redirect: "manual",
       cache: "no-store",
     }
-  )
+  ).catch(() => null)
 
-  const location = response.headers.get("location")
-  if (response.status >= 300 && response.status < 400 && location) {
+  const location = response?.headers.get("location")
+  if (response && response.status >= 300 && response.status < 400 && location) {
     return NextResponse.redirect(location, {
       headers: { "Cache-Control": "no-store" },
     })
   }
 
-  return new NextResponse(
-    response.status === 404
-      ? "This document isn't available."
-      : "Couldn't open the document. Please sign in and try again.",
-    { status: response.status === 404 ? 404 : 401 }
-  )
+  if (response?.status === 404) {
+    return new NextResponse("This document isn't available.", { status: 404 })
+  }
+  if (response?.status === 401) {
+    return new NextResponse("Please sign in to open your documents.", {
+      status: 401,
+    })
+  }
+  // The backend failed or couldn't be reached: signing in again wouldn't help.
+  return new NextResponse("Couldn't open the document. Please try again.", {
+    status: 502,
+  })
 }

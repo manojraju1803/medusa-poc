@@ -470,19 +470,33 @@ export const FIELD_LABELS: Record<string, string> = {
 
 // A supplier's document, stored privately. `key` is where the file is in the
 // documents bucket; there's no public link, so it is opened through
-// `documentHref`, which checks the customer is signed in.
+// `documentHref`, which checks the customer is signed in. A document saved
+// before storage moved to S3 had a public `url` instead: it's listed without
+// a `key`, and can't be opened, until the backend's move script has secured it.
 export type StoredDocument = {
   label: string
   filename: string
-  key: string
+  key?: string
   uploaded_at?: string
 }
 
+type SavedDocument = Partial<StoredDocument> & { url?: string }
+
 export const documentsOf = (metadata: unknown): StoredDocument[] => {
   const docs = (metadata as Record<string, unknown> | null)?.documents
-  return Array.isArray(docs)
-    ? (docs as StoredDocument[]).filter((d) => d && d.label && d.key)
-    : []
+  return (Array.isArray(docs) ? (docs as (SavedDocument | null)[]) : []).flatMap(
+    (d) =>
+      d?.label && (d.key || d.url)
+        ? [
+            {
+              label: d.label,
+              filename: d.filename || d.label,
+              key: d.key,
+              uploaded_at: d.uploaded_at,
+            },
+          ]
+        : []
+  )
 }
 
 // "ISO 22000/HACCP Form" -> "iso-22000-haccp-form". Must match `documentType`

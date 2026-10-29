@@ -14,6 +14,7 @@ import {
   customerFolder,
   CustomerDocument,
   documentFileName,
+  listedDocumentsOf,
 } from '../api/utils/document-files';
 
 // Entries saved before documents moved to S3 had a public `url` and an
@@ -117,6 +118,8 @@ export const updateCustomerDocumentsWorkflow = createWorkflow(
       files: input.files,
     });
 
+    // Only `documents` is sent: Medusa merges metadata keys on update, so
+    // other keys changed while the files uploaded (e.g. the wishlist) are kept.
     const metadata = transform(
       { currentMetadata, uploaded, input },
       ({ currentMetadata, uploaded, input }) => {
@@ -128,7 +131,6 @@ export const updateCustomerDocumentsWorkflow = createWorkflow(
           ...uploaded.map((d) => d.label),
         ]);
         return {
-          ...currentMetadata,
           documents: [
             ...existing.filter((d) => !replaced.has(d.label)),
             ...uploaded,
@@ -158,9 +160,8 @@ export const updateCustomerDocumentsWorkflow = createWorkflow(
     );
     deleteReplacedFilesStep(obsoleteFileIds);
 
-    const documents = transform(
-      { metadata },
-      ({ metadata }) => metadata.documents as CustomerDocument[],
+    const documents = transform({ metadata }, ({ metadata }) =>
+      listedDocumentsOf(metadata),
     );
     return new WorkflowResponse(documents);
   },

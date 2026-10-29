@@ -3,14 +3,15 @@
  * which documents a customer may open. Pure functions only: the admin's
  * profile page imports `documentType` too.
  *
- *   documents/<customer_id>/<document-type>-<ULID>.<ext>          a customer's documents
- *   documents/pending/<auth_identity_id>/<document-type>-<ULID>.<ext>
- *       uploaded at signup, before the customer exists; moved into the
- *       customer's folder when the account is created
+ *   documents/<customer_id>/<document-type>-<ULID>.<ext>
+ *       uploaded or replaced from the profile (supplier or admin)
+ *   documents/signup/<auth_identity_id>/<document-type>-<ULID>.<ext>
+ *       uploaded at signup, before the customer exists; they stay here
  *
  * The server always builds these paths from the signed-in identity, so a
  * document's folder says whose it is: a download is allowed when the stored
- * key is inside the requester's own folder.
+ * key is in the customer's folder or in their own login's signup folder
+ * (src/api/utils/document-owner.ts).
  */
 
 /** A document listed in `customer.metadata.documents`. */
@@ -25,8 +26,16 @@ export type CustomerDocument = {
 
 // The storage provider adds a ULID before the extension (src/modules/s3-file).
 export const customerFolder = (customerId: string) => `documents/${customerId}/`;
-export const pendingFolder = (authIdentityId: string) =>
-  `documents/pending/${authIdentityId}/`;
+const SIGNUP_FOLDER = 'documents/signup/';
+export const signupFolder = (authIdentityId: string) =>
+  `${SIGNUP_FOLDER}${authIdentityId}/`;
+
+/** The login (auth identity) whose signup folder holds `key`, or null. */
+export const signupIdentityOf = (key: string) => {
+  if (!key.startsWith(SIGNUP_FOLDER)) return null;
+  const [identity, file, ...rest] = key.slice(SIGNUP_FOLDER.length).split('/');
+  return identity && file && !rest.length ? identity : null;
+};
 
 /** "ISO 22000/HACCP Form" -> "iso-22000-haccp-form": file names and download URLs. */
 export const documentType = (label: string) =>
@@ -60,8 +69,34 @@ export const documentsOf = (metadata: unknown): CustomerDocument[] => {
   return Array.isArray(docs) ? docs.filter(isStoredDocument) : [];
 };
 
-// What a stored document's type is, from its extension: used when a pending
-// document is copied into the customer's folder.
+/**
+ * A document as the profile and the admin list it. `key` is missing for one
+ * saved before storage moved to S3 (it had a public `url`) until
+ * src/scripts/move-files-to-s3.ts has secured it: it's listed, but can't be
+ * opened yet.
+ */
+export type ListedDocument = Omit<CustomerDocument, 'key'> & { key?: string };
+
+export const listedDocumentsOf = (metadata: unknown): ListedDocument[] => {
+  const docs = (metadata as Record<string, unknown> | null)?.documents;
+  return (Array.isArray(docs) ? docs : []).flatMap((doc) => {
+    if (isStoredDocument(doc)) {
+      const { label, filename, key, uploaded_at } = doc;
+      return [{ label, filename, key, uploaded_at }];
+    }
+    const legacy = doc as { label?: unknown; filename?: unknown; url?: unknown; uploaded_at?: string } | null;
+    return legacy && typeof legacy.label === 'string' && typeof legacy.url === 'string'
+      ? [{
+          label: legacy.label,
+          filename: typeof legacy.filename === 'string' ? legacy.filename : legacy.label,
+          uploaded_at: legacy.uploaded_at,
+        }]
+      : [];
+  });
+};
+
+// What a stored document's type is, from its extension: used when the move
+// script copies an older document into the customer's folder.
 export const DOCUMENT_MIME_TYPES: Record<string, string> = {
   '.pdf': 'application/pdf',
   '.doc': 'application/msword',

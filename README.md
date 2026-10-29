@@ -54,13 +54,6 @@ A production-ready monorepo starter for direct-to-consumer ecommerce stores powe
 
 ## Getting Started
 
-### Deploy with Medusa Cloud
-
-The fastest way to get started is deploying with [Medusa Cloud](https://cloud.medusajs.com):
-
-1. [Create a Medusa Cloud account](https://cloud.medusajs.com)
-2. Deploy this starter directly from your dashboard
-
 ### Local Installation
 
 > **Prerequisites:
@@ -261,4 +254,3 @@ The storefront is configured via environment variables in `apps/storefront/.env.
 ## Resources
 
 - [Medusa Documentation](https://docs.medusajs.com)
-- [Medusa Cloud](https://cloud.medusajs.com)
