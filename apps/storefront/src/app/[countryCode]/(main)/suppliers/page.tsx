@@ -1,13 +1,14 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import PageBanner from "@modules/suppliers/components/page-banner"
 import SupplierDirectory from "@modules/suppliers/components/supplier-directory"
 import { listSuppliers } from "@modules/suppliers/data"
 
-export const metadata: Metadata = {
-  title: "Suppliers | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/suppliers",
+  title: "Suppliers",
   description: "Browse the brands and suppliers on Ingredients Bazar.",
-}
+})
 
 export default async function SuppliersPage() {
   const suppliers = await listSuppliers()

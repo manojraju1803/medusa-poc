@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { getCategoryByHandle, listCategories } from "@lib/data/categories"
 import { listRegions } from "@lib/data/regions"
+import { pageMetadata, toMetaDescription } from "@lib/util/seo"
 import { HttpTypes, StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
@@ -20,7 +21,10 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  const product_categories = await listCategories()
+  const product_categories = await listCategories({
+    limit: 1000,
+    fields: "handle",
+  })
 
   if (!product_categories) {
     return []
@@ -47,24 +51,27 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params
-  try {
-    const productCategory = await getCategoryByHandle(params.category)
+  const { category, countryCode } = await props.params
+  const productCategory = await getCategoryByHandle(category).catch(
+    () => undefined
+  )
 
-    const title = productCategory.name + " | IngredientsBazar"
-
-    const description = productCategory.description ?? `${title} category.`
-
-    return {
-      title,
-      description,
-      alternates: {
-        canonical: `${params.category.join("/")}`,
-      },
-    }
-  } catch {
+  if (!productCategory) {
     notFound()
   }
+
+  const name = productCategory.name
+  const description =
+    toMetaDescription(productCategory.description) ||
+    `Buy ${name} ingredients in bulk from verified suppliers on Ingredients Bazar. Compare brands, minimum order quantities and HSN codes.`
+
+  // Sorted, filtered and paged variants all point at the plain category URL.
+  return pageMetadata({
+    countryCode,
+    path: `/categories/${category.join("/")}`,
+    title: /ingredient/i.test(name) ? name : `${name} Ingredients`,
+    description,
+  })
 }
 
 export default async function CategoryPage(props: Props) {

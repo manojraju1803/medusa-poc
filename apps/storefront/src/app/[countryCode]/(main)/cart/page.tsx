@@ -4,13 +4,15 @@ import { listPriceTiers } from "@lib/data/price-tiers"
 import { isCustomerApproved } from "@modules/account/lib/approval"
 import CartTemplate from "@modules/cart/templates"
 import { CART_FIELDS } from "@modules/cart/fields"
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 import { notFound } from "next/navigation"
 
-export const metadata: Metadata = {
+export const generateMetadata = staticPageMetadata({
+  path: "/cart",
   title: "Cart",
   description: "View your cart",
-}
+  noindex: true,
+})
 
 export default async function Cart() {
   const cart = await retrieveCart(undefined, CART_FIELDS).catch((error) => {
