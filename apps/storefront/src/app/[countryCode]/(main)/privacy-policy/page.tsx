@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import {
   Checklist,
@@ -8,11 +8,12 @@ import {
   P,
 } from "@modules/info-pages/components/info-layout"
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/privacy-policy",
+  title: "Privacy Policy",
   description:
     "How SaiSukrithkar Supplements Private Limited collects, uses and protects information on Ingredientsbazar.com.",
-}
+})
 
 export default function PrivacyPolicyPage() {
   return (

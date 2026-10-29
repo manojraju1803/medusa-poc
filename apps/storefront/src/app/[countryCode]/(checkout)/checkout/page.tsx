@@ -12,13 +12,14 @@ export const metadata: Metadata = {
 }
 
 export default async function Checkout() {
-  const cart = await retrieveCart(undefined, CART_FIELDS)
+  const [cart, customer] = await Promise.all([
+    retrieveCart(undefined, CART_FIELDS),
+    retrieveCustomer(),
+  ])
 
   if (!cart) {
     return notFound()
   }
-
-  const customer = await retrieveCustomer()
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 small:px-6 py-8 grid grid-cols-1 small:grid-cols-[1fr_380px] gap-6 small:gap-8">

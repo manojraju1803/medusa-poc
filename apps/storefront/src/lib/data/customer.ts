@@ -1,11 +1,13 @@
 "use server"
 
 import { sdk } from "@lib/config"
+import { safeReturnPath } from "@lib/util/login-return"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { FetchError } from "@medusajs/js-sdk"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
+import { cache } from "react"
 import {
   documentField,
   DOCUMENT_MIME_TYPES,
@@ -54,29 +56,31 @@ async function requestVerificationEmail(email: string, token: string) {
   )
 }
 
-export const retrieveCustomer =
-  async (): Promise<HttpTypes.StoreCustomer | null> => {
-    const authHeaders = await getAuthHeaders()
-
-    if (!authHeaders) return null
-
-    const headers = {
-      ...authHeaders,
-    }
-
-    const next = {
-      ...(await getCacheOptions("customers")),
-    }
-
-    return await sdk.client
+// The layout, nav and page all ask for the customer while rendering one
+// request; React's cache() shares a single lookup between them. Keyed by the
+// token, so buyers never share an entry.
+const fetchCustomer = cache(
+  async (authorization: string): Promise<HttpTypes.StoreCustomer | null> =>
+    sdk.client
       .fetch<{ customer: HttpTypes.StoreCustomer }>(`/store/customers/me`, {
         method: "GET",
-        headers,
-        next,
+        headers: { authorization },
+        next: { ...(await getCacheOptions("customers")) },
         cache: "force-cache",
       })
       .then(({ customer }) => customer)
       .catch(() => null)
+)
+
+export const retrieveCustomer =
+  async (): Promise<HttpTypes.StoreCustomer | null> => {
+    const authHeaders = await getAuthHeaders()
+
+    // Signed-out visitors have no token; asking the backend only earns a 401,
+    // which is never cached, so it used to cost a round trip on every page.
+    if (!("authorization" in authHeaders)) return null
+
+    return fetchCustomer(authHeaders.authorization)
   }
 
 export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
@@ -319,7 +323,14 @@ export async function login(
     }
   }
 
-  return completeLogin(email, password)
+  const result = await completeLogin(email, password)
+
+  // Back to the page that sent the buyer to sign in, such as an order link.
+  const next = safeReturnPath(formData.get("next"))
+  if (result?.state === "success" && next) {
+    redirect(next)
+  }
+  return result
 }
 
 export type PasswordResetState =

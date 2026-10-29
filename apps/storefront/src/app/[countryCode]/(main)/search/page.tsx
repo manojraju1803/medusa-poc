@@ -1,11 +1,13 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import SearchTemplate from "@modules/search/templates"
 
-export const metadata: Metadata = {
-  title: "Search | IngredientsBazar",
+export const generateMetadata = staticPageMetadata({
+  path: "/search",
+  title: "Search",
   description: "Search ingredients and brands on Ingredients Bazar.",
-}
+  noindex: true,
+})
 
 export default async function SearchPage(props: {
   params: Promise<{ countryCode: string }>

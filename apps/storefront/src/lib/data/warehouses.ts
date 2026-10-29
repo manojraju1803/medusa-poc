@@ -136,7 +136,11 @@ const fetchLocation = async (): Promise<StoreLocation | null> => {
     .fetch<{ location: StoreLocation }>("/store/location", {
       method: "GET",
       headers,
-      cache: "no-store",
+      // Runs on every page for a signed-in buyer with no warehouse cookie.
+      // Keyed by their auth header; a change made in this browser is written
+      // to the cookie, which wins over this, so only a choice made on another
+      // device waits out the minute.
+      next: { revalidate: 60 },
     })
     .then(({ location }) => location)
     .catch(() => null)

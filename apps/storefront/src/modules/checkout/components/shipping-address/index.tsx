@@ -8,6 +8,18 @@ import AddressSelect from "../address-select"
 import CountrySelect from "../country-select"
 import ProvinceSelect from "../province-select"
 
+// The GSTIN given at registration pre-fills the field until this step is first
+// saved (a saved address always has `address_1`). After that the cart's value
+// wins, so a GSTIN the buyer cleared stays cleared.
+const initialGstNumber = (
+  cart: HttpTypes.StoreCart | null,
+  customer: HttpTypes.StoreCustomer | null
+) => {
+  const saved = cart?.metadata?.gst_number as string | undefined
+  if (saved || cart?.shipping_address?.address_1) return saved || ""
+  return (customer?.metadata?.gst_number as string) || ""
+}
+
 const ShippingAddress = ({
   customer,
   cart,
@@ -34,6 +46,8 @@ const ShippingAddress = ({
     "shipping_address.province": cart?.shipping_address?.province || "",
     "shipping_address.phone": cart?.shipping_address?.phone || "",
     email: cart?.email || "",
+    gst_number: initialGstNumber(cart, customer),
+    po_number: (cart?.metadata?.po_number as string) || "",
   })
 
   const countriesInRegion = useMemo(
@@ -217,6 +231,30 @@ const ShippingAddress = ({
           onChange={handleChange}
           data-testid="shipping-phone-input"
         />
+      </div>
+      <div className="pt-4 mt-2 border-t border-ui-border-base">
+        <p className="text-xs font-bold uppercase tracking-wider text-ui-fg-subtle mb-3">
+          B2B Order Details (Optional)
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="GSTIN / Tax ID"
+            name="gst_number"
+            autoComplete="off"
+            maxLength={15}
+            value={formData.gst_number || ""}
+            onChange={handleChange}
+            data-testid="shipping-gst-input"
+          />
+          <Input
+            label="Purchase Order (PO) #"
+            name="po_number"
+            autoComplete="off"
+            value={formData.po_number || ""}
+            onChange={handleChange}
+            data-testid="shipping-po-input"
+          />
+        </div>
       </div>
     </>
   )

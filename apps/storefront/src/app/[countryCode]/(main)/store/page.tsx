@@ -1,13 +1,15 @@
-import { Metadata } from "next"
+import { staticPageMetadata } from "@lib/util/seo"
 
 import { parseOptionValueIds } from "@lib/util/product-option-filters"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import StoreTemplate from "@modules/store/templates"
 
-export const metadata: Metadata = {
-  title: "Ingredients",
-  description: "Browse verified ingredients by category and brand.",
-}
+export const generateMetadata = staticPageMetadata({
+  path: "/store",
+  title: "Buy Bulk Food Ingredients",
+  description:
+    "Browse verified bulk food ingredients by category and brand. Approved business buyers see bulk prices, quantity slabs and live stock.",
+})
 
 type StorePageSearchParams = Record<string, string | string[] | undefined> & {
   sortBy?: SortOptions

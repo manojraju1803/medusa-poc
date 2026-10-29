@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect, useState } from "react"
 
 import type { HeroSlideContent } from "@lib/data/hero"
@@ -43,24 +44,27 @@ const HeroSlides = ({ custom = [] }: { custom?: HeroSlideContent[] }) => {
 
   return (
     <div
-      className="absolute inset-0 bg-[#00254d]"
+      className="absolute inset-0 bg-[#0d3320]"
       aria-roledescription="carousel"
       aria-label="Featured ingredients"
     >
       {SLIDES.map((slide, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           key={i}
+
           src={slide.src}
           alt={i === index ? slide.alt : ""}
           aria-hidden={i !== index}
-          loading={i === 0 ? "eager" : "lazy"}
+          fill
+          sizes="100vw"
+          priority={i === 0}
+          quality={70}
           className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 motion-reduce:duration-0 ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#00254d]/[.92] via-[#00254d]/[.76] to-[#00254d]/[.15]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0d3320]/95 via-[#0d3320]/80 to-[#0d3320]/25" />
 
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
         {SLIDES.map((slide, i) => (
@@ -71,7 +75,7 @@ const HeroSlides = ({ custom = [] }: { custom?: HeroSlideContent[] }) => {
             aria-label={`Show slide ${i + 1} of ${SLIDES.length}`}
             aria-current={i === index}
             className={`h-2.5 rounded-full transition-all ${
-              i === index ? "w-7 bg-[#7aba0c]" : "w-2.5 bg-white/50 hover:bg-white/80"
+              i === index ? "w-7 bg-[#4ade80]" : "w-2.5 bg-white/50 hover:bg-white/80"
             }`}
           />
         ))}

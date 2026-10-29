@@ -88,13 +88,7 @@ export default function CategoryTemplate({
             </ul>
           </div>
         )}
-        <Suspense
-          fallback={
-            <SkeletonProductGrid
-              numberOfProducts={category.products?.length ?? 8}
-            />
-          }
-        >
+        <Suspense fallback={<SkeletonProductGrid numberOfProducts={12} />}>
           <PaginatedProducts
             sortBy={sort}
             page={pageNumber}

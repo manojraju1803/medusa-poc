@@ -2,6 +2,7 @@
 
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
+import { normalizeValues, validateFields } from "@lib/util/registration"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
@@ -15,6 +16,7 @@ import {
 } from "./cookies"
 import { getRegion } from "./regions"
 import { getLocale } from "./locale-actions"
+import { retrieveOrder } from "./orders"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -376,6 +378,21 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
+
+    // Optional B2B fields, normalised and checked with the registration rules
+    // (the GSTIN rule is the same for every role). Blank fields are still sent:
+    // Medusa deletes a metadata key whose value is "", so this clears them.
+    const { gst_number, po_number } = normalizeValues({
+      gst_number: String(formData.get("gst_number") ?? ""),
+      po_number: String(formData.get("po_number") ?? ""),
+    })
+    if (gst_number) {
+      const error = validateFields("buyer", { gst_number }, ["gst_number"])
+        .gst_number
+      if (error) return error
+    }
+    data.metadata = { gst_number, po_number }
+
     await updateCart(data)
   } catch (e: any) {
     return e.message
@@ -420,6 +437,12 @@ export async function placeOrder(cartId?: string) {
 
     removeCartId()
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
+  }
+
+  // Payment authorization failures come back as HTTP 200 with the cart and an
+  // `error`, not as a thrown request error - surface them to the caller.
+  if (cartRes?.type === "cart" && cartRes.error) {
+    throw new Error(cartRes.error.message)
   }
 
   return cartRes.cart
@@ -470,4 +493,37 @@ export async function listCartOptions() {
     headers,
     cache: "force-cache",
   })
+}
+
+/**
+ * Adds every line item of a past order to the current cart at the same
+ * quantity. Items that can no longer be added (product removed, out of the
+ * buyer's catalogue, below a new minimum quantity, ...) are skipped and
+ * returned so the caller can tell the buyer.
+ */
+export async function reorder(orderId: string, countryCode: string) {
+  const order = await retrieveOrder(orderId)
+  const items = order.items ?? []
+
+  const added: string[] = []
+  const unavailable: string[] = []
+  for (const item of items) {
+    const name = item.product_title ?? item.title
+    if (!item.variant_id) {
+      unavailable.push(name)
+      continue
+    }
+    try {
+      await addToCart({
+        variantId: item.variant_id,
+        quantity: item.quantity,
+        countryCode,
+      })
+      added.push(name)
+    } catch {
+      unavailable.push(name)
+    }
+  }
+
+  return { added, unavailable }
 }
