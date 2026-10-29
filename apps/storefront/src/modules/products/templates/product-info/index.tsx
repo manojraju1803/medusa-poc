@@ -1,3 +1,4 @@
+import { safeDescriptionHtml } from "@lib/util/description-html"
 import { HttpTypes } from "@medusajs/types"
 import { Heading } from "@modules/common/components/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -30,7 +31,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           <div
             className="product-description text-medium text-ui-fg-subtle"
             data-testid="product-description"
-            dangerouslySetInnerHTML={{ __html: product.description }}
+            dangerouslySetInnerHTML={{ __html: safeDescriptionHtml(product.description) }}
           />
         )}
       </div>
