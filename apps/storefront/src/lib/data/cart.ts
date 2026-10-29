@@ -15,6 +15,7 @@ import {
 } from "./cookies"
 import { getRegion } from "./regions"
 import { getLocale } from "./locale-actions"
+import { retrieveOrder } from "./orders"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -470,4 +471,37 @@ export async function listCartOptions() {
     headers,
     cache: "force-cache",
   })
+}
+
+/**
+ * Adds every line item of a past order to the current cart at the same
+ * quantity. Items that can no longer be added (product removed, out of the
+ * buyer's catalogue, below a new minimum quantity, ...) are skipped and
+ * returned so the caller can tell the buyer.
+ */
+export async function reorder(orderId: string, countryCode: string) {
+  const order = await retrieveOrder(orderId)
+  const items = order.items ?? []
+
+  const added: string[] = []
+  const unavailable: string[] = []
+  for (const item of items) {
+    const name = item.product_title ?? item.title
+    if (!item.variant_id) {
+      unavailable.push(name)
+      continue
+    }
+    try {
+      await addToCart({
+        variantId: item.variant_id,
+        quantity: item.quantity,
+        countryCode,
+      })
+      added.push(name)
+    } catch {
+      unavailable.push(name)
+    }
+  }
+
+  return { added, unavailable }
 }
