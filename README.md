@@ -54,13 +54,6 @@ A production-ready monorepo starter for direct-to-consumer ecommerce stores powe
 
 ## Getting Started
 
-### Deploy with Medusa Cloud
-
-The fastest way to get started is deploying with [Medusa Cloud](https://cloud.medusajs.com):
-
-1. [Create a Medusa Cloud account](https://cloud.medusajs.com)
-2. Deploy this starter directly from your dashboard
-
 ### Local Installation
 
 > **Prerequisites:
@@ -89,6 +82,18 @@ cp apps/backend/.env.template apps/backend/.env
 # Replace with actual database URL, make sure the database exists.
 DATABASE_URL=postgres://postgres:@localhost:5432/medusa-dtc-starter
 ```
+
+   Uploaded files (product images, customers' documents) are stored in S3 only,
+   and the `S3_*` settings from `.env.template` point at the development
+   buckets. The backend won't start without them. Sign in to AWS before
+   starting it, and again when the session expires (after up to 12 hours):
+
+```bash
+aws login
+```
+
+   See [docs/PRIVATE_DOCUMENTS.md](docs/PRIVATE_DOCUMENTS.md) for the buckets and
+   what access you need.
 
 4. Run migrations:
 
@@ -249,4 +254,3 @@ The storefront is configured via environment variables in `apps/storefront/.env.
 ## Resources
 
 - [Medusa Documentation](https://docs.medusajs.com)
-- [Medusa Cloud](https://cloud.medusajs.com)

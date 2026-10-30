@@ -7,6 +7,7 @@ import {
   DOCUMENT_ACCEPT,
   DOCUMENT_HINT,
   documentField,
+  documentHref,
   QUALITY_DOCUMENTS,
   StoredDocument,
   validateDocument,
@@ -135,9 +136,12 @@ const DocumentsCard = ({ documents: initial }: { documents: StoredDocument[] }) 
               <p className="mt-2 text-[10px] text-[#94a3b8]">{DOCUMENT_HINT}</p>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                {current && !markedForRemoval && !file && (
+                {current && !current.key && !markedForRemoval && !file && (
+                  <span className="text-[11px] text-[#94a3b8]">Being moved to secure storage</span>
+                )}
+                {current?.key && !markedForRemoval && !file && (
                   <a
-                    href={current.url}
+                    href={documentHref(current.label)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center h-8 px-3 rounded-lg border border-[#0077cf]/40 text-[11px] font-bold text-[#0077cf] hover:bg-[#eaf5fc] transition-colors"

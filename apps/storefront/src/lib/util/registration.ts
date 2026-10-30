@@ -468,16 +468,44 @@ export const FIELD_LABELS: Record<string, string> = {
   ingredient_name: "Ingredient Name",
 }
 
+// A supplier's document, stored privately. `key` is where the file is in the
+// documents bucket; there's no public link, so it is opened through
+// `documentHref`, which checks the customer is signed in. A document saved
+// before storage moved to S3 had a public `url` instead: it's listed without
+// a `key`, and can't be opened, until the backend's move script has secured it.
 export type StoredDocument = {
   label: string
   filename: string
-  url: string
+  key?: string
   uploaded_at?: string
 }
 
+type SavedDocument = Partial<StoredDocument> & { url?: string }
+
 export const documentsOf = (metadata: unknown): StoredDocument[] => {
   const docs = (metadata as Record<string, unknown> | null)?.documents
-  return Array.isArray(docs)
-    ? (docs as StoredDocument[]).filter((d) => d && d.label && d.url)
-    : []
+  return (Array.isArray(docs) ? (docs as (SavedDocument | null)[]) : []).flatMap(
+    (d) =>
+      d?.label && (d.key || d.url)
+        ? [
+            {
+              label: d.label,
+              filename: d.filename || d.label,
+              key: d.key,
+              uploaded_at: d.uploaded_at,
+            },
+          ]
+        : []
+  )
 }
+
+// "ISO 22000/HACCP Form" -> "iso-22000-haccp-form". Must match `documentType`
+// in the backend's src/api/utils/document-files.ts.
+const documentType = (label: string) =>
+  label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+
+/** Where the signed-in customer opens one of their documents. */
+export const documentHref = (label: string) => `/api/documents/${documentType(label)}`
