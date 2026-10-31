@@ -151,7 +151,8 @@ itself upload through their own route instead:
 | Stored as | `watermarked_<name>` | `site-<name>` |
 | Body | multipart form (`files`) | JSON: `{ "files": [{ "filename", "content": <base64> }] }`, up to 3 images of 10 MB |
 
-A file that isn't an image at all is refused with "it isn't an image". Only
+A file the image library can't read is refused with "it couldn't be read as an
+image", and the library's reason goes to the backend log. Only
 signed-in admins can use the route (Medusa protects `/admin`).
 
 Every admin screen that uploads images for the site (the storefront content
@@ -234,7 +235,7 @@ Tested on the local database, with `pnpm dev` running.
 | The same photo through `POST /admin/uploads` | `watermarked_quinoa-seeds…`, logo top-left (top-left change 54.4, opposite corner 0.0) |
 | …through `POST /admin/site-images` | `site-quinoa-seeds…`, no logo (top-left change 0.9, compression only), 75 KB |
 | 4000×3000 JPEG, 4.3 MB, as a site image | 2000×1500, 480 KB, no logo |
-| GIF / a text file named `.jpg` / no admin login | 400 "GIF images aren't supported…" / 400 "it isn't an image…" / 401 |
+| GIF / a text file named `.jpg` / no admin login | 400 "GIF images aren't supported…" / 400 "it isn't an image…" (since reworded to "it couldn't be read as an image…") / 401 |
 
 **Uploads with compression** (`POST /admin/uploads`, as the admin sends them),
 24 Oct: 19 of 20 checks passed. The one failure was the test's own logo

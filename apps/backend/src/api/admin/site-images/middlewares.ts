@@ -14,7 +14,6 @@ export const AdminPostSiteImages = z.object({
       z.object({
         filename: z.string().trim().min(1).max(200),
         content: z
-          .string()
           .base64()
           // Base64 is 4 bytes per 3; this bounds the decoded size.
           .max(Math.ceil(MAX_SITE_IMAGE_BYTES / 3) * 4),
