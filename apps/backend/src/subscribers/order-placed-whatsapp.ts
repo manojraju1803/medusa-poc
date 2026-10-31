@@ -1,6 +1,6 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
+import { formatAmount, orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
 
 export default async function orderPlacedWhatsAppSubscriber({
   event: { data },
@@ -43,9 +43,10 @@ export default async function orderPlacedWhatsAppSubscriber({
 
     const orderNumber = order.display_id ? `#${order.display_id}` : order.id
     const orderUrl = orderPageUrl(order.id, order.shipping_address?.country_code)
+    const total = formatAmount(order.total, order.currency_code)
 
     const header = "🎉 Order Confirmation"
-    const body = `Hi ${customerName},\n\nThank you for choosing IngredientsBazar!\n\nYour order ${orderNumber} has been successfully placed and is now being processed.\n\nClick the button below to view your full order details and invoice.`
+    const body = `Hi ${customerName},\n\nThank you for choosing IngredientsBazar!\n\nYour order ${orderNumber} for ${total} has been successfully placed and is now being processed.\n\nClick the button below to view your full order details and invoice.`
     const footer = "IngredientsBazar Support"
     const buttonText = "View Order Details"
 

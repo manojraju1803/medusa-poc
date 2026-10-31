@@ -1,6 +1,6 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
+import { formatAmount, orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
 
 export default async function orderPaymentWhatsAppSubscriber({
   event: { data, name: eventName },
@@ -11,6 +11,8 @@ export default async function orderPaymentWhatsAppSubscriber({
 
   try {
     let orderId = data.order_id
+    // The captured payment's own amount, when the event is about one payment.
+    let paid: { amount?: unknown; currency_code?: string } | undefined
 
     if (!orderId && data.id?.startsWith("pay_")) {
       const { data: payments } = await query.graph({
@@ -20,6 +22,7 @@ export default async function orderPaymentWhatsAppSubscriber({
       })
       const pay = payments?.[0] as any
       orderId = pay?.payment_collection?.order?.id || pay?.payment_collection?.orders?.[0]?.id
+      paid = pay
     }
 
     if (!orderId) {
@@ -63,10 +66,9 @@ export default async function orderPaymentWhatsAppSubscriber({
     const orderNumber = order.display_id ? `#${order.display_id}` : order.id
     const receiptUrl = orderPageUrl(order.id, order.shipping_address?.country_code)
 
-    const formattedAmount = new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: (order.currency_code || "inr").toUpperCase(),
-    }).format((order.total || 0) / 100)
+    const formattedAmount = paid?.amount != null
+      ? formatAmount(paid.amount as Parameters<typeof formatAmount>[0], paid.currency_code)
+      : formatAmount(order.total, order.currency_code)
 
     const header = "💳 Payment Confirmed"
     const body = `Hi ${customerName},\n\nWe have successfully received your payment of ${formattedAmount} for order ${orderNumber}.\n\nYour order is being prepared by our fulfillment team.`

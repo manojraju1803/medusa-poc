@@ -1,3 +1,5 @@
+import { MathBN } from "@medusajs/framework/utils"
+
 interface SendCtaMessageParams {
   to: string
   headerText?: string
@@ -67,6 +69,19 @@ function getCredentials(): { token: string; phoneId: string } {
 }
 
 /** The storefront page a message's button opens for an order. */
+/**
+ * "₹5,381.25". Medusa stores amounts in the currency's main unit (rupees,
+ * not paise), so they're not divided by 100.
+ */
+export const formatAmount = (
+  amount: Parameters<typeof MathBN.convert>[0] | null | undefined,
+  currencyCode?: string | null
+) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: (currencyCode || "inr").toUpperCase(),
+  }).format(MathBN.convert(amount ?? 0).toNumber())
+
 export const orderPageUrl = (orderId: string, countryCode?: string | null) =>
   `${process.env.STOREFRONT_URL || "http://localhost:8000"}/${countryCode || "in"}/order/${orderId}/confirmed`
 
