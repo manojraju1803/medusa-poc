@@ -134,6 +134,7 @@ All under `apps/backend/`.
 | `src/admin/i18n/json/en.json`, `src/admin/i18n/index.ts` | Replace the media editor's "Failed to upload" text with the upload rules. Medusa merges these over its own admin texts. |
 | `medusa-config.ts` (`admin.maxUploadFileSize`) | Lets the admin accept files up to 10 MB before compression. |
 | `src/api/admin/site-images/route.ts`, `middlewares.ts` | `POST /admin/site-images`: compresses site images without the logo. See [Site images](#site-images-no-watermark). |
+| `src/api/utils/site-images.ts`, `src/workflows/steps/delete-replaced-site-images.ts` | Tells site images apart, and deletes the ones a save replaced. |
 
 New dependency: `sharp`, the image library (already used by the storefront).
 
@@ -157,6 +158,19 @@ signed-in admins can use the route (Medusa protects `/admin`).
 
 Every admin screen that uploads images for the site (the storefront content
 page, blog covers) should use this route rather than its own upload route.
+
+**Replacing a site image.** A screen that saves site images should delete the
+ones it no longer uses: add `deleteReplacedSiteImagesStep({ previous, current })`
+to its save workflow, after the step that saves, with the file keys in use
+before and after. Pass the keys (the `id` the upload returns), not the image
+URLs; save the key next to the URL. `current` must list every site image still
+in use anywhere, not only in the section being saved, or an image shared by
+two sections is deleted from under the other. It only deletes files named
+`site-…`, never one still in `current`, and a failed delete is logged rather
+than undoing the save.
+Uploads the screen makes but never saves (an image picked and then changed
+again, or a page left without saving) aren't covered; uploading only on save
+avoids them.
 
 ## Watermarking the existing images
 
