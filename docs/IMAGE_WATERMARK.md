@@ -1,9 +1,13 @@
 # Product image watermark
 
 The IngredientsBazar logo is burned into product images: into every image
-uploaded through the admin, and, by a script, into the images that existed
-before. Every image is also compressed, and stored only if it ends up at
-500 KB or less.
+uploaded through `POST /admin/uploads` (the admin's product screens), and, by a
+script, into the images that existed before. Every image is also compressed,
+and stored only if it ends up at 500 KB or less.
+
+Images for the site itself, such as hero slides and blog covers, upload through a
+separate route that compresses them the same way but never adds the logo; see
+[Site images](#site-images-no-watermark).
 
 ## What it looks like
 
@@ -129,8 +133,44 @@ All under `apps/backend/`.
 | `.gitignore` | Ignores `/static`, where files were kept before storage moved to S3. |
 | `src/admin/i18n/json/en.json`, `src/admin/i18n/index.ts` | Replace the media editor's "Failed to upload" text with the upload rules. Medusa merges these over its own admin texts. |
 | `medusa-config.ts` (`admin.maxUploadFileSize`) | Lets the admin accept files up to 10 MB before compression. |
+| `src/api/admin/site-images/route.ts`, `middlewares.ts` | `POST /admin/site-images`: compresses site images without the logo. See [Site images](#site-images-no-watermark). |
+| `src/api/utils/site-images.ts`, `src/workflows/steps/delete-replaced-site-images.ts` | Tells site images apart, and deletes the ones a save replaced. |
 
 New dependency: `sharp`, the image library (already used by the storefront).
+
+## Site images (no watermark)
+
+The watermark middleware runs on `POST /admin/uploads` and can't tell what an
+image is for, so anything uploaded there gets the logo. Images for the site
+itself upload through their own route instead:
+
+| | Product images | Site images |
+|---|---|---|
+| Route | `POST /admin/uploads` (Medusa's, used by the product screens) | `POST /admin/site-images` (ours) |
+| Logo | Added, top-left | Never |
+| Compression, 500 KB limit, JPEG/PNG/WebP only, turned upright | Yes | Yes, the same code (`watermarkAndCompress` with `addLogo: false`) |
+| Stored as | `watermarked_<name>` | `site-<name>` |
+| Body | multipart form (`files`) | JSON: `{ "files": [{ "filename", "content": <base64> }] }`, up to 3 images of 10 MB |
+
+A file the image library can't read is refused with "it couldn't be read as an
+image", and the library's reason goes to the backend log. Only
+signed-in admins can use the route (Medusa protects `/admin`).
+
+Every admin screen that uploads images for the site (the storefront content
+page, blog covers) should use this route rather than its own upload route.
+
+**Replacing a site image.** A screen that saves site images should delete the
+ones it no longer uses: add `deleteReplacedSiteImagesStep({ previous, current })`
+to its save workflow, after the step that saves, with the file keys in use
+before and after. Pass the keys (the `id` the upload returns), not the image
+URLs; save the key next to the URL. `current` must list every site image still
+in use anywhere, not only in the section being saved, or an image shared by
+two sections is deleted from under the other. It only deletes files named
+`site-…`, never one still in `current`, and a failed delete is logged rather
+than undoing the save.
+Uploads the screen makes but never saves (an image picked and then changed
+again, or a page left without saving) aren't covered; uploading only on save
+avoids them.
 
 ## Watermarking the existing images
 
@@ -182,6 +222,15 @@ Images that were watermarked while files were still kept on the backend's disk
 ## Checks
 
 Tested on the local database, with `pnpm dev` running.
+
+**Site images**, 29 Oct:
+
+| Check | Result |
+|---|---|
+| The same photo through `POST /admin/uploads` | `watermarked_quinoa-seeds…`, logo top-left (top-left change 54.4, opposite corner 0.0) |
+| …through `POST /admin/site-images` | `site-quinoa-seeds…`, no logo (top-left change 0.9, compression only), 75 KB |
+| 4000×3000 JPEG, 4.3 MB, as a site image | 2000×1500, 480 KB, no logo |
+| GIF / a text file named `.jpg` / no admin login | 400 "GIF images aren't supported…" / 400 "it isn't an image…" (since reworded to "it couldn't be read as an image…") / 401 |
 
 **Uploads with compression** (`POST /admin/uploads`, as the admin sends them),
 24 Oct: 19 of 20 checks passed. The one failure was the test's own logo
@@ -235,6 +284,8 @@ are in the existing inquiry routes), and `pnpm build` completes.
       reason.
 - [ ] After running the script, a product's images show the logo, and the image
       order and thumbnail are unchanged.
+- [ ] A photo uploaded through `POST /admin/site-images` has **no** logo; the
+      same photo uploaded to a product's media gets the logo.
 
 ## Limitations
 
@@ -245,9 +296,11 @@ are in the existing inquiry routes), and `pnpm build` completes.
   could keep them privately if that's ever needed.
 - **The old site still serves clean images.** While the WooCommerce site is up,
   anyone with an old link can open an image without the logo.
-- **Only uploads through `POST /admin/uploads`.** That's every upload the admin
-  makes today. An image added by URL (for example through a product import or
-  the API) isn't uploaded, so it isn't watermarked until the script runs again.
+- **Only uploads through `POST /admin/uploads`.** That's every product image
+  upload the admin makes today. Anything uploaded there gets the logo, whatever
+  it's for, so site images must use `POST /admin/site-images`. An image added
+  by URL (for example through a product import or the API) isn't uploaded, so
+  it isn't watermarked until the script runs again.
   If a future Medusa admin uploads straight to S3 through presigned URLs, it
   would bypass the middleware; check after upgrading Medusa.
 - **Re-uploading a downloaded image** that has lost its `watermarked_` name gets
