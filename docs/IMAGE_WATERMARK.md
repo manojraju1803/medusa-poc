@@ -5,7 +5,7 @@ uploaded through `POST /admin/uploads` (the admin's product screens), and, by a
 script, into the images that existed before. Every image is also compressed,
 and stored only if it ends up at 500 KB or less.
 
-Images for the site itself, such as the homepage hero slides, upload through a
+Images for the site itself, such as hero slides and blog covers, upload through a
 separate route that compresses them the same way but never adds the logo; see
 [Site images](#site-images-no-watermark).
 
@@ -134,8 +134,6 @@ All under `apps/backend/`.
 | `src/admin/i18n/json/en.json`, `src/admin/i18n/index.ts` | Replace the media editor's "Failed to upload" text with the upload rules. Medusa merges these over its own admin texts. |
 | `medusa-config.ts` (`admin.maxUploadFileSize`) | Lets the admin accept files up to 10 MB before compression. |
 | `src/api/admin/site-images/route.ts`, `middlewares.ts` | `POST /admin/site-images`: compresses site images without the logo. See [Site images](#site-images-no-watermark). |
-| `src/api/utils/hero-slides.ts`, `src/api/admin/hero-slides/*`, `src/api/store/hero-slides/route.ts`, `src/workflows/update-hero-slides.ts`, `src/admin/routes/hero-slides/page.tsx` | The hero slides: rules, admin and store routes, the save workflow and the admin page. |
-| `apps/storefront/src/lib/data/hero.ts`, `src/modules/home/components/hero/index.tsx`, `slides.tsx` | The storefront hero reads the slides and falls back to its bundled images. |
 
 New dependency: `sharp`, the image library (already used by the storefront).
 
@@ -156,31 +154,8 @@ itself upload through their own route instead:
 A file that isn't an image at all is refused with "it isn't an image". Only
 signed-in admins can use the route (Medusa protects `/admin`).
 
-**Hero slides.** The homepage hero rotates three images. Admin sidebar →
-**Hero slides** shows them; each can get its own image (uploaded through
-`POST /admin/site-images`) and a description for screen readers, or **Use
-default** to go back to the storefront's bundled image. **Save** writes them to
-the store's metadata (`hero_slides`) through the `update-hero-slides`
-workflow, which keeps the store's other metadata and then deletes the site
-images no slide uses any more. It only ever deletes files named `site-…`, so
-pointing a slide at a product image can't delete that image.
-
-| Route | Who | What |
-|---|---|---|
-| `GET /admin/hero-slides` | Admins | The 3 slides, plus the storefront's default images for previews (`STOREFRONT_URL` + `/home-hero*.jpg`) |
-| `POST /admin/hero-slides` | Admins | Saves exactly 3 slides: `{ image_url, image_key, alt }`, `null` meaning the default |
-| `GET /store/hero-slides` | Storefront | The 3 slides' `image_url` and `alt` (not the stored file key) |
-
-The storefront's hero (`apps/storefront/src/modules/home/components/hero`)
-reads them on every homepage visit, without caching: saving deletes the image
-a slide replaced, so a cached copy could point at a missing file. The homepage
-already renders per visit (it checks the signed-in customer), so this adds one
-small request. A slide without its own image, or a backend that can't be
-reached, shows the bundled image.
-
-Blog and testimonial images are still files in the storefront's code. When
-they get admin screens, those screens should upload through
-`POST /admin/site-images` too.
+Every admin screen that uploads images for the site (the storefront content
+page, blog covers) should use this route rather than its own upload route.
 
 ## Watermarking the existing images
 
@@ -252,7 +227,7 @@ separate step.
 
 Tested on the local database, with `pnpm dev` running.
 
-**Site images and hero slides**, 29 Oct: 16 of 16 passed.
+**Site images**, 29 Oct:
 
 | Check | Result |
 |---|---|
@@ -260,14 +235,6 @@ Tested on the local database, with `pnpm dev` running.
 | …through `POST /admin/site-images` | `site-quinoa-seeds…`, no logo (top-left change 0.9, compression only), 75 KB |
 | 4000×3000 JPEG, 4.3 MB, as a site image | 2000×1500, 480 KB, no logo |
 | GIF / a text file named `.jpg` / no admin login | 400 "GIF images aren't supported…" / 400 "it isn't an image…" / 401 |
-| `GET /admin/hero-slides` | 3 slides and the 3 default image addresses |
-| Save slide 1 | `GET /store/hero-slides` returns its image and description, without the file key |
-| Storefront homepage | Shows the new slide 1 and the bundled slides 2 and 3, straight after saving |
-| Replace slide 1, then reset it | Each replaced site image deleted (its address returns 404) |
-| A product image put on a slide, then removed | Not deleted |
-| Saving 2 slides / an image that isn't a URL | 400 / 400 |
-
-The slides were put back to the defaults afterwards.
 
 **Uploads with compression** (`POST /admin/uploads`, as the admin sends them),
 24 Oct: 19 of 20 checks passed. The one failure was the test's own logo
@@ -321,12 +288,8 @@ are in the existing inquiry routes), and `pnpm build` completes.
       reason.
 - [ ] After running the script, a product's images show the logo, and the image
       order and thumbnail are unchanged.
-- [ ] Hero slides → Replace image on slide 1 with a photo, then Save: the
-      preview and the storefront homepage show it with **no** logo; slides 2
-      and 3 are unchanged.
-- [ ] The same photo uploaded to a product's media gets the logo.
-- [ ] Hero slides → Use default on slide 1, then Save: the homepage shows the
-      bundled image again.
+- [ ] A photo uploaded through `POST /admin/site-images` has **no** logo; the
+      same photo uploaded to a product's media gets the logo.
 
 ## Limitations
 
