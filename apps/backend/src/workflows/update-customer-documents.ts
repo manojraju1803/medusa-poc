@@ -10,14 +10,16 @@ import {
   updateCustomersWorkflow,
   useQueryGraphStep,
 } from '@medusajs/medusa/core-flows';
+import {
+  customerFolder,
+  CustomerDocument,
+  documentFileName,
+  listedDocumentsOf,
+} from '../api/utils/document-files';
 
-export type CustomerDocument = {
-  label: string;
-  filename: string;
-  url: string;
-  file_id?: string;
-  uploaded_at?: string;
-};
+// Entries saved before documents moved to S3 had a public `url` and an
+// optional `file_id` instead of `key`; the move script converts them.
+type StoredEntry = CustomerDocument & { file_id?: string };
 
 type IncomingFile = {
   label: string;
@@ -32,14 +34,19 @@ export type UpdateCustomerDocumentsInput = {
   remove: string[];
 };
 
+// Stores the files privately in the customer's own folder,
+// documents/<customer_id>/<document-type>-<ULID>.<ext>.
 const uploadDocumentFilesStep = createStep(
   'upload-customer-document-files',
-  async (files: IncomingFile[], { container }) => {
+  async (
+    { customerId, files }: { customerId: string; files: IncomingFile[] },
+    { container },
+  ) => {
     if (!files.length) return new StepResponse([] as CustomerDocument[], []);
     const fileService = container.resolve(Modules.FILE);
     const created = await fileService.createFiles(
       files.map((f) => ({
-        filename: f.filename,
+        filename: documentFileName(customerFolder(customerId), f.label, f.filename),
         mimeType: f.mimeType,
         content: f.content,
         access: 'private' as const,
@@ -49,8 +56,7 @@ const uploadDocumentFilesStep = createStep(
     const documents: CustomerDocument[] = created.map((file, i) => ({
       label: files[i].label,
       filename: files[i].filename,
-      url: file.url,
-      file_id: file.id,
+      key: file.id,
       uploaded_at: uploadedAt,
     }));
     return new StepResponse(
@@ -65,8 +71,8 @@ const uploadDocumentFilesStep = createStep(
 );
 
 // Runs after the customer is updated, so a failed update never deletes a file
-// that is still referenced. Old files from before `file_id` was stored are
-// left alone.
+// that is still referenced. Old entries with only a public `url` are left
+// alone; the move script handles those.
 const deleteReplacedFilesStep = createStep(
   'delete-replaced-customer-document-files',
   async (fileIds: string[], { container }) => {
@@ -107,20 +113,24 @@ export const updateCustomerDocumentsWorkflow = createWorkflow(
     );
     assertSupplierStep(currentMetadata);
 
-    const uploaded = uploadDocumentFilesStep(input.files);
+    const uploaded = uploadDocumentFilesStep({
+      customerId: input.customerId,
+      files: input.files,
+    });
 
+    // Only `documents` is sent: Medusa merges metadata keys on update, so
+    // other keys changed while the files uploaded (e.g. the wishlist) are kept.
     const metadata = transform(
       { currentMetadata, uploaded, input },
       ({ currentMetadata, uploaded, input }) => {
         const existing = Array.isArray(currentMetadata.documents)
-          ? (currentMetadata.documents as CustomerDocument[])
+          ? (currentMetadata.documents as StoredEntry[])
           : [];
         const replaced = new Set([
           ...input.remove,
           ...uploaded.map((d) => d.label),
         ]);
         return {
-          ...currentMetadata,
           documents: [
             ...existing.filter((d) => !replaced.has(d.label)),
             ...uploaded,
@@ -141,18 +151,17 @@ export const updateCustomerDocumentsWorkflow = createWorkflow(
       ({ currentMetadata, uploaded, input }) => {
         const replaced = new Set([...input.remove, ...uploaded.map((d) => d.label)]);
         const existing = Array.isArray(currentMetadata.documents)
-          ? (currentMetadata.documents as CustomerDocument[])
+          ? (currentMetadata.documents as StoredEntry[])
           : [];
         return existing
-          .filter((d) => replaced.has(d.label) && d.file_id)
-          .map((d) => d.file_id as string);
+          .filter((d) => replaced.has(d.label) && (d.key ?? d.file_id))
+          .map((d) => (d.key ?? d.file_id) as string);
       },
     );
     deleteReplacedFilesStep(obsoleteFileIds);
 
-    const documents = transform(
-      { metadata },
-      ({ metadata }) => metadata.documents as CustomerDocument[],
+    const documents = transform({ metadata }, ({ metadata }) =>
+      listedDocumentsOf(metadata),
     );
     return new WorkflowResponse(documents);
   },

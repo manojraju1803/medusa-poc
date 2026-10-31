@@ -19,6 +19,9 @@ const BACKEND_HOST = BACKEND_URL ? new URL(BACKEND_URL) : null
  */
 const nextConfig = {
   reactStrictMode: true,
+  // The middleware strips trailing slashes itself, after answering old
+  // WordPress URLs (which all end in "/") with a single 301.
+  skipTrailingSlashRedirect: true,
   experimental: {
     serverActions: {
       // Supplier registration carries up to 8 quality documents of 2 MB each.

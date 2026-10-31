@@ -38,7 +38,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
           shippingOptions={shippingOptions}
         />
       )}
-      <SiteChrome loggedIn={!!customer} floatingBack>
+      <SiteChrome loggedIn={!!customer}>
         <BackButton />
       </SiteChrome>
       {props.children}

@@ -1,9 +1,13 @@
 # Product image watermark
 
 The IngredientsBazar logo is burned into product images: into every image
-uploaded through the admin, and, by a script, into the images that existed
-before. Every image is also compressed, and stored only if it ends up at
-500 KB or less.
+uploaded through `POST /admin/uploads` (the admin's product screens), and, by a
+script, into the images that existed before. Every image is also compressed,
+and stored only if it ends up at 500 KB or less.
+
+Images for the site itself, such as hero slides and blog covers, upload through a
+separate route that compresses them the same way but never adds the logo; see
+[Site images](#site-images-no-watermark).
 
 ## What it looks like
 
@@ -96,7 +100,7 @@ Medusa reads the files into memory (multer)
 watermarkUploads middleware ── adds the logo, compresses to ≤ 500 KB (or rejects),
         │                       renames it watermarked_<name>
         ▼
-Medusa's upload route ── uploadFilesWorkflow ── File Module ── local disk now, S3 later
+Medusa's upload route ── uploadFilesWorkflow ── File Module ── S3 media bucket
 ```
 
 - **New uploads.** The admin's product media editor and product create form both
@@ -124,13 +128,49 @@ All under `apps/backend/`.
 | `src/api/admin/uploads/middlewares.ts` | The `watermarkUploads` middleware on `POST /admin/uploads`. |
 | `src/api/middlewares.ts` | Registers it (two added lines). |
 | `src/scripts/watermark-product-images.ts` | The one-off script for existing images. |
-| `medusa-config.ts` | Picks the file storage: local disk, or S3 when `S3_BUCKET` is set. |
-| `.env.template` | `MEDUSA_BACKEND_URL` and the `S3_*` variables. |
-| `.gitignore` | Ignores `/static`, where local storage keeps uploaded files. |
+| `medusa-config.ts` | Stores uploaded files in S3 only; see [PRIVATE_DOCUMENTS.md](PRIVATE_DOCUMENTS.md). |
+| `.env.template` | The `S3_*` settings. |
+| `.gitignore` | Ignores `/static`, where files were kept before storage moved to S3. |
 | `src/admin/i18n/json/en.json`, `src/admin/i18n/index.ts` | Replace the media editor's "Failed to upload" text with the upload rules. Medusa merges these over its own admin texts. |
 | `medusa-config.ts` (`admin.maxUploadFileSize`) | Lets the admin accept files up to 10 MB before compression. |
+| `src/api/admin/site-images/route.ts`, `middlewares.ts` | `POST /admin/site-images`: compresses site images without the logo. See [Site images](#site-images-no-watermark). |
+| `src/api/utils/site-images.ts`, `src/workflows/steps/delete-replaced-site-images.ts` | Tells site images apart, and deletes the ones a save replaced. |
 
 New dependency: `sharp`, the image library (already used by the storefront).
+
+## Site images (no watermark)
+
+The watermark middleware runs on `POST /admin/uploads` and can't tell what an
+image is for, so anything uploaded there gets the logo. Images for the site
+itself upload through their own route instead:
+
+| | Product images | Site images |
+|---|---|---|
+| Route | `POST /admin/uploads` (Medusa's, used by the product screens) | `POST /admin/site-images` (ours) |
+| Logo | Added, top-left | Never |
+| Compression, 500 KB limit, JPEG/PNG/WebP only, turned upright | Yes | Yes, the same code (`watermarkAndCompress` with `addLogo: false`) |
+| Stored as | `watermarked_<name>` | `site-<name>` |
+| Body | multipart form (`files`) | JSON: `{ "files": [{ "filename", "content": <base64> }] }`, up to 3 images of 10 MB |
+
+A file the image library can't read is refused with "it couldn't be read as an
+image", and the library's reason goes to the backend log. Only
+signed-in admins can use the route (Medusa protects `/admin`).
+
+Every admin screen that uploads images for the site (the storefront content
+page, blog covers) should use this route rather than its own upload route.
+
+**Replacing a site image.** A screen that saves site images should delete the
+ones it no longer uses: add `deleteReplacedSiteImagesStep({ previous, current })`
+to its save workflow, after the step that saves, with the file keys in use
+before and after. Pass the keys (the `id` the upload returns), not the image
+URLs; save the key next to the URL. `current` must list every site image still
+in use anywhere, not only in the section being saved, or an image shared by
+two sections is deleted from under the other. It only deletes files named
+`site-…`, never one still in `current`, and a failed delete is logged rather
+than undoing the save.
+Uploads the screen makes but never saves (an image picked and then changed
+again, or a page left without saving) aren't covered; uploading only on save
+avoids them.
 
 ## Watermarking the existing images
 
@@ -159,48 +199,38 @@ products, pass their ids:
 pnpm medusa exec ./src/scripts/watermark-product-images.ts prod_01... prod_02...
 ```
 
-Run it once in each environment. **With local storage, run it on the server
-that stores the files** (the script refuses to run against a non-local
-database unless `S3_BUCKET` is set): the copies are written to that machine's `static`
-folder, so running it on a laptop against the live database would link live
-products to files that only exist on the laptop.
+Run it once in each environment, with that environment's S3 settings: the
+copies go to the media bucket in `.env`. It refuses to put a shared database's
+images into a development (`-dev`) bucket.
 
 On 23 Oct the local catalogue had 354 images on 333 products, all linked from
 the WooCommerce site. Those were watermarked before compression was added; on
 24 Oct all 356 product images were watermarked and the largest stored file was
 253 KB, so they're within the limit too.
 
-## File storage: local now, S3 later
+## File storage
 
-`medusa-config.ts` configures Medusa's File Module:
+Uploaded files are stored in S3 only: product images in a public media bucket,
+customers' documents in a locked documents bucket. The setup, settings and
+credentials are in [PRIVATE_DOCUMENTS.md](PRIVATE_DOCUMENTS.md). The middleware
+and the script only talk to Medusa's File Module, so they didn't change.
 
-- **Local (now).** Files are saved in the backend's `static` folder and served
-  at `<MEDUSA_BACKEND_URL>/static/<file>`. **Set `MEDUSA_BACKEND_URL` to the
-  backend's public address in every deployed environment.** Medusa's default
-  is `http://localhost:9000`, which gives broken image links anywhere but a
-  developer's machine. Many hosts also wipe the server's disk on every
-  redeploy, which deletes the files; check that the live host keeps the
-  `static` folder, or switch to S3.
-- **S3 (later).** Set `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY_ID`,
-  `S3_SECRET_ACCESS_KEY` and `S3_FILE_URL` (the public address of the bucket's
-  files). For an S3-compatible service other than AWS, such as Supabase Storage
-  or MinIO, also set `S3_ENDPOINT`. `S3_PREFIX` is an optional folder inside the
-  bucket. No code changes: the middleware and the script only talk to the File
-  Module. This branch has not been tested against a real bucket. Some
-  S3-compatible services also need path-style URLs; if so, add
-  `additional_client_config: { forcePathStyle: true }` to the S3 options in
-  `medusa-config.ts`.
-- **On Medusa Cloud**, Medusa sets up S3 storage itself, and this configuration
-  steps aside.
-
-Files already stored locally aren't moved when you switch. Their links keep
-pointing at the backend's `/static` folder, which works only while the backend
-still has them. Copying them to the bucket and updating the links would be a
-separate step.
+Images that were watermarked while files were still kept on the backend's disk
+(links to `<backend>/static/...`) are moved to the media bucket with
+`move-files-to-s3.ts`; see [PRIVATE_DOCUMENTS.md](PRIVATE_DOCUMENTS.md#moving-existing-files).
 
 ## Checks
 
 Tested on the local database, with `pnpm dev` running.
+
+**Site images**, 29 Oct:
+
+| Check | Result |
+|---|---|
+| The same photo through `POST /admin/uploads` | `watermarked_quinoa-seeds…`, logo top-left (top-left change 54.4, opposite corner 0.0) |
+| …through `POST /admin/site-images` | `site-quinoa-seeds…`, no logo (top-left change 0.9, compression only), 75 KB |
+| 4000×3000 JPEG, 4.3 MB, as a site image | 2000×1500, 480 KB, no logo |
+| GIF / a text file named `.jpg` / no admin login | 400 "GIF images aren't supported…" / 400 "it isn't an image…" (since reworded to "it couldn't be read as an image…") / 401 |
 
 **Uploads with compression** (`POST /admin/uploads`, as the admin sends them),
 24 Oct: 19 of 20 checks passed. The one failure was the test's own logo
@@ -254,19 +284,23 @@ are in the existing inquiry routes), and `pnpm build` completes.
       reason.
 - [ ] After running the script, a product's images show the logo, and the image
       order and thumbnail are unchanged.
+- [ ] A photo uploaded through `POST /admin/site-images` has **no** logo; the
+      same photo uploaded to a product's media gets the logo.
 
 ## Limitations
 
 - **Burned in.** For new uploads only the watermarked file is stored. To change
   the logo or its position later, images need the originals: for the imported
   catalogue, `metadata.original_url` points at them while the WooCommerce site
-  is up. New uploads have no stored original, because local storage has no
-  truly private files. With S3, originals could be kept in a private bucket.
+  is up. New uploads have no stored original; the locked documents bucket
+  could keep them privately if that's ever needed.
 - **The old site still serves clean images.** While the WooCommerce site is up,
   anyone with an old link can open an image without the logo.
-- **Only uploads through `POST /admin/uploads`.** That's every upload the admin
-  makes today. An image added by URL (for example through a product import or
-  the API) isn't uploaded, so it isn't watermarked until the script runs again.
+- **Only uploads through `POST /admin/uploads`.** That's every product image
+  upload the admin makes today. Anything uploaded there gets the logo, whatever
+  it's for, so site images must use `POST /admin/site-images`. An image added
+  by URL (for example through a product import or the API) isn't uploaded, so
+  it isn't watermarked until the script runs again.
   If a future Medusa admin uploads straight to S3 through presigned URLs, it
   would bypass the middleware; check after upgrading Medusa.
 - **Re-uploading a downloaded image** that has lost its `watermarked_` name gets

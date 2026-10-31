@@ -5,6 +5,7 @@ import { retrieveCustomer } from "@lib/data/customer"
 import { listProducts } from "@lib/data/products"
 import { wishlistOf } from "@lib/data/wishlist"
 import { minQuantityOf } from "@lib/util/min-quantity"
+import { withoutOldSiteLinks } from "@lib/util/old-site-links"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import QuoteSampleForm from "@modules/inquiry/components/quote-sample-form"
@@ -178,7 +179,12 @@ const ProductTemplate = async ({
                 <div
                   className="product-description text-sm text-[#475569] leading-relaxed mt-2"
                   data-testid="product-description"
-                  dangerouslySetInnerHTML={{ __html: safeDescriptionHtml(product.description) }}
+                  dangerouslySetInnerHTML={{
+                    __html: withoutOldSiteLinks(
+                      safeDescriptionHtml(product.description),
+                      countryCode
+                    ),
+                  }}
                 />
               </div>
             )}

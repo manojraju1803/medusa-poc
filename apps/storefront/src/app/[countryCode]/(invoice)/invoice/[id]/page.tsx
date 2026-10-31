@@ -1,7 +1,6 @@
 import { retrieveCustomer } from "@lib/data/customer"
 import { retrieveOrder } from "@lib/data/orders"
 import { loginPath } from "@lib/util/login-return"
-import { NOINDEX } from "@lib/util/seo"
 import InvoiceTemplate from "@modules/order/templates/invoice-template"
 import { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
@@ -29,7 +28,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const order = await loadOrder(id, token)
   return {
     title: order ? `Invoice ${order.display_id}` : "Invoice",
-    robots: NOINDEX,
+    robots: { index: false, follow: false },
   }
 }
 

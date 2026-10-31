@@ -9,6 +9,7 @@ import { priceListSlabMiddlewares } from './admin/price-lists/middlewares';
 import { approvalMiddlewares } from './store/customers/me/approval/middlewares';
 import { adminDemoMiddlewares } from './admin/demo-middlewares';
 import { uploadWatermarkMiddlewares } from './admin/uploads/middlewares';
+import { siteImageMiddlewares } from './admin/site-images/middlewares';
 import { monitoringMiddlewares } from './admin/monitoring/middlewares';
 import { adminCustomerDocumentMiddlewares } from './admin/customers/[id]/documents/middlewares';
 import { inquiryMiddlewares } from './store/inquiries/middlewares';
@@ -20,7 +21,11 @@ import { filterProductsByWarehouse } from '../lib/warehouse-product-filter';
 import { registrationDocumentMiddlewares } from './store/registration-documents/middlewares';
 import { protectMetadataMiddlewares } from './store/customers/me/protect-metadata';
 import { myDocumentsMiddlewares } from './store/customers/me/documents/middlewares';
+
+import { customerDocumentDownloadMiddlewares } from './store/customers/[id]/documents/[type]/middlewares';
+
 import { orderAccessMiddlewares } from './store/orders/middlewares';
+
 import { isApproved } from './utils/is-approved';
 
 async function requireApproved(
@@ -89,15 +94,20 @@ export default defineMiddlewares({
     ...registrationDocumentMiddlewares,
     ...protectMetadataMiddlewares,
     ...myDocumentsMiddlewares,
+
+    ...customerDocumentDownloadMiddlewares,
+
+    ...orderAccessMiddlewares,
+
     ...stockLevelMiddlewares,
     ...locationMiddlewares,
     ...warehouseAvailabilityMiddlewares,
     ...approvalMiddlewares,
     ...adminDemoMiddlewares,
     ...uploadWatermarkMiddlewares,
+    ...siteImageMiddlewares,
     ...monitoringMiddlewares,
     ...adminCustomerDocumentMiddlewares,
-    ...orderAccessMiddlewares,
     {
       method: ['GET'],
       matcher: '/store/products',

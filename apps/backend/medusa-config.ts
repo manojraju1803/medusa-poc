@@ -1,43 +1,9 @@
 import { loadEnv, defineConfig } from '@medusajs/framework/utils';
 
-loadEnv(process.env.NODE_ENV || 'development', __dirname);
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
-
-// Where uploaded files, such as product images, are stored: the backend's own
-// disk (the `static` folder) until S3_BUCKET is set, then S3. Code that stores
-// files goes through Medusa's File Module, so switching needs no code changes.
-const fileProvider = process.env.S3_BUCKET
-  ? {
-      resolve: '@medusajs/medusa/file-s3',
-      id: 's3',
-      options: {
-        bucket: process.env.S3_BUCKET,
-        region: process.env.S3_REGION,
-        access_key_id: process.env.S3_ACCESS_KEY_ID,
-        secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-        // The public address files are served from, e.g. the bucket's URL.
-        file_url: process.env.S3_FILE_URL,
-        // Only for S3-compatible services other than AWS.
-        endpoint: process.env.S3_ENDPOINT,
-        prefix: process.env.S3_PREFIX,
-      },
-    }
-  : {
-      resolve: '@medusajs/medusa/file-local',
-      id: 'local',
-      options: {
-        // Links to stored files. Must be the backend's public address: the
-        // default is localhost, which only works on a developer's machine.
-        backend_url: `${process.env.MEDUSA_BACKEND_URL || 'http://localhost:9000'}/static`,
-      },
-    };
-
-// Medusa Cloud sets up S3 file storage itself, so leave it alone there.
-const onMedusaCloud = process.env.EXECUTION_CONTEXT === 'medusa-cloud';
 
 module.exports = defineConfig({
   admin: {
-    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
     // The admin refuses larger files the moment they're added (Medusa's
     // default is 1 MB). Uploaded images are then compressed to at most 500 KB
     // on the server (src/api/utils/watermark.ts), so phone photos can come in
@@ -64,37 +30,41 @@ module.exports = defineConfig({
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
     http: {
-      storeCors: process.env.STORE_CORS || "http://localhost:8000,https://*.vercel.app",
-      adminCors: process.env.ADMIN_CORS || "http://localhost:9000,https://*.onrender.com",
-      authCors: process.env.AUTH_CORS || "http://localhost:8000,http://localhost:9000,https://*.vercel.app,https://*.onrender.com",
-      jwtSecret: process.env.JWT_SECRET || "super_secret_jwt_random_key_1234567890",
-      cookieSecret: process.env.COOKIE_SECRET || "super_secret_cookie_random_key_1234567890",
+      storeCors: process.env.STORE_CORS!,
+      adminCors: process.env.ADMIN_CORS!,
+      authCors: process.env.AUTH_CORS!,
+      jwtSecret: process.env.JWT_SECRET,
+      cookieSecret: process.env.COOKIE_SECRET,
     },
     // Hosted DBs (Supabase) need SSL; local Postgres doesn't
     databaseDriverOptions:
-      process.env.DATABASE_SSL === 'true' ||
-      process.env.DATABASE_URL?.includes("sslmode=require") ||
-      process.env.NODE_ENV === "production"
-        ? {
-            connection: { ssl: { rejectUnauthorized: false } },
-            pool: {
-              min: 2,
-              max: 20,
-              idleTimeoutMillis: 300000,
-              acquireTimeoutMillis: 60000,
-            },
-          }
+      process.env.DATABASE_SSL === 'true'
+        ? { connection: { ssl: { rejectUnauthorized: false } } }
         : { ssl: false, sslmode: 'disable' },
   },
   modules: [
-    ...(onMedusaCloud
-      ? []
-      : [
+    // Uploaded files live in S3 only: images in a public media bucket, private
+    // documents in a locked documents bucket (src/modules/s3-file). The
+    // backend refuses to start without these settings, so a private file can
+    // never fall back to the public `static` folder. See docs/PRIVATE_DOCUMENTS.md.
+    {
+      resolve: '@medusajs/medusa/file',
+      options: {
+        providers: [
           {
-            resolve: '@medusajs/medusa/file',
-            options: { providers: [fileProvider] },
+            resolve: './src/modules/s3-file',
+            id: 's3',
+            options: {
+              region: process.env.S3_REGION,
+              media_bucket: process.env.S3_MEDIA_BUCKET,
+              media_url: process.env.S3_MEDIA_URL,
+              documents_bucket: process.env.S3_DOCUMENTS_BUCKET,
+              endpoint: process.env.S3_ENDPOINT,
+            },
           },
-        ]),
+        ],
+      },
+    },
     // Stock notification module with the local provider on the e-mail channel
     // too, so password-reset links are written to the server log in dev.
     // Swap in a real e-mail provider (e.g. @medusajs/medusa/notification-sendgrid)
@@ -114,21 +84,17 @@ module.exports = defineConfig({
         ],
       },
     },
+    { resolve: './src/modules/inquiry' },
+    { resolve: './src/modules/brand' },
     {
-      resolve: "./src/modules/inquiry",
-    },
-    {
-      resolve: "./src/modules/brand",
-    },
-    {
-      resolve: "@medusajs/medusa/tax",
+      resolve: '@medusajs/medusa/tax',
       options: {
         providers: [
           {
-            resolve: "./src/modules/india-gst-tax",
-            id: "india-gst",
+            resolve: './src/modules/india-gst-tax',
+            id: 'india-gst',
             options: {
-              sellerProvinceCode: "in-ka",
+              sellerProvinceCode: 'in-ka',
               shippingGstPercent: 18,
             },
           },
@@ -136,17 +102,16 @@ module.exports = defineConfig({
       },
     },
     {
-      resolve: "@medusajs/medusa/payment",
+      resolve: '@medusajs/medusa/payment',
       options: {
         providers: [
           {
             // registered as payment provider "pp_mock_default"
-            resolve: "./src/modules/mock-payment",
-            id: "default",
+            resolve: './src/modules/mock-payment',
+            id: 'default',
           },
         ],
       },
     },
   ],
-})
-
+});

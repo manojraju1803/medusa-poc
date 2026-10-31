@@ -28,6 +28,12 @@ const countryCodes = async (): Promise<string[]> => {
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const baseUrl = getBaseURL()
 
+  // Demo and dev deployments stay out of search results; only the real
+  // production site sets ALLOW_INDEXING=true.
+  if (process.env.ALLOW_INDEXING !== "true") {
+    return { rules: [{ userAgent: "*", disallow: "/" }] }
+  }
+
   // Every page lives under "/<country code>/". The codes are spelled out rather
   // than written as "/*/cart", since "*" also spans slashes and would block
   // e.g. "/in/products/carthamus-...".
