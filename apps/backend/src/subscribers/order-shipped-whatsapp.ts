@@ -1,6 +1,6 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { sendWhatsAppCtaMessage } from "../lib/whatsapp"
+import { orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
 
 export default async function orderShippedWhatsAppSubscriber({
   event: { data, name: eventName },
@@ -80,8 +80,7 @@ export default async function orderShippedWhatsAppSubscriber({
       .join(" ") || "Customer"
 
     const orderNumber = order.display_id ? `#${order.display_id}` : order.id
-    const storefrontUrl = process.env.STOREFRONT_URL || "https://storefront-snowy-iota.vercel.app"
-    const trackingUrl = `${storefrontUrl}/in/order/${order.id}/confirmed`
+    const trackingUrl = orderPageUrl(order.id, order.shipping_address?.country_code)
 
     // Extract tracking numbers / carrier info
     let trackingInfo = ""

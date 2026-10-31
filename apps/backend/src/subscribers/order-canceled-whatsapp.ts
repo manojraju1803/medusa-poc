@@ -1,6 +1,6 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { sendWhatsAppCtaMessage } from "../lib/whatsapp"
+import { orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
 
 export default async function orderCanceledWhatsAppSubscriber({
   event: { data, name: eventName },
@@ -50,8 +50,7 @@ export default async function orderCanceledWhatsAppSubscriber({
       .join(" ") || "Customer"
 
     const orderNumber = order.display_id ? `#${order.display_id}` : order.id
-    const storefrontUrl = process.env.STOREFRONT_URL || "https://storefront-snowy-iota.vercel.app"
-    const supportUrl = `${storefrontUrl}/in/order/${order.id}/confirmed`
+    const supportUrl = orderPageUrl(order.id, order.shipping_address?.country_code)
 
     const header = "❌ Order Canceled"
     const body = `Hi ${customerName},\n\nYour IngredientsBazar order ${orderNumber} has been canceled.\n\nIf you have already made a payment, your refund will be processed back to your original payment source within 3-5 business days.\n\nIf you have questions, please reach out to our team.`

@@ -1,6 +1,6 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { sendWhatsAppCtaMessage } from "../lib/whatsapp"
+import { orderPageUrl, sendWhatsAppCtaMessage } from "../lib/whatsapp"
 
 export default async function orderPackedWhatsAppSubscriber({
   event: { data, name: eventName },
@@ -75,8 +75,7 @@ export default async function orderPackedWhatsAppSubscriber({
       .join(" ") || "Customer"
 
     const orderNumber = order.display_id ? `#${order.display_id}` : order.id
-    const storefrontUrl = process.env.STOREFRONT_URL || "https://storefront-snowy-iota.vercel.app"
-    const trackingUrl = `${storefrontUrl}/in/order/${order.id}/confirmed`
+    const trackingUrl = orderPageUrl(order.id, order.shipping_address?.country_code)
 
     const header = "📦 Order Packed"
     const body = `Hi ${customerName},\n\nYour IngredientsBazar order ${orderNumber} has been packed at our fulfillment center and is ready for carrier dispatch.\n\nClick the button below to check your live order status.`

@@ -57,47 +57,18 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
-import fs from "fs"
-import path from "path"
-
+// Medusa loads apps/backend/.env at startup (medusa-config.ts). A token
+// renewed by refreshAccessToken() is kept until the backend restarts.
 function getCredentials(): { token: string; phoneId: string } {
-  let token = ""
-  let phoneId = ""
-
-  try {
-    const candidates = [
-      path.resolve(process.cwd(), "apps/backend/.env"),
-      path.resolve(process.cwd(), ".env"),
-      path.resolve(__dirname, "../../.env"),
-      path.resolve(__dirname, "../../../.env"),
-      path.resolve(__dirname, "../../../../apps/backend/.env"),
-    ]
-    for (const envPath of candidates) {
-      if (fs.existsSync(envPath)) {
-        const content = fs.readFileSync(envPath, "utf8")
-        const tokenMatch = content.match(/^WHATSAPP_ACCESS_TOKEN=(.*)$/m)
-        if (tokenMatch && tokenMatch[1]) {
-          token = tokenMatch[1].trim().replace(/^["']|["']$/g, "")
-        }
-        const phoneMatch = content.match(/^WHATSAPP_PHONE_NUMBER_ID=(.*)$/m)
-        if (phoneMatch && phoneMatch[1]) {
-          phoneId = phoneMatch[1].trim().replace(/^["']|["']$/g, "")
-        }
-        if (token) break
-      }
-    }
-  } catch {}
-
-  if (!token) {
-    token = activeToken || process.env.WHATSAPP_ACCESS_TOKEN || ""
+  return {
+    token: activeToken,
+    phoneId: process.env.WHATSAPP_PHONE_NUMBER_ID || "",
   }
-  if (!phoneId) {
-    phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "616368184901733"
-  }
-
-  activeToken = token
-  return { token, phoneId }
 }
+
+/** The storefront page a message's button opens for an order. */
+export const orderPageUrl = (orderId: string, countryCode?: string | null) =>
+  `${process.env.STOREFRONT_URL || "http://localhost:8000"}/${countryCode || "in"}/order/${orderId}/confirmed`
 
 /**
  * Sends an Interactive CTA URL Button message to the recipient phone number.
@@ -111,7 +82,6 @@ export async function sendWhatsAppCtaMessage({
   buttonUrl,
 }: SendCtaMessageParams): Promise<{ success: boolean; data?: any; error?: string }> {
   const { token, phoneId } = getCredentials()
-  console.log(`[WhatsApp] Using Token prefix: "${token.substring(0, 15)}..." length: ${token.length} with Phone ID: "${phoneId}"`)
 
   if (!token || !phoneId) {
     console.warn("[WhatsApp] Credentials missing: WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID not set in env.")
